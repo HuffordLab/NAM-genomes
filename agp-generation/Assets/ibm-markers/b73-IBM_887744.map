@@ -1,0 +1,189 @@
+Locus	Coordinate	Bin	v3_Gene Model	C_v3	Chr Start	Chr End	v4_Gene_Model	C_v4	Chr Start	Char End
+AY109715	-4.10	4.01	<a href='/gene_center/gene/GRMZM2G145725'>GRMZM2G145725</a>	4	1,064,160	1,065,086	<a href='/gene_center/gene/Zm00001d048609'>Zm00001d048609</a>	4	1,277,393	1,280,951
+umc2278	0.00	4.01	<a href='/gene_center/gene/GRMZM2G058868'>GRMZM2G058868</a>	4	609,416	610,872	<a href='/gene_center/gene/Zm00001d048590'>Zm00001d048590</a>	4	818,674	819,621
+ufg26	1.80	4.01					<a href='/gene_center/gene/Zm00001d048604'>Zm00001d048604</a>	4	1,058,559	1,060,856
+mtl1	2.90	4.01	<a href='/gene_center/gene/GRMZM2G164229'>GRMZM2G164229</a>	4	1,078,840	1,080,800	<a href='/gene_center/gene/Zm00001d048611'>Zm00001d048611</a>	4	1,283,712	1,284,484
+bnlg1434	4.30	4.01	<a href='/gene_center/gene/GRMZM2G008369'>GRMZM2G008369</a>	4	1,095,458	1,097,674	<a href='/gene_center/gene/Zm00001d048614'>Zm00001d048614</a>	4	1,307,131	1,309,817
+rca1	9.90	4.01	<a href='/gene_center/gene/GRMZM2G162200'>GRMZM2G162200</a>	4	693,736	696,087	<a href='/gene_center/gene/Zm00001d048593'>Zm00001d048593</a>	4	921,608	923,738
+mmp192	13.70	4.01	<a href='/gene_center/gene/GRMZM2G308860'>GRMZM2G308860</a>	4	1,256,813	1,261,230	<a href='/gene_center/gene/Zm00001d048621'>Zm00001d048621</a>	4	1,519,872	1,524,402
+msf1	15.80	4.01	<a href='/gene_center/gene/GRMZM2G057450'>GRMZM2G057450</a>	4	2,116,635	2,122,723	<a href='/gene_center/gene/Zm00001d048655'>Zm00001d048655</a>	4	2,668,192	2,674,113
+csu221	18.70	4.01	<a href='/gene_center/gene/GRMZM2G131409'>GRMZM2G131409</a>	4	2,060,577	2,061,511	<a href='/gene_center/gene/Zm00001d048649'>Zm00001d048649</a>	4	2,612,412	2,612,975
+umc2279	22.90	4.01	<a href='/gene_center/gene/GRMZM2G001169'>GRMZM2G001169</a>	4	2,517,724	2,519,683	<a href='/gene_center/gene/Zm00001d048671'>Zm00001d048671</a>	4	3,088,195	3,089,163
+umc123	24.60	4.01								
+mmp174	30.40	4.01	<a href='/gene_center/gene/GRMZM2G062160'>GRMZM2G062160</a>	4	2,843,218	2,844,283	<a href='/gene_center/gene/Zm00001d048694'>Zm00001d048694</a>	4	3,416,245	3,417,544
+bx4	37.50	4.01	<a href='/gene_center/gene/GRMZM2G172491'>GRMZM2G172491</a>	4	3,051,215	3,054,036	<a href='/gene_center/gene/Zm00001d048703'>Zm00001d048703</a>	4	3,614,699	3,616,705
+bx2	47.60	4.01	<a href='/gene_center/gene/GRMZM2G085661'>GRMZM2G085661</a>	4	3,265,213	3,267,368	<a href='/gene_center/gene/Zm00001d048710'>Zm00001d048710</a>	4	3,837,797	3,839,930
+umc1669	57.50	4.01	<a href='/gene_center/gene/GRMZM2G037472'>GRMZM2G037472</a>	4	3,748,230	3,751,679	<a href='/gene_center/gene/Zm00001d048731'>Zm00001d048731</a>	4	4,464,763	4,469,275
+umc1757	81.00	4.01	<a href='/gene_center/gene/GRMZM5G877647'>GRMZM5G877647</a>	4	5,006,417	5,007,575	<a href='/gene_center/gene/Zm00001d048801'>Zm00001d048801</a>	4	5,759,011	5,759,400
+php20725a	83.70	4.02	<a href='/gene_center/gene/GRMZM2G076435'>GRMZM2G076435</a>	4	5,044,212	5,046,753	<a href='/gene_center/gene/Zm00001d048804'>Zm00001d048804</a>	4	5,796,759	5,799,180
+umc1943	101.10	4.02								
+psr144b	130.40	4.02								
+chr117c	134.70	4.02								
+alf18	135.60	4.03	<a href='/gene_center/gene/GRMZM2G008259'>GRMZM2G008259</a>	4	11,403,566	11,428,284	<a href='/gene_center/gene/Zm00001d049007'>Zm00001d049007</a>	4	12,330,907	12,332,675
+bnlg1126	135.80	4.03								
+umc1926	141.50	4.03								
+umc2082	142.20	4.03	<a href='/gene_center/gene/GRMZM2G010056'>GRMZM2G010056</a>	4	12,057,536	12,064,864	<a href='/gene_center/gene/Zm00001d049026'>Zm00001d049026</a>	4	12,963,595	12,972,386
+csu235	144.00	4.03	<a href='/gene_center/gene/GRMZM2G124644'>GRMZM2G124644</a>	4	12,989,184	12,990,519	<a href='/gene_center/gene/Zm00001d049048'>Zm00001d049048</a>	4	13,883,904	13,884,785
+adh2	147.70	4.03	<a href='/gene_center/gene/GRMZM2G098346'>GRMZM2G098346</a>	4	13,409,584	13,412,986	<a href='/gene_center/gene/Zm00001d049059'>Zm00001d049059</a>	4	14,333,136	14,336,565
+rz53b	147.80	4.03					<a href='/gene_center/gene/Zm00001d049060'>Zm00001d049060</a>	4	14,442,996	14,443,265
+AY110253	153.50	4.03	<a href='/gene_center/gene/GRMZM2G070011'>GRMZM2G070011</a>	4	15,320,600	15,322,087	<a href='/gene_center/gene/Zm00001d049113'>Zm00001d049113</a>	4	16,448,731	16,450,218
+isu144b	158.20	4.03								
+bhlh141	159.40	4.03	<a href='/gene_center/gene/GRMZM2G080168'>GRMZM2G080168</a>	4	17,257,180	17,259,695	<a href='/gene_center/gene/Zm00001d049158'>Zm00001d049158</a>	4	18,372,576	18,374,628
+sig2A	164.50		<a href='/gene_center/gene/GRMZM2G143392'>GRMZM2G143392</a>	4	17,349,492	17,354,543	<a href='/gene_center/gene/Zm00001d049160'>Zm00001d049160</a>	4	18,466,281	18,470,669
+sbp3 (GRASSIUS)	175.20	4.03	<a href='/gene_center/gene/GRMZM2G106798'>GRMZM2G106798</a>	4	17,511,896	17,523,810	<a href='/gene_center/gene/Zm00001d049165'>Zm00001d049165</a>	4	18,638,440	18,650,497
+umc1902	182.00	4.03								
+la1	189.70		<a href='/gene_center/gene/GRMZM2G135019'>GRMZM2G135019</a>	4	18,000,248	18,006,785	<a href='/gene_center/gene/Zm00001d049174'>Zm00001d049174</a>	4	19,153,020	19,159,545
+bx7	197.00	4.03	<a href='/gene_center/gene/GRMZM2G441753'>GRMZM2G441753</a>	4	18,244,663	18,245,553	<a href='/gene_center/gene/Zm00001d049179'>Zm00001d049179</a>	4	19,409,404	19,410,924
+pgd3	200.90	4.03	<a href='/gene_center/gene/GRMZM2G440208'>GRMZM2G440208</a>	4	18,596,164	18,598,086	<a href='/gene_center/gene/Zm00001d049187'>Zm00001d049187</a>	4	19,755,800	19,757,563
+wip2	205.60	4.03	<a href='/gene_center/gene/GRMZM2G112795'>GRMZM2G112795</a>	4	20,529,042	20,532,586				
+gras28	212.00	4.04	<a href='/gene_center/gene/GRMZM2G342217'>GRMZM2G342217</a>	4	21,604,764	21,607,924	<a href='/gene_center/gene/Zm00001d049249'>Zm00001d049249</a>	4	22,848,841	22,851,983
+umc1117	219.10	4.04	<a href='/gene_center/gene/GRMZM2G050982'>GRMZM2G050982</a>	4	25,351,731	25,363,303	<a href='/gene_center/gene/Zm00001d049333'>Zm00001d049333</a>	4	26,910,739	26,922,418
+lim415	224.20	4.04								
+umc1963	226.30	4.04	<a href='/gene_center/gene/GRMZM2G171311'>GRMZM2G171311</a>	4	27,785,181	27,787,300	<a href='/gene_center/gene/Zm00001d049400'>Zm00001d049400</a>	4	29,282,763	29,284,915
+umc1652	229.00	4.04	<a href='/gene_center/gene/GRMZM5G852329'>GRMZM5G852329</a>	4	26,401,956	26,404,136	<a href='/gene_center/gene/Zm00001d049361'>Zm00001d049361</a>	4	27,879,419	27,894,268
+jpsb527b	231.00	4.04								
+zp1	233.00	4.04	<a href='/gene_center/gene/GRMZM2G008913'>GRMZM2G008913</a>	4	29,963,321	29,964,591	<a href='/gene_center/gene/Zm00001d049473'>Zm00001d049473</a>	4	31,476,231	31,476,932
+mre11b	233.00	4.04	<a href='/gene_center/gene/GRMZM2G309109'>GRMZM2G309109</a>	4	29,935,686	29,941,454	<a href='/gene_center/gene/Zm00001d049471'>Zm00001d049471</a>	4	31,448,746	31,454,292
+sdg108	233.00	4.04	<a href='/gene_center/gene/GRMZM2G149153'>GRMZM2G149153</a>	4	29,377,433	29,389,813	<a href='/gene_center/gene/Zm00001d049457'>Zm00001d049457</a>	4	30,893,684	30,906,303
+glk22	238.70	4.04	<a href='/gene_center/gene/GRMZM2G315506'>GRMZM2G315506</a>	4	31,335,510	31,339,291	<a href='/gene_center/gene/Zm00001d049511'>Zm00001d049511</a>	4	32,889,820	32,894,110
+agrr301	246.50	4.05								
+bm3	249.60		<a href='/gene_center/gene/AC196475.3_FG004'>AC196475.3_FG004</a>	4	32,278,881	32,280,752	<a href='/gene_center/gene/Zm00001d049541'>Zm00001d049541</a>	4	33,817,769	33,820,095
+mybr92	251.80	4.05	<a href='/gene_center/gene/GRMZM2G157306'>GRMZM2G157306</a>	4	34,498,413	34,504,954	<a href='/gene_center/gene/Zm00001d049581'>Zm00001d049581</a>	4	36,062,634	36,069,198
+gpc1	255.00	4.05	<a href='/gene_center/gene/GRMZM2G046804'>GRMZM2G046804</a>	4	36,912,994	36,917,779	<a href='/gene_center/gene/Zm00001d049641'>Zm00001d049641</a>	4	38,551,544	38,555,126
+umc2282	255.90	4.05	<a href='/gene_center/gene/GRMZM2G179976'>GRMZM2G179976</a>	4	36,155,816	36,158,310	<a href='/gene_center/gene/Zm00001d049619'>Zm00001d049619</a>	4	37,784,246	37,786,605
+bnlg1265	269.40	4.05								
+umc1303	271.30	4.05	<a href='/gene_center/gene/GRMZM2G377165'>GRMZM2G377165</a>	4	42,171,674	42,174,905	<a href='/gene_center/gene/Zm00001d049767'>Zm00001d049767</a>	4	43,883,748	43,891,489
+umc1964	272.40	4.05	<a href='/gene_center/gene/GRMZM2G075496'>GRMZM2G075496</a>	4	42,128,754	42,132,190	<a href='/gene_center/gene/Zm00001d049766'>Zm00001d049766</a>	4	43,845,346	43,848,071
+AY110290	275.70	4.05	<a href='/gene_center/gene/GRMZM5G821611'>GRMZM5G821611</a>	4	46,647,187	46,652,116	<a href='/gene_center/gene/Zm00001d049857'>Zm00001d049857</a>	4	48,657,712	48,662,643
+ntf2	278.80	4.05	<a href='/gene_center/gene/GRMZM2G006953'>GRMZM2G006953</a>	4	44,885,697	44,888,397	<a href='/gene_center/gene/Zm00001d049826'>Zm00001d049826</a>	4	46,705,236	46,707,933
+nnr1	280.90	4.05	<a href='/gene_center/gene/GRMZM2G568636'>GRMZM2G568636</a>	4	56,335,735	56,340,792	<a href='/gene_center/gene/Zm00001d049995'>Zm00001d049995</a>	4	58,642,687	58,647,338
+brl3	284.30	4.05	<a href='/gene_center/gene/GRMZM2G438007'>GRMZM2G438007</a>	4	65,769,675	65,773,352	<a href='/gene_center/gene/Zm00001d050132'>Zm00001d050132</a>	4	68,202,250	68,205,876
+umc1031	287.00	4.05								
+chr112a	288.20	4.05								
+akh1	288.30	4.05	<a href='/gene_center/gene/GRMZM2G365423'>GRMZM2G365423</a>	4	65,845,329	65,852,416	<a href='/gene_center/gene/Zm00001d050133'>Zm00001d050133</a>	4	68,209,203	68,220,619
+hda108	288.70	4.05	<a href='/gene_center/gene/GRMZM2G136067'>GRMZM2G136067</a>	4	65,983,218	65,988,818	<a href='/gene_center/gene/Zm00001d050139'>Zm00001d050139</a>	4	68,410,505	68,416,118
+umc42a	289.40	4.05	<a href='/gene_center/gene/GRMZM2G038046'>GRMZM2G038046</a>	4	63,937,339	63,938,743	<a href='/gene_center/gene/Zm00001d050110'>Zm00001d050110</a>	4	66,333,703	66,335,464
+isu61d	292.30	4.05								
+jpsb67	293.40	4.05								
+bnl15.45	293.90	4.05								
+umc1953	295.30	4.05	<a href='/gene_center/gene/GRMZM2G166711'>GRMZM2G166711</a>	4	75,531,427	75,535,036	<a href='/gene_center/gene/Zm00001d050277'>Zm00001d050277</a>	4	78,271,436	78,274,987
+umc1511	296.20	4.05	<a href='/gene_center/gene/GRMZM2G004878'>GRMZM2G004878</a>	4	81,276,744	81,278,113	<a href='/gene_center/gene/Zm00001d050368'>Zm00001d050368</a>	4	84,247,503	84,248,847
+psr128	298.40	4.05								
+sweet15a	299.10	4.05	<a href='/gene_center/gene/GRMZM2G168365'>GRMZM2G168365</a>	4	96,336,663	96,338,566	<a href='/gene_center/gene/Zm00001d050577'>Zm00001d050577</a>	4	101,826,608	101,828,504
+mmp190	299.40	4.05								
+mmp140	299.90	4.05	<a href='/gene_center/gene/GRMZM2G009019'>GRMZM2G009019</a>	4	119,491,974	119,495,409	<a href='/gene_center/gene/Zm00001d050790'>Zm00001d050790</a>	4	123,187,727	123,191,108
+bnlg1755	300.90	4.05								
+umc1702	301.40	4.05	<a href='/gene_center/gene/GRMZM2G125529'>GRMZM2G125529</a>	4	142,229,246	142,232,850	<a href='/gene_center/gene/Zm00001d051139'>Zm00001d051139</a>	4	145,546,078	145,549,609
+umc1142	303.50	4.05	<a href='/gene_center/gene/GRMZM2G030125'>GRMZM2G030125</a>	4	135,339,429	135,342,026	<a href='/gene_center/gene/Zm00001d051044'>Zm00001d051044</a>	4	138,472,340	138,473,695
+umc1346	305.40	4.05	<a href='/gene_center/gene/GRMZM2G366392'>GRMZM2G366392</a>	4	136,094,171	136,096,890	<a href='/gene_center/gene/Zm00001d051056'>Zm00001d051056</a>	4	139,235,984	139,238,663
+nfd104e	306.20	4.05								
+mmp86	306.30	4.05	<a href='/gene_center/gene/GRMZM2G056442'>GRMZM2G056442</a>	4	114,298,600	114,306,772	<a href='/gene_center/gene/Zm00001d050714'>Zm00001d050714</a>	4	117,910,694	117,919,249
+mmp149a	307.90	4.05								
+mmp78	312.30	4.05								
+nap1	316.60		<a href='/gene_center/gene/GRMZM2G157019'>GRMZM2G157019</a>	4	125,114,646	125,123,620	<a href='/gene_center/gene/Zm00001d050874'>Zm00001d050874</a>	4	128,050,675	128,059,411
+AY110562	322.20	4.05	<a href='/gene_center/gene/GRMZM2G374302'>GRMZM2G374302</a>	4	144,862,958	144,868,207	<a href='/gene_center/gene/Zm00001d051194'>Zm00001d051194</a>	4	148,148,821	148,150,740
+AY110355	328.30	4.05	<a href='/gene_center/gene/GRMZM2G074436'>GRMZM2G074436</a>	4	144,052,202	144,071,759	<a href='/gene_center/gene/Zm00001d051178'>Zm00001d051178</a>	4	147,335,724	147,347,180
+php20597a	331.40	4.06								
+nactf27	333.10	4.06	<a href='/gene_center/gene/GRMZM2G354151'>GRMZM2G354151</a>	4	148,843,760	148,847,667	<a href='/gene_center/gene/Zm00001d051294'>Zm00001d051294</a>	4	152,220,730	152,221,346
+umc2284	334.20	4.06	<a href='/gene_center/gene/GRMZM2G060357'>GRMZM2G060357</a>	4	148,044,809	148,047,396	<a href='/gene_center/gene/Zm00001d051272'>Zm00001d051272</a>	4	151,408,424	151,411,182
+umc1945	335.00	4.06	<a href='/gene_center/gene/GRMZM2G111015'>GRMZM2G111015</a>	4	147,934,002	147,936,232	<a href='/gene_center/gene/Zm00001d051268'>Zm00001d051268</a>	4	151,295,170	151,303,295
+mmp74	337.20	4.06								
+nfd105	348.60	4.06								
+umc2027	351.70	4.06	<a href='/gene_center/gene/GRMZM2G301585'>GRMZM2G301585</a>	4	155,555,161	155,558,241	<a href='/gene_center/gene/Zm00001d051448'>Zm00001d051448</a>	4	159,031,088	159,035,197
+mmp97	356.40	4.06								
+mmp176	357.30	4.06	<a href='/gene_center/gene/GRMZM2G080959'>GRMZM2G080959</a>	4	156,959,835	156,960,798	<a href='/gene_center/gene/Zm00001d051496'>Zm00001d051496</a>	4	160,437,529	160,438,553
+AY110310	364.30	4.06	<a href='/gene_center/gene/GRMZM2G004748'>GRMZM2G004748</a>	4	157,636,951	157,644,647	<a href='/gene_center/gene/Zm00001d051514'>Zm00001d051514</a>	4	161,089,336	161,097,086
+myb19	369.10	4.06	<a href='/gene_center/gene/GRMZM5G833253'>GRMZM5G833253</a>	4	157,794,216	157,795,479	<a href='/gene_center/gene/Zm00001d051520'>Zm00001d051520</a>	4	161,213,576	161,215,329
+rz567b(klc)	375.20	4.06	<a href='/gene_center/gene/GRMZM2G060947'>GRMZM2G060947</a>	4	160,593,547	160,597,529	<a href='/gene_center/gene/Zm00001d051589'>Zm00001d051589</a>	4	163,588,760	163,592,644
+bnlg2291	394.10	4.06								
+bnlg1137	394.30	4.06								
+umc66a(lcr)	399.30	4.07								
+umc104a	410.60	4.07	<a href='/gene_center/gene/GRMZM2G130002'>GRMZM2G130002</a>	4	172,714,527	172,719,310	<a href='/gene_center/gene/Zm00001d051977'>Zm00001d051977</a>	4	175,738,176	175,743,156
+mmp147	412.70	4.07								
+gata4	413.20	4.07	<a href='/gene_center/gene/GRMZM2G379005'>GRMZM2G379005</a>	4	172,789,633	172,794,795	<a href='/gene_center/gene/Zm00001d051981'>Zm00001d051981</a>	4	175,840,987	175,846,170
+umc19	416.10	4.07	<a href='/gene_center/gene/GRMZM2G125838'>GRMZM2G125838</a>	4	173,401,199	173,403,388	<a href='/gene_center/gene/Zm00001d052010'>Zm00001d052010</a>	4	176,412,462	176,414,889
+mmp115a	422.50	4.07								
+bnlg1189	429.90	4.07								
+grftf10	432.10	4.07	<a href='/gene_center/gene/GRMZM2G105335'>GRMZM2G105335</a>	4	177,152,123	177,154,056	<a href='/gene_center/gene/Zm00001d052112'>Zm00001d052112</a>	4	180,147,356	180,150,053
+asg33	439.40	4.07								
+cyc13	445.10	4.08	<a href='/gene_center/gene/GRMZM2G075117'>GRMZM2G075117</a>	4	179,655,519	179,658,130	<a href='/gene_center/gene/Zm00001d052185'>Zm00001d052185</a>	4	182,579,495	182,583,632
+trpp4	451.30	4.08	<a href='/gene_center/gene/GRMZM2G151044'>GRMZM2G151044</a>	4	180,916,055	180,919,097	<a href='/gene_center/gene/Zm00001d052227'>Zm00001d052227</a>	4	183,819,885	183,822,900
+AY109534	454.00	4.08	<a href='/gene_center/gene/GRMZM2G021605'>GRMZM2G021605</a>	4	181,259,476	181,262,496	<a href='/gene_center/gene/Zm00001d052233'>Zm00001d052233</a>	4	184,160,265	184,163,189
+umc1808	454.80	4.08	<a href='/gene_center/gene/GRMZM2G021889'>GRMZM2G021889</a>	4	181,255,627	181,258,503	<a href='/gene_center/gene/Zm00001d052232'>Zm00001d052232</a>	4	184,156,145	184,159,248
+mmp3	457.80	4.08	<a href='/gene_center/gene/AC185478.4_FG005'>AC185478.4_FG005</a>	4	181,432,210	181,432,974	<a href='/gene_center/gene/Zm00001d052238'>Zm00001d052238</a>	4	184,344,859	184,345,623
+asg27a	460.00	4.08								
+umc1476	464.00	4.08					<a href='/gene_center/gene/Zm00001d052266'>Zm00001d052266</a>	4	185,249,435	185,254,161
+bnlg1444	464.40	4.08								
+gol1	465.20	4.08	<a href='/gene_center/gene/GRMZM2G080079'>GRMZM2G080079</a>	4	182,134,219	182,136,764	<a href='/gene_center/gene/Zm00001d052268'>Zm00001d052268</a>	4	185,307,585	185,310,033
+bnl7.65	466.80	4.08	<a href='/gene_center/gene/GRMZM2G138936'>GRMZM2G138936</a>	4	184,091,589	184,094,554	<a href='/gene_center/gene/Zm00001d052334'>Zm00001d052334</a>	4	187,337,794	187,340,606
+bnl10.05	468.00	4.08	<a href='/gene_center/gene/GRMZM2G032619'>GRMZM2G032619</a>	4	184,330,252	184,335,355	<a href='/gene_center/gene/Zm00001d052343'>Zm00001d052343</a>	4	187,573,638	187,579,315
+bnlg2244	469.00	4.08								
+umc1899	472.50	4.08	<a href='/gene_center/gene/GRMZM2G306734'>GRMZM2G306734</a>	4	185,508,572	185,510,149	<a href='/gene_center/gene/Zm00001d052382'>Zm00001d052382</a>	4	188,774,627	188,776,099
+umc158	475.80	4.08								
+bnlg2162	477.60	4.08								
+mmp70	477.90	4.08								
+npi570	482.60	4.08	<a href='/gene_center/gene/GRMZM2G174739'>GRMZM2G174739</a>	4	185,890,136	185,893,110	<a href='/gene_center/gene/Zm00001d052401'>Zm00001d052401</a>	4	189,173,442	189,175,233
+AY112127	489.60	4.08								
+nbs25	501.80	4.08	<a href='/gene_center/gene/GRMZM2G050959'>GRMZM2G050959</a>	4	189,470,957	189,474,033	<a href='/gene_center/gene/Zm00001d052581'>Zm00001d052581</a>	4	193,472,119	193,474,854
+AY110631	511.90	4.08	<a href='/gene_center/gene/GRMZM2G439311'>GRMZM2G439311</a>	4	188,375,246	188,379,468	<a href='/gene_center/gene/Zm00001d052525'>Zm00001d052525</a>	4	192,080,883	192,084,967
+umc2285	516.80	4.08	<a href='/gene_center/gene/GRMZM2G119175'>GRMZM2G119175</a>	4	188,059,569	188,065,517	<a href='/gene_center/gene/Zm00001d052494'>Zm00001d052494</a>	4	191,353,211	191,358,538
+npi270	518.50	4.08	<a href='/gene_center/gene/GRMZM2G051697'>GRMZM2G051697</a>	4	188,488,773	188,493,202	<a href='/gene_center/gene/Zm00001d052519'>Zm00001d052519</a>	4	191,968,167	191,972,580
+php20071	520.00	4.08	<a href='/gene_center/gene/GRMZM2G051697'>GRMZM2G051697</a>	4	188,488,773	188,493,202	<a href='/gene_center/gene/Zm00001d052519'>Zm00001d052519</a>	4	191,968,167	191,972,580
+ssu1	524.00	4.08	<a href='/gene_center/gene/GRMZM2G098520'>GRMZM2G098520</a>	4	190,228,051	190,230,534	<a href='/gene_center/gene/Zm00001d052595'>Zm00001d052595</a>	4	194,257,728	194,258,862
+npi444	526.00	4.08								
+umc15a	527.70	4.08	<a href='/gene_center/gene/GRMZM2G013128'>GRMZM2G013128</a>	4	190,621,341	190,624,624	<a href='/gene_center/gene/Zm00001d052612'>Zm00001d052612</a>	4	194,612,477	194,615,657
+umc2187a	533.60	4.08	<a href='/gene_center/gene/GRMZM5G855894'>GRMZM5G855894</a>	4	192,435,208	192,440,223	<a href='/gene_center/gene/Zm00001d052668'>Zm00001d052668</a>	4	196,532,890	196,537,939
+umc1842	536.70	4.08								
+umc1132	537.00	4.08	<a href='/gene_center/gene/GRMZM2G131957'>GRMZM2G131957</a>	4	197,705,149	197,709,667	<a href='/gene_center/gene/Zm00001d052816'>Zm00001d052816</a>	4	201,805,607	201,807,418
+nfd106	537.40	4.08	<a href='/gene_center/gene/GRMZM2G125648'>GRMZM2G125648</a>	4	195,556,757	195,558,537	<a href='/gene_center/gene/Zm00001d052749'>Zm00001d052749</a>	4	199,665,081	199,666,577
+AY105971	538.10	4.08	<a href='/gene_center/gene/GRMZM2G140545'>GRMZM2G140545</a>	4	197,081,353	197,082,741	<a href='/gene_center/gene/Zm00001d052796'>Zm00001d052796</a>	4	201,214,849	201,216,177
+AY110989	538.70	4.08	<a href='/gene_center/gene/GRMZM2G079471'>GRMZM2G079471</a>	4	195,504,059	195,509,361	<a href='/gene_center/gene/Zm00001d052747'>Zm00001d052747</a>	4	199,611,240	199,615,525
+rz596b	540.80	4.08	<a href='/gene_center/gene/GRMZM2G147452'>GRMZM2G147452</a>	4	195,372,399	195,374,901	<a href='/gene_center/gene/Zm00001d052741'>Zm00001d052741</a>	4	199,478,963	199,481,434
+AY109980	542.90	4.06	<a href='/gene_center/gene/GRMZM2G363038'>GRMZM2G363038</a>	4	195,710,028	195,718,292	<a href='/gene_center/gene/Zm00001d052751'>Zm00001d052751</a>	4	199,802,512	199,811,051
+abi47	545.90	4.08	<a href='/gene_center/gene/GRMZM2G125596'>GRMZM2G125596</a>	4	195,559,254	195,562,953	<a href='/gene_center/gene/Zm00001d052750'>Zm00001d052750</a>	4	199,667,552	199,671,247
+mmp178	552.80	4.08	<a href='/gene_center/gene/GRMZM2G317270'>GRMZM2G317270</a>	4	198,553,396	198,556,876	<a href='/gene_center/gene/Zm00001d052856'>Zm00001d052856</a>	4	202,676,879	202,680,949
+umc2286	555.50	4.08	<a href='/gene_center/gene/GRMZM2G393337'>GRMZM2G393337</a>	4	199,975,488	199,979,512	<a href='/gene_center/gene/Zm00001d052903'>Zm00001d052903</a>	4	204,205,739	204,209,741
+umc2188	555.90	4.08	<a href='/gene_center/gene/GRMZM2G098527'>GRMZM2G098527</a>	4	200,113,752	200,115,760	<a href='/gene_center/gene/Zm00001d052904'>Zm00001d052904</a>	4	204,238,907	204,245,663
+tcptf2	560.80	4.09	<a href='/gene_center/gene/GRMZM2G003944'>GRMZM2G003944</a>	4	205,135,012	205,137,037	<a href='/gene_center/gene/Zm00001d053020'>Zm00001d053020</a>	4	209,499,482	209,500,645
+AY110170	563.30	4.09	<a href='/gene_center/gene/GRMZM2G155253'>GRMZM2G155253</a>	4	204,774,264	204,776,415	<a href='/gene_center/gene/Zm00001d053015'>Zm00001d053015</a>	4	209,127,785	209,129,931
+lim446	567.20	4.09								
+atg13e	576.60	4.09	<a href='/gene_center/gene/GRMZM2G044733'>GRMZM2G044733</a>	4	214,493,953	214,497,097	<a href='/gene_center/gene/Zm00001d053173'>Zm00001d053173</a>	4	218,017,452	218,021,002
+php10025	581.60	4.09								
+umc1999	583.60	4.09	<a href='/gene_center/gene/GRMZM2G125342'>GRMZM2G125342</a>	4	221,183,920	221,194,638	<a href='/gene_center/gene/Zm00001d053300'>Zm00001d053300</a>	4	224,942,731	224,952,442
+umc1854	597.50	4.09								
+rz476a	603.20	4.09	<a href='/gene_center/gene/GRMZM2G134582'>GRMZM2G134582</a>	4	230,638,921	230,642,641	<a href='/gene_center/gene/Zm00001d053576'>Zm00001d053576</a>	4	235,104,770	235,108,555
+rz599b	603.20	4.09	<a href='/gene_center/gene/GRMZM2G154505'>GRMZM2G154505</a>	4	230,277,228	230,278,253	<a href='/gene_center/gene/Zm00001d053568'>Zm00001d053568</a>	4	234,742,154	234,742,759
+npi449b	603.40	4.09								
+umc1650	603.90	4.09	<a href='/gene_center/gene/GRMZM2G121495'>GRMZM2G121495</a>	4	230,885,162	230,889,587	<a href='/gene_center/gene/Zm00001d053585'>Zm00001d053585</a>	4	235,371,631	235,376,042
+cyp25	604.00	4.09	<a href='/gene_center/gene/GRMZM2G070508'>GRMZM2G070508</a>	4	230,384,824	230,387,143	<a href='/gene_center/gene/Zm00001d053569'>Zm00001d053569</a>	4	234,845,163	234,847,523
+asg22	605.10	4.09	<a href='/gene_center/gene/GRMZM2G343139'>GRMZM2G343139</a>	4	231,571,831	231,581,695	<a href='/gene_center/gene/Zm00001d053603'>Zm00001d053603</a>	4	236,105,402	236,116,126
+mmp94	607.30	4.09	<a href='/gene_center/gene/GRMZM2G003411'>GRMZM2G003411</a>	4	231,940,939	231,947,595	<a href='/gene_center/gene/Zm00001d053612'>Zm00001d053612</a>	4	236,474,079	236,481,803
+AY109933	614.80		<a href='/gene_center/gene/GRMZM2G078832'>GRMZM2G078832</a>	4	232,265,095	232,270,083	<a href='/gene_center/gene/Zm00001d053620'>Zm00001d053620</a>	4	236,807,529	236,818,076
+zfp30	619.90	4.09	<a href='/gene_center/gene/GRMZM2G116079'>GRMZM2G116079</a>	4	232,434,818	232,442,130	<a href='/gene_center/gene/Zm00001d053622'>Zm00001d053622</a>	4	236,999,463	237,006,338
+cts2	625.20	4.09	<a href='/gene_center/gene/GRMZM2G064023'>GRMZM2G064023</a>	4	234,360,280	234,367,429	<a href='/gene_center/gene/Zm00001d053685'>Zm00001d053685</a>	4	239,005,570	239,012,726
+AY110231	637.00	4.09	<a href='/gene_center/gene/GRMZM2G000964'>GRMZM2G000964</a>	4	235,154,285	235,161,789	<a href='/gene_center/gene/Zm00001d053718'>Zm00001d053718</a>	4	239,807,329	239,820,801
+sbp2	646.10	4.09	<a href='/gene_center/gene/GRMZM2G168229'>GRMZM2G168229</a>	4	235,838,405	235,842,060	<a href='/gene_center/gene/Zm00001d053756'>Zm00001d053756</a>	4	240,523,216	240,526,731
+bnlg1565	647.50	4.09								
+cyp15	653.50	4.09	<a href='/gene_center/gene/GRMZM2G010221'>GRMZM2G010221</a>	4	236,268,174	236,272,709	<a href='/gene_center/gene/Zm00001d053782'>Zm00001d053782</a>	4	240,980,104	240,984,661
+umc1101	656.80	4.09	<a href='/gene_center/gene/GRMZM2G041310'>GRMZM2G041310</a>	4	236,710,843	236,714,482	<a href='/gene_center/gene/Zm00001d053808'>Zm00001d053808</a>	4	241,457,479	241,460,882
+umc2046	658.80	4.09								
+php20608a	671.60	4.10	<a href='/gene_center/gene/GRMZM2G101818'>GRMZM2G101818</a>	4	237,244,514	237,245,531	<a href='/gene_center/gene/Zm00001d053828'>Zm00001d053828</a>	4	241,949,508	241,950,525
+bnlg589	672.00	4.10	<a href='/gene_center/gene/GRMZM2G101920'>GRMZM2G101920</a>	4	237,277,300	237,279,434	<a href='/gene_center/gene/Zm00001d053831'>Zm00001d053831</a>	4	241,982,040	241,984,774
+umc1532	673.70	4.10								
+umc124b(chk)	674.20	4.10	<a href='/gene_center/gene/GRMZM2G111319'>GRMZM2G111319</a>	4	237,502,083	237,505,189	<a href='/gene_center/gene/Zm00001d053853'>Zm00001d053853</a>	4	242,214,223	242,216,703
+csd2	689.60	4.10	<a href='/gene_center/gene/GRMZM2G389768'>GRMZM2G389768</a>	4	238,665,158	238,666,872	<a href='/gene_center/gene/Zm00001d053908'>Zm00001d053908</a>	4	243,422,436	243,423,185
+lim471a	690.50	4.10								
+bnl15.07a	693.00	4.10								
+umc2288	693.90	4.10	<a href='/gene_center/gene/GRMZM2G060451'>GRMZM2G060451</a>	4	238,872,881	238,878,782	<a href='/gene_center/gene/Zm00001d053923'>Zm00001d053923</a>	4	243,656,212	243,665,866
+asg41	697.30	4.10	<a href='/gene_center/gene/GRMZM2G133958'>GRMZM2G133958</a>	4	239,016,739	239,023,284	<a href='/gene_center/gene/Zm00001d053936'>Zm00001d053936</a>	4	243,883,854	243,885,686
+umc1180	700.70	4.10	<a href='/gene_center/gene/GRMZM2G319875'>GRMZM2G319875</a>	4	239,338,677	239,339,463	<a href='/gene_center/gene/Zm00001d053958'>Zm00001d053958</a>	4	244,221,975	244,222,424
+AY109668	704.00	4.10								
+umc2289	709.60	4.10								
+smk2	710.30	4.10	<a href='/gene_center/gene/GRMZM2G023528'>GRMZM2G023528</a>	4	239,684,932	239,688,530	<a href='/gene_center/gene/Zm00001d053981'>Zm00001d053981</a>	4	244,568,059	244,571,526
+AY109611	717.30	4.10								
+wee1	730.30	4.11	<a href='/gene_center/gene/GRMZM5G878541'>GRMZM5G878541</a>	4	239,984,257	239,988,267	<a href='/gene_center/gene/Zm00001d053998'>Zm00001d053998</a>	4	244,830,012	244,833,977
+bip2	739.60	4.11	<a href='/gene_center/gene/GRMZM2G415007'>GRMZM2G415007</a>	4	240,596,989	240,600,763	<a href='/gene_center/gene/Zm00001d054043'>Zm00001d054043</a>	4	245,469,383	245,473,221
+nrt2	742.50	4.11	<a href='/gene_center/gene/GRMZM2G010280'>GRMZM2G010280</a>	4	240,779,448	240,781,473	<a href='/gene_center/gene/Zm00001d054057'>Zm00001d054057</a>	4	245,638,263	245,639,837
+cat3	745.90	4.11	<a href='/gene_center/gene/GRMZM2G079348'>GRMZM2G079348</a>	4	240,651,914	240,655,881	<a href='/gene_center/gene/Zm00001d054044'>Zm00001d054044</a>	4	245,523,681	245,525,759
+umc1707	750.10	4.11	<a href='/gene_center/gene/GRMZM2G167149'>GRMZM2G167149</a>	4	241,173,225	241,174,276	<a href='/gene_center/gene/Zm00001d054086'>Zm00001d054086</a>	4	246,132,178	246,132,864
+bnlg1890	752.00	4.11								
