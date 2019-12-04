@@ -6,9 +6,9 @@ This is done for each NAM, replace the NAM with the actual NAM name and run it o
 The map files for each NAM should be placed in their own folder
 
 
-### Mo18W example run:
+**Mo18W example run:**
 
-#### Step 0
+### Step 0: Build index
 
 build index for your scaffolds:
 
@@ -17,7 +17,7 @@ build index for your scaffolds:
 ```
 
 
-#### Step 1
+### Step 1: Process markers
 
 ```bash
 for f in *.map; do
@@ -25,7 +25,7 @@ for f in *.map; do
 done
 ```
 
-Stdout:
+stdout:
 ```
 For M018W Chr 1, orignal file had 113 markers, but only 103 had information and 103 sequences were able to extract
 For M018W Chr 2, orignal file had 75 markers, but only 65 had information and 65 sequences were able to extract
@@ -42,7 +42,7 @@ For M018W Chr 10, orignal file had 35 markers, but only 31 had information and 3
 
 You will see `.fasta` and `.tsv` for each chr separately
 
-#### Step 2
+### Step 2: Pool markers
 
 ```bash
 gg2_MergeMarkers.sh M018W
@@ -57,7 +57,7 @@ M018W_merged.txt
 
 as output
 
-#### Step 3
+### Step 3a: Map markers
 
 Map markers
 
@@ -123,9 +123,9 @@ mv temp pb_anchors.bed
 bedtools getfasta -fi Zea_mays.AGPv3.22.dna.genome.fa -fo pb_anchors.fasta -bed pb_anchors.bed  -name
 ```
 
-### Mo18W example run:
+**Mo18W example run:**
 
-Map pangenome markers
+### Step 3b: Map pangenome markers
 
 ```
 gg3_MapMarkers.sh \
@@ -141,22 +141,25 @@ same set of files are created as before. But you will only need `M018W_GG-mapped
 M018W_GG-mapped.csv M018W_pangenome.csv
 ```
 
-Clean markers
+### Step 4: Clean markers/ Remove hets
 
 ```bash
 gg4_clean-markers.sh M018W_pangenome.csv
 ```
 
-this will create `pangeome.csv` file. 
+this will create `pangeome.csv` file.
+
+Only if you find heterozygous scaffolds in your genome (based on optical map), you can construct a file with just the names of scaffolds that are heterozygous and remove them form the marker file. This will prevent them from including those scaffolds in the AGP.
+
+```bash
+remove-hets.sh hets-to-remove.txt
+```
 
 
-
-## Run ALLMAPS to create AGP file and Pseudomolecules
+### Step 5: Run ALLMAPS to create AGP file and Pseudomolecules
 
 
 Run ALLMAPS
-
-
 ```bash
 singularity exec --bind $PWD /work/LAS/mhufford-lab/arnstrm/Canu_1.8/genetic_maps/jcvi.simg \
      /work/LAS/mhufford-lab/arnstrm/Canu_1.8/genetic_maps/98_runALLMAPS.sh \
