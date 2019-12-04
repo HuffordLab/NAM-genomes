@@ -21,7 +21,7 @@ build index for your scaffolds:
 
 ```bash
 for f in *.map; do
-  gg1_ProcessMaizeGDBmaps.sh $f NAM-name;
+  gg1_ProcessMaizeGDBmaps.sh $f M018W;
 done
 ```
 
@@ -82,7 +82,85 @@ M018W_part2.txt
 M018W_GG-mapped.csv
 ```
 
-The file `M018W_GG-mapped.csv` is needed for the ALLMAPS step later.
+The file `M018W_GG-mapped.csv` is needed for the ALLMAPS step later, but we will renamed this file:
+
+```bash
+mv M018W_GG-mapped.csv goldengate.csv
+```
+
+## Process PanGenome anchor markers and generate mapped marker file
+
+First we need to prepare PG marker file (once for all NAM lines). File is located in CyVerse Data Commons that is accessible via iRods
+
+```bash
+icd /iplant/home/shared/panzea/genotypes/GBS/v27
+iget Lu_2015_NatCommun_panGenomeAnchors20150219.txt.gz
+```
+or through direct link:
+
+```
+https://datacommons.cyverse.org/browse/iplant/home/shared/panzea/genotypes/GBS/v27/Lu_2015_NatCommun_panGenomeAnchors20150219.txt.gz
+# wget/curl will not work
+```
+
+Once downloaded process the file downloaded as follows:
+
+```bash
+for f in {1..10}; do
+ awk -v x=$f '$3==x && $7==0 {print $5"\tpg_"NR"\t"$8}' Lu_2015_NatCommun_panGenomeAnchors20150219.txt;
+done > pb_anchors.txt
+# bed file to extract sequence
+for f in {1..10}; do
+ awk -v x=$f '$3==x && $7==0 {print $5"\t"$6-50"\t"$6+50"\tpg_"NR"\t.\t+"}' Lu_2015_NatCommun_panGenomeAnchors20150219.txt;
+done > pb_anchors.bed
+# genome
+wget ftp://ftp.ensemblgenomes.org/pub/plants/release-22/fasta/zea_mays/dna/Zea_mays.AGPv3.22.dna.genome.fa.gz
+gunzip Zea_mays.AGPv3.22.dna.genome.fa.gz
+# marker sequence
+ml bedtools2
+awk '$2>0' pb_anchors.bed > temp
+mv temp pb_anchors.bed
+bedtools getfasta -fi Zea_mays.AGPv3.22.dna.genome.fa -fo pb_anchors.fasta -bed pb_anchors.bed  -name
+```
+
+### Mo18W example run:
+
+Map pangenome markers
+
+```
+gg3_MapMarkers.sh \
+   /work/LAS/mhufford-lab/arnstrm/Canu_1.8/genetic_maps/Mo18W/Mo18W_index/Mo18W \
+    pb_anchors.fasta \
+    pb_anchors.txt \
+    M018W
+```
+
+same set of files are created as before. But you will only need `M018W_GG-mapped.csv`. Rename this file
+
+```bash
+M018W_GG-mapped.csv M018W_pangenome.csv
+```
+
+Clean markers
+
+```bash
+gg4_clean-markers.sh M018W_pangenome.csv
+```
+
+this will create `pangeome.csv` file. 
 
 
 
+## Run ALLMAPS to create AGP file and Pseudomolecules
+
+
+Run ALLMAPS
+
+
+```bash
+singularity exec --bind $PWD /work/LAS/mhufford-lab/arnstrm/Canu_1.8/genetic_maps/jcvi.simg \
+     /work/LAS/mhufford-lab/arnstrm/Canu_1.8/genetic_maps/98_runALLMAPS.sh \
+     pangenome.csv \
+     goldengate.csv \
+     Mo18W.scaffolds.fasta
+```
