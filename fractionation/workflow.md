@@ -40,7 +40,8 @@ e.  R 3.6.0 (for post-analysis processing)
 ### Step 1: Run Tandem Repeat Finder (TRF)
 
 ```bash
-sh trf.sh```
+sh trf.sh
+```
 
 
 **trf.sh code**
@@ -56,7 +57,8 @@ for sample in *.fasta.masked
 
 trf ${sample} 2 7 7 80 10 50 2000 -l 1 -d -h
 
-done```
+done
+```
 
 ### Step 2: Parse TRF output:
 
