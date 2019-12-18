@@ -44,7 +44,7 @@ sh trf.sh
 ```
 
 
-**trf.sh code**
+**trf.sh** code
 
 ```bash
 #!/bin/bash
@@ -100,7 +100,7 @@ done
 sh blastdb.sh
 ```
 
-**blastdb.sh code**
+**blastdb.sh** code
 
 ```bash
 #!/bin/bash
@@ -128,7 +128,7 @@ done
 sh dc-megablast.sh
 ```
 
-**dc-megablast.sh code**
+**dc-megablast.sh** code
 
 ```bash
 #!/bin/bash
@@ -153,7 +153,7 @@ blastn -task dc-megablast -outfmt 6 -query Sbicolor_313_v3.1_exons_primary_notan
 sh parse_dc-megablast.sh
 ```
 
-**parse_dc-megablast.sh code**
+**parse_dc-megablast.sh** code
 
 ```bash
 #!/bin/bash
@@ -183,7 +183,7 @@ sh intersect_trf_allsizes.sh
 ```
 
 
-**intersect_trf_allsizes.sh code**
+**intersect_trf_allsizes.sh** code
 
 ```bash
 #!/bin/bash
@@ -213,11 +213,11 @@ done
 sh dagchainer-filtered-trf.sh
 ```
 
-**dagchainer-filtered-trf.sh code**
-
-#!/bin/bash
+**dagchainer-filtered-trf.sh** code
 
 ```bash
+#!/bin/bash
+
 for sample in *_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer_trf_allsizes_sb-trf.txt
         do
                 echo $sample
@@ -249,7 +249,7 @@ This generates the exon count table of syntenic Sorghum aligned exons vs B73 and
 sh post_dagchainer_coords_csv_filtered_subg_unique_trf.sh
 ```
 
-**post_dagchainer_coords_csv_filtered_subg_unique_trf.sh code**
+**post_dagchainer_coords_csv_filtered_subg_unique_trf.sh** code
 
 ```bash
 #!/bin/bash
