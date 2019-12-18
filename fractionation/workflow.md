@@ -11,10 +11,10 @@ Key steps:
 
 Required files:
 
-a.  Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa 
-b.  Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt
-c.  Sb_orthologs_good_sorted_notandems.txt
-d.  Repeatmasked NAM and B73 genomes
+a. Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa 
+b. Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt
+c. Sb_orthologs_good_sorted_notandems.txt
+d. Repeatmasked NAM and B73 genomes
 
 
 These steps were all done recursively on each masked NAM genome and B73.
@@ -22,11 +22,11 @@ These steps were all done recursively on each masked NAM genome and B73.
 
 Software used for these analyses:
 
-a.  Tandem Repeat Finder (TRF) 4.09 https://tandem.bu.edu/trf/trf.html
-b.  Blast+ 2.7.1
-c.  DagChainer http://dagchainer.sourceforge.net/
-d.  bedtools2 2.27 https://github.com/arq5x/bedtools2
-e.  R 3.6.0 (for post-analysis processing)
+a. Tandem Repeat Finder (TRF) 4.09 https://tandem.bu.edu/trf/trf.html
+b. Blast+ 2.7.1
+c. DagChainer http://dagchainer.sourceforge.net/
+d. bedtools2 2.27 https://github.com/arq5x/bedtools2
+e. R 3.6.0 (for post-analysis processing)
 	- dplyr
 	- purrr
 	- tibble
@@ -64,7 +64,8 @@ done
 
 
 ```bash
-sh parse_trf_bedfile_allsizes.sh```	
+sh parse_trf_bedfile_allsizes.sh
+```	
 
 **parse_trf_bedfile_allsizes.sh code**
 
@@ -96,7 +97,8 @@ done
 ### Step 1: Create blast database:
 
 ```bash
-sh blastdb.sh```
+sh blastdb.sh
+```
 
 **blastdb.sh code**
 
@@ -115,14 +117,16 @@ for sample in *.fasta.masked
 
 makeblastdb -in ${sample} -dbtype nucl -out ${describer}_masked
 
-done```
+done
+```
 
 
 ### Step 2: align reads using dc-megablast:
 
 
 ```bash
-sh dc-megablast.sh```
+sh dc-megablast.sh
+```
 
 **dc-megablast.sh code**
 
@@ -139,13 +143,15 @@ for database in *.nhr
 
 blastn -task dc-megablast -outfmt 6 -query Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa -db ${database%.*} -num_threads 4 -out "${database}_Sb3_exons_primary_notandems4_dc-megablast_nomax_ISUmasked.txt"
 
-        done```
+        done
+```
 
 
 ### Step 3: parse dc-megablast output:
 
 ```bash
-sh parse_dc-megablast.sh```
+sh parse_dc-megablast.sh
+```
 
 **parse_dc-megablast.sh code**
 
@@ -164,7 +170,8 @@ for sample in *_Sb3_exons_primary_notandems4_dc-megablast_nomax_ISUmasked.txt
 
 cat ${sample} | grep -v "Sobic.K" | grep -v "super" | awk -v OFS="\t" '{if($9>$10) print $1,$2,$10,$9,$11; else print $1,$2,$9,$10,$11}' | sort -k1,1 | join - Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt | tr ' ' '\t' | awk -v OFS="\t" '{if($2==$11) print $6,$1"_"$9"_"$10"_"$11,$7,$8,$2,$2"_"$3"_"$4,$3,$4,$5}' > ${describer}_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer.txt
 
-	done```
+	done
+```
 
 
 
@@ -172,7 +179,8 @@ cat ${sample} | grep -v "Sobic.K" | grep -v "super" | awk -v OFS="\t" '{if($9>$1
 ## 3) Remove dc-megablast alignments that overlap Tandem Repeat Finder coordinates
 
 ```bash
-sh intersect_trf_allsizes.sh```
+sh intersect_trf_allsizes.sh
+```
 
 
 **intersect_trf_allsizes.sh code**
@@ -193,7 +201,8 @@ for sample in *_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer.txt
 
 cat ${sample} | awk -v OFS="\t" '{print $5,$7,$8,$1,$2,$3,$4,$5,$9}' | bedtools sort | bedtools intersect -a - -b ${describer}*_trf_allsizes.bed -v | awk -v OFS="\t" '{print $4,$5,$6,$7,$1,$1"_"$2"_"$3,$2,$3,$9}' > ${describer}_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer_trf_allsizes_sb-trf.txt
 
-done```
+done
+```
 
 
 
@@ -201,7 +210,8 @@ done```
 
 
 ```bash
-sh dagchainer-filtered-trf.sh```
+sh dagchainer-filtered-trf.sh
+```
 
 **dagchainer-filtered-trf.sh code**
 
@@ -223,7 +233,8 @@ perl /DAGCHAINER/accessory_scripts/filter_repetitive_matches.pl 100000 < ${sampl
 
 perl /DAGCHAINER/run_DAG_chainer.pl -i ${describer}_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer_trf_allsizes_sb-trf.filtered -s -I -D 1000000 -g 40000 -A 15
 
-        done```
+        done
+```
 
 
 
@@ -234,12 +245,13 @@ This generates the exon count table of syntenic Sorghum aligned exons vs B73 and
 
 ### Step 1: Get exon counts for each NAM genome and B73:
 
-``````bash
-sh post_dagchainer_coords_csv_filtered_subg_unique_trf.sh```
+```bash
+sh post_dagchainer_coords_csv_filtered_subg_unique_trf.sh
+```
 
 **post_dagchainer_coords_csv_filtered_subg_unique_trf.sh code**
 
-``````bash
+```bash
 #!/bin/bash
 
 #Each subgenome was processed individually. Data was converted to csv files. 
@@ -256,7 +268,8 @@ cat ${sample} | grep -v "#" | grep "M1" | awk '{$1=$1} 1' FS=".1.v3.1." OFS="\t"
 
 cat ${sample} | grep -v "#" | grep "M2" | awk '{$1=$1} 1' FS=".1.v3.1." OFS="\t" | tr '_' '\t' | awk -v OFS="\t" '{print $2".1_"$4"_"$5,$10,$11}' | groupBy -i - -g 1,2 -c 1,3 -o count,min  | sort -k1,1 -k3,3r | awk '!x[$1]++' | awk -v x=$describer 'BEGIN { OFS="\t"; print "gene_chr","pos_"x,"exoncount_"x} { print $1"_"$2,$4,$3}' | tr '\t' ',' > ${describer}_ISUmasked_Sb_dagchainer_filtered_dc-m_coords_trf_M2.csv
 
-done```
+done
+```
 
 ### Step 2: Make table for each subgenome:
 
@@ -282,7 +295,8 @@ Reduce(function(x,y) {merge(x,y,all = TRUE)}, datalist)
 
 full_data = multmerge("/path/to/directory")
 
-write.csv(full_data, file = "output.csv")```
+write.csv(full_data, file = "output.csv")
+```
 
 
 ### Step 3: Join subgenome tables:
