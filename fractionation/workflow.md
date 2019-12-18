@@ -24,7 +24,7 @@ Software used for these analyses:
 
 a) Tandem Repeat Finder (TRF) 4.09 https://tandem.bu.edu/trf/trf.html<br/>
 b) Blast+ 2.7.1<br/>
-). DagChainer http://dagchainer.sourceforge.net/<br/>
+c) DagChainer http://dagchainer.sourceforge.net/<br/>
 d) bedtools2 2.27 https://github.com/arq5x/bedtools2<br/>
 e) R 3.6.0 (for post-analysis processing)<br/>
 	- dplyr
