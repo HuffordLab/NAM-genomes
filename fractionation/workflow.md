@@ -12,9 +12,9 @@ Key steps:
 Required files:
 
 a) Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa <br/>
-b) Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt
-c) Sb_orthologs_good_sorted_notandems.txt
-d) Repeatmasked NAM and B73 genomes
+b) Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt<br/>
+c) Sb_orthologs_good_sorted_notandems.txt<br/>
+d) Repeatmasked NAM and B73 genomes<br/>
 
 
 These steps were all done recursively on each masked NAM genome and B73.
@@ -22,11 +22,11 @@ These steps were all done recursively on each masked NAM genome and B73.
 
 Software used for these analyses:
 
-a) Tandem Repeat Finder (TRF) 4.09 https://tandem.bu.edu/trf/trf.html
-b) Blast+ 2.7.1
-). DagChainer http://dagchainer.sourceforge.net/
-d) bedtools2 2.27 https://github.com/arq5x/bedtools2
-e) R 3.6.0 (for post-analysis processing)
+a) Tandem Repeat Finder (TRF) 4.09 https://tandem.bu.edu/trf/trf.html<br/>
+b) Blast+ 2.7.1<br/>
+). DagChainer http://dagchainer.sourceforge.net/<br/>
+d) bedtools2 2.27 https://github.com/arq5x/bedtools2<br/>
+e) R 3.6.0 (for post-analysis processing)<br/>
 	- dplyr
 	- purrr
 	- tibble
