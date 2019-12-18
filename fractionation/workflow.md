@@ -39,12 +39,14 @@ e.  R 3.6.0 (for post-analysis processing)
 
 ### Step 1: Run Tandem Repeat Finder (TRF)
 
-```sh trf.sh```
+```bash
+sh trf.sh```
 
 
 **trf.sh code**
 
-```#!/bin/bash
+```bash
+#!/bin/bash
 
 for sample in *.fasta.masked
         do
@@ -59,11 +61,13 @@ done```
 ### Step 2: Parse TRF output:
 
 
-```sh parse_trf_bedfile_allsizes.sh```	
+```bash
+sh parse_trf_bedfile_allsizes.sh```	
 
 **parse_trf_bedfile_allsizes.sh code**
 
-```#!/bin/bash
+```bash
+#!/bin/bash
 
 for sample in *.fasta.masked.2.7.7.80.10.50.2000.dat
         do
@@ -89,11 +93,13 @@ done
 
 ### Step 1: Create blast database:
 
-```sh blastdb.sh```
+```bash
+sh blastdb.sh```
 
 **blastdb.sh code**
 
-```#!/bin/bash
+```bash
+#!/bin/bash
 
 module load blast-plus
 
@@ -113,11 +119,13 @@ done```
 ### Step 2: align reads using dc-megablast:
 
 
-```sh dc-megablast.sh```
+```bash
+sh dc-megablast.sh```
 
 **dc-megablast.sh code**
 
-```#!/bin/bash
+```bash
+#!/bin/bash
 
 module load blast-plus
 
@@ -134,11 +142,13 @@ blastn -task dc-megablast -outfmt 6 -query Sbicolor_313_v3.1_exons_primary_notan
 
 ### Step 3: parse dc-megablast output:
 
-```sh parse_dc-megablast.sh```
+```bash
+sh parse_dc-megablast.sh```
 
 **parse_dc-megablast.sh code**
 
-```#!/bin/bash
+```bash
+#!/bin/bash
 
 #This script formats the dc-megablast outfmt 6 output and merges it with the coordinates associated with the Sorghum exons based on Sorghum exon ID for preparation for DagChainer; DagChainer needs a very specific format, as specified in their documentation. Sorghum exons not on chromosomes are filtered out. The Sorghum exons in Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt have the subgenome and chromosome information vs B73 associated with them; alignments to the NAMs to Sorghum that don't match the B73 chr ID were ignored. 
 
@@ -159,12 +169,14 @@ cat ${sample} | grep -v "Sobic.K" | grep -v "super" | awk -v OFS="\t" '{if($9>$1
 
 ## 3) Remove dc-megablast alignments that overlap Tandem Repeat Finder coordinates
 
-```sh intersect_trf_allsizes.sh```
+```bash
+sh intersect_trf_allsizes.sh```
 
 
 **intersect_trf_allsizes.sh code**
 
-```#!/bin/bash
+```bash
+#!/bin/bash
 
 #This script compares the coordinates of the tandem array regions determined by trf with the coordinates of the filtered, formatted dc-megablast outputs and reports only non-intersecting dc-megablast alignment coordinates using bedtools intersect. The formatted dc-megablast output is first reformatted to a bed file, then formatted back to its original state after the bedtools step. This step could be optimized by formatting the dc-megablast output to a bedfile from the outset. 
 
@@ -186,13 +198,15 @@ done```
 ## 4) Use the tandem-repeat filtered dc-megablast alignments from step 3) as inputs to DagChainer and run DagChainer
 
 
-```sh dagchainer-filtered-trf.sh```
+```bash
+sh dagchainer-filtered-trf.sh```
 
 **dagchainer-filtered-trf.sh code**
 
 #!/bin/bash
 
-```for sample in *_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer_trf_allsizes_sb-trf.txt
+```bash
+for sample in *_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer_trf_allsizes_sb-trf.txt
         do
                 echo $sample
                 describer=$(echo ${sample} | sed 's/_ISUmasked_Sb_subgenomes_exons_dc-megablast_dagchainer_trf_allsizes_sb-trf.txt//')
@@ -218,11 +232,13 @@ This generates the exon count table of syntenic Sorghum aligned exons vs B73 and
 
 ### Step 1: Get exon counts for each NAM genome and B73:
 
-```sh post_dagchainer_coords_csv_filtered_subg_unique_trf.sh```
+``````bash
+sh post_dagchainer_coords_csv_filtered_subg_unique_trf.sh```
 
 **post_dagchainer_coords_csv_filtered_subg_unique_trf.sh code**
 
-```#!/bin/bash
+``````bash
+#!/bin/bash
 
 #Each subgenome was processed individually. Data was converted to csv files. 
 
