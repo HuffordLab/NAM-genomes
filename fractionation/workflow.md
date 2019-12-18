@@ -277,10 +277,18 @@ all M1 csv files were put into their own directory; same with all M2 csv files.
 
 For each directory:
 
-```
 Module load r
 
-R
+```bash
+./r_table.R
+```
+
+**r_table.R** code
+
+```bash
+#!/usr/bin/env Rscript
+
+#make a table from all csv files in a directory
 
 library(dplyr)
 library(purrr)
