@@ -1,6 +1,6 @@
 # FRACTIONATION PIPELINE
 
-Key steps:
+**Key steps:**
 
 1) Find tandem repeats in each masked genome using Tandem Repeat Finder
 2) Align Sorghum exons associated with B73 subgenomes to each masked genome using dc-megablast
@@ -9,7 +9,7 @@ Key steps:
 5) Organize and filter DagChainer outputs and generate tables
 
 
-Required files:
+**Required files:**
 
 a) Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa <br/>
 b) Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt<br/>
@@ -20,7 +20,7 @@ d) Repeatmasked NAM and B73 genomes<br/>
 These steps were all done recursively on each masked NAM genome and B73.
 
 
-Software used for these analyses:
+**Software used for these analyses:**
 
 a) Tandem Repeat Finder (TRF) 4.09 https://tandem.bu.edu/trf/trf.html<br/>
 b) Blast+ 2.7.1<br/>
