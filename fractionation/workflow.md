@@ -11,7 +11,7 @@ Key steps:
 
 Required files:
 
-a) Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa 
+a) Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa <br/>
 b) Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt
 c) Sb_orthologs_good_sorted_notandems.txt
 d) Repeatmasked NAM and B73 genomes
