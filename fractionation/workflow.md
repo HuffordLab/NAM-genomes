@@ -240,7 +240,7 @@ perl /DAGCHAINER/run_DAG_chainer.pl -i ${describer}_ISUmasked_Sb_subgenomes_exon
 
 ## 5) Organize and filter DagChainer outputs and generate table
 
-This generates the exon count table of syntenic Sorghum aligned exons vs B73 and the NAMs. Exon counts were determined using bedtools groupby by grouping exons within a syntenic region that had the same Sorghum gene ID in that region and reporting the count of those exons, as well as the chromosome ID and the minimum coordinate (i.e. what results in the start coordinate) of those exons within the syntenic region. The result of this parsing was made into a table using R.
+This generates the exon count table of syntenic Sorghum aligned exons vs B73 and the NAMs within each syntenic block designated by DagChainer. Files were not sorted prior to processing since the syntenic block order from DagChainer was used. Exon counts were determined using bedtools groupby by grouping exons within a syntenic region that had the same Sorghum gene ID in that region and reporting the count of those exons, as well as the chromosome ID and the minimum coordinate (i.e. what results in the start coordinate) of those exons within the syntenic region. The result of this parsing was made into a table using R.
 
 
 ### Step 1: Get exon counts for each NAM genome and B73:
