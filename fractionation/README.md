@@ -308,4 +308,4 @@ write.csv(full_data, file = "output.csv")
 
 ### Step 3: Join subgenome tables:
 
-Both subgenome tables were joined with the M1 table being first. 
+Subgenome tables were joined together using unix join.
