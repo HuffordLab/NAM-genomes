@@ -9,12 +9,11 @@
 5) Organize and filter DagChainer outputs and generate tables
 
 
-**Required files:**
+**Input files:**
 
 a) Sbicolor_313_v3.1_exons_primary_notandems_cshl_clusters4.fa <br/>
 b) Sb_exons_coords_CSHL_subgenomes_sections_sorted.txt<br/>
-c) Sb_orthologs_good_sorted_notandems.txt<br/>
-d) Repeatmasked NAM and B73 genomes<br/>
+c) Repeatmasked NAM and B73 genomes<br/>
 
 
 These steps were all done recursively on each masked NAM genome and B73.
