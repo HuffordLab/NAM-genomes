@@ -66,7 +66,7 @@ done
 sh parse_trf_bedfile_allsizes.sh
 ```	
 
-**parse_trf_bedfile_allsizes.sh code**
+**parse_trf_bedfile_allsizes.sh** code
 
 ```bash
 #!/bin/bash
