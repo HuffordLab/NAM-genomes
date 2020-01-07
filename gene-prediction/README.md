@@ -83,4 +83,14 @@ finalize-files-and-pick.sh NAM
 
 Additional structural improvements for the Mikado generated transcripts were completed using the PASA (v2.3.3)51 genome annotation tool. The inputs for PASA included 2,019,896 maize EST derived from genbank, 83,087 Mikado transcripts, 69,163 B73 full length cDNA from genbank and 46,311 maize iso-seq transcripts from 11 developmental tissues that were filtered for intron retention52.  PASA was run with default options, with a first step of aligning transcript evidence to the masked B73-Ab10 genome using GMAP (v.2018-07-04)53 and Blat (v.36)54. The full length cDNA and Iso-seq transcript ID’s were passed in a text file (-f FL.acc.list) during the PASA alignment step. Valid near perfect alignments with 95% identity were clustered based on genome mapping location and assembled into gene structures that included the maximal number of compatible transcript alignments. PASA assemblies were then compared with NAM Mikado transcript models using default parameters. PASA updated the models, providing UTR extensions, novel and additional alternative isoforms.
 
-To run PASA a the config files need to be update with the path to the sqlite data base. Template config flies are [alignAssembly.config](PASA_scripts/alignAssembly.config)
+To run PASA the config files need to be update with the path to the sqlite database folder. E.g Template config flies are [alignAssembly.config](PASA_scripts/alignAssembly.config) and [annotCompare.config](PASA_scripts/annotCompare.config). The PASA runs for all NAM lines is accomplished with the [script](PASA_scripts/maize.flc.iso.est.NAM_mikado.combined.fasta-script.sh)
+
+### 5. MAKER-P post prosssing of PASA updated evidence models
+
+We use MAKER-P tool using the same evidence used in PASA runs to add Annotation Edit Distance(AED) scores to the PASA updated evidence models. The AED scores provide a measure of the qaulity of the models i.e how well is the evindece supporting the gene model. AED score closer to 0 indicates highest support will 1 least or no evidence support.
+
+Note: the PASA updated evidence models gff are passed as model_gff within MAKER; as such no structural updates are added to the gene models, only AED score and Qaulity index(QI) attritubute is added to the gff.
+
+MAKER control files are described here. MAKER is run with the control files using the qsub script.
+
+
