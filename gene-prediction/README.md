@@ -81,4 +81,6 @@ finalize-files-and-pick.sh NAM
 
 ### 5. Post processing of evidence-based predictions
 
-Kapeel's section
+Additional structural improvements for the Mikado generated transcripts were completed using the PASA (v2.3.3)51 genome annotation tool. The inputs for PASA included 2,019,896 maize EST derived from genbank, 83,087 Mikado transcripts, 69,163 B73 full length cDNA from genbank and 46,311 maize iso-seq transcripts from 11 developmental tissues that were filtered for intron retention52.  PASA was run with default options, with a first step of aligning transcript evidence to the masked B73-Ab10 genome using GMAP (v.2018-07-04)53 and Blat (v.36)54. The full length cDNA and Iso-seq transcript ID’s were passed in a text file (-f FL.acc.list) during the PASA alignment step. Valid near perfect alignments with 95% identity were clustered based on genome mapping location and assembled into gene structures that included the maximal number of compatible transcript alignments. PASA assemblies were then compared with NAM Mikado transcript models using default parameters. PASA updated the models, providing UTR extensions, novel and additional alternative isoforms.
+
+To run PASA a the config files need to be update with the path to the sqlite data base. Template config flies are [alignAssembly.config](PASA_scripts/alignAssembly.config)
