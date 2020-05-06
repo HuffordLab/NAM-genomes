@@ -12,20 +12,18 @@ args <- commandArgs(trailingOnly = TRUE)
 # }
 
 # make sure the correct number of arguments are used
-# you should provide 2 arguments
-if (length(args) != 2) {
+# you should provide 1 argument
+if (length(args) != 1) {
   stop("incorrect number of arguments provided.
        
-       Usage: Rscript remove_duplicated_SVs.R [parents_file] [rils_file]
+       Usage: Rscript collapse_sniffles_SVs.R [parents_file]
        ")
 }
 
 # assign arguments to variables
 sv.parents.file <- args[1]
-sv.rils.file <- args[2]
 
-# sv.parents.file <- "data/NAM_founders_SVs.hmp.txt"
-# sv.rils.file <- "analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.hmp.txt"
+# sv.parents.file <- "data/NAM_founders_SVs.sniffles.hmp.txt"
 
 
 #### libraries ----
@@ -149,6 +147,8 @@ for (chr in unique(sv.parents.no.tra[, "chrom"])) {
   # append to df with other chromosomes
   sv.parents.collapsed.no.tra <- rbind(sv.parents.collapsed.no.tra, sv.parents.no.tra.chr.filtered)
   
+  
+  
 }
 
 # add translocations back
@@ -165,6 +165,7 @@ sv.parents <- SortMixedColumn(sv.parents)
 # create a list with any value just to start the loop
 # (this value will be replaced inside the loop)
 svs.to.remove <- c("start")
+
 # start counting the number of iterations
 i = 1
 
@@ -400,7 +401,7 @@ while (length(svs.to.remove) > 0) {
   sv.parents <- sv.parents[which(!sv.parents[, 1] %in% sv.parents.collapsed[, 1]), ]
   sv.parents <- rbind(sv.parents, sv.parents.collapsed)
   sv.parents <- SortMixedColumn(sv.parents)
-
+  
   cat("  ", NROW(sv.parents.collapsed[,1]), " SVs collapsed\n", sep = "")
   cat("  ", length(svs.to.remove), " SVs removed\n", sep = "")
   
@@ -413,21 +414,11 @@ while (length(svs.to.remove) > 0) {
 # get list of SVs kept
 final.svs.to.keep <- sv.parents[, 1]
 
-# load and filter RIL data
-cat("Done with iterations, loading RIL data\n", sep = "")
-sv.rils <- fread(sv.rils.file, header = TRUE, data.table = FALSE)
-
-cat("Removing duplicated SVs in RIL data\n", sep = "")
-sv.rils <- sv.rils[which(sv.rils[, 1] %in% final.svs.to.keep), ]
-
-# write parental and RIL SV filtered files
-cat("Writing filtered files\n", sep = "")
-outfile.parents <- gsub("hmp.txt", "duplicated-SVs-removed.hmp.txt", sv.parents.file)
-outfile.rils <- gsub("hmp.txt", "duplicated-SVs-removed.hmp.txt", sv.rils.file)
+# write parental filtered file
+cat("Writing filtered file\n", sep = "")
+outfile.parents <- gsub("hmp.txt", "collapsed.hmp.txt", sv.parents.file)
 
 fwrite(x = sv.parents, file = outfile.parents, na = NA, quote = FALSE, sep = "\t")
 cat("  parents done!\n", sep = "")
-fwrite(x = sv.rils, file = outfile.rils, na = NA, quote = FALSE, sep = "\t")
-cat("  RILs done!\n", sep = "")
 
 

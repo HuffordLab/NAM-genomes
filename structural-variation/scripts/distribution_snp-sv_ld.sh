@@ -20,4 +20,4 @@ Rscript ~/projects/sv_nams/scripts/distribution_snps-LD-svs.R ld/plink_results_S
 Rscript ~/projects/sv_nams/scripts/distribution_snps-LD-svs.R ld/plink_results_SNPs-highest-LD-SV_chr${CHR}.missing-filter.ld ld/subset_high-ld-snps ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_subsample-high-ld_chr${CHR}.missing-filter.txt
 
 # random snps
-Rscript ~/projects/sv_nams/scripts/distribution_snps-LD-svs.R /scratch.global/della028/hirsch_lab/ld_files/NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.duplicated-SVs-removed_ld-w-100_v2.no-tra.snp-sv.ld ld/subset_random-snps ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr${CHR}.txt
+Rscript ~/projects/sv_nams/scripts/distribution_snps-LD-svs.R /scratch.global/della028/hirsch_lab/ld_files/NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.no-tra.snp-sv.ld ld/subset_random-snps ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr${CHR}.txt

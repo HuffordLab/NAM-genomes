@@ -15,7 +15,7 @@ parser = ap.ArgumentParser(formatter_class=ap.RawDescriptionHelpFormatter,
 description: this script reads a VCF file containing structural variant calls,
              and transform it into a hapmap file.
 
-example: vcf2hapmap.py my_file.vcf my_results.sorted.hmp.txt''')
+example: vcf2hapmap.py my_file.vcf my_results.hmp.txt''')
 # add positional arguments
 parser.add_argument("vcf_file", type=str,
                     help="VCF file with SV calls")
