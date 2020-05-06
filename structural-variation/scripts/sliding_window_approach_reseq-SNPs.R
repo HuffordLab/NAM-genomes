@@ -43,8 +43,8 @@ if (grepl("--min_snps_per_window=", args[6])) {
 }
 
 # cross <- "B73xB97"
-# data.filename <- "~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xB97.poly.chr-1.projected.hmp.txt"
-# reseq.parents.filename <- "~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_parents_SNPs-reseq_and_SVs-SNPs.B73xB97.poly.chr-1.sorted.hmp.txt"
+# data.filename <- "~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.B73xB97.poly.chr-1.projected.hmp.txt"
+# reseq.parents.filename <- "~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_parents_SNPs-reseq_and_best-SNPs.B73xB97.poly.chr-1.sorted.hmp.txt"
 # window.size <- 45
 # window.step <- 1
 # min.snps.per.window <- 15
@@ -67,6 +67,9 @@ cat("\nLoading cross ", cross, "...\n", sep = "")
 
 # get available cores for paralellizing
 num.cores <- detectCores()
+if (num.cores > 24) {
+  num.cores <- 24
+}
 # register cores for parallelizing, but limit to maximum 5 cores
 registerDoParallel(cores = num.cores)
 

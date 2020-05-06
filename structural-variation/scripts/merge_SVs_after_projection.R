@@ -1,11 +1,44 @@
+#### arguments for command line ----
+
+args <- commandArgs(trailingOnly = TRUE)
+
+# # help
+# if (all(length(args) == 1 & args == "-h" | args == "--help")) {
+#   cat("
+# Description:
+#
+# Usage: ")
+#   quit()
+# }
+
+# make sure the correct number of arguments are used
+# you should provide 3 arguments
+if (length(args) != 2) {
+  stop("incorrect number of arguments provided.
+
+Usage: Rscript merge_SVs_after_projection.R [hmp_all_svs_from_founders] [folder_with_projected_files]
+       ")
+}
+
+# assign arguments to variables
+sv.founders.file <- args[1]
+folder.after.proj <- args[2]
+
+# sv.founders.file <- "~/projects/sv_nams/data/NAM_founders_SVs.hmp.txt"
+# folder.after.proj <- "~/projects/sv_nams/analysis/projection"
+
+
+
+
+#### libraries ----
+
 if(!require("data.table")) install.packages("data.table")
 if(!require("foreach")) install.packages("foreach")
 if(!require("doParallel")) install.packages("doParallel")
 
 
-# sv.folder <- "~/projects/sv_nams/data"
-folder.after.proj <- "~/projects/sv_nams/analysis/projection"
 
+#### get sv positions for all populations ----
 
 # get list with all NAM families
 cross.list <- system("ls -d ~/projects/sv_nams/data/GBS-output/tmp/B73* | xargs -n 1 basename",
@@ -49,6 +82,11 @@ for (cross in cross.list) {
 
 cat("Done!\n\n")
 
+
+
+
+#### create file with all svs for each cross ----
+
 cat("Creating file with SVs only for each cross...\n")
 
 for (cross in cross.list) {
@@ -56,7 +94,7 @@ for (cross in cross.list) {
   cat("  ", cross, "\n")
 
   # load all SVs called for all RILs
-  all.svs.hmp <- fread("~/projects/sv_nams/data/NAM_founders_SVs.hmp.txt", header = TRUE, data.table = FALSE)
+  all.svs.hmp <- fread(sv.founders.file, header = TRUE, data.table = FALSE)
   all.svs.hmp <- all.svs.hmp[1:11]
 
   # load SVs projected for a cross
@@ -136,6 +174,11 @@ for (cross in cross.list) {
 cat("Done!\n\n")
 
 cat("Creating a single file with SVs for all populations...\n")
+
+
+
+
+#### create final file ----
 
 # merge SVs only in one file
 for (i in 1:length(cross.list)) {

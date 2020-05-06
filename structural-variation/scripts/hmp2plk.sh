@@ -12,5 +12,5 @@
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2/
 
 # transform hmp into plink format
-run_pipeline.pl -Xmx110g -importGuess NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.duplicated-SVs-removed.hmp.txt -export ld/NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.duplicated-SVs-removed -exportType Plink
+run_pipeline.pl -Xmx110g -importGuess NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -export ld/NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected -exportType Plink
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=12:00:00,nodes=1:ppn=3,mem=30gb
+#PBS -l walltime=6:00:00,nodes=1:ppn=10,mem=100gb
 #PBS -o /home/hirschc1/della028/projects/sv_nams/data/GBS-output/tmp
 #PBS -e /home/hirschc1/della028/projects/sv_nams/data/GBS-output/tmp
 #PBS -V
@@ -15,4 +15,4 @@ module load parallel
 cd ~/projects/sv_nams/data/GBS-output/tmp/
 
 # filter SNPs
-parallel --jobs 3 < ~/projects/sv_nams/scripts/commands_for_overlay-parental-SNPs.txt
+parallel --jobs 10 < ~/projects/sv_nams/scripts/commands_for_overlay-parental-SNPs.txt

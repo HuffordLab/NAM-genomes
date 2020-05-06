@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=24:00:00,nodes=1:ppn=5,mem=50gb
+#PBS -l walltime=20:00:00,nodes=1:ppn=10,mem=120gb
 #PBS -o /home/hirschc1/della028/projects/sv_nams/data/GBS-output/tmp
 #PBS -e /home/hirschc1/della028/projects/sv_nams/data/GBS-output/tmp
 #PBS -V
@@ -15,4 +15,4 @@ module load parallel
 cd ~/projects/sv_nams/data/GBS-output/tmp/
 
 # filter SNPs
-parallel --jobs 5 < ~/projects/sv_nams/scripts/commands_for_collapse-GBS-SNPs.txt
+parallel --tmpdir /scratch.global/della028/hirsch_lab/sv_nams/data/GBS-output/tmp/ --jobs 10 < ~/projects/sv_nams/scripts/commands_for_collapse-GBS-SNPs.txt

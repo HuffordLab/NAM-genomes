@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=30:00:00,nodes=1:ppn=1,mem=30gb
+#PBS -l walltime=30:00:00,nodes=1:ppn=1,mem=100gb
 #PBS -o /home/hirschc1/della028/projects/sv_nams/data/tmp
 #PBS -e /home/hirschc1/della028/projects/sv_nams/data/tmp
 #PBS -V

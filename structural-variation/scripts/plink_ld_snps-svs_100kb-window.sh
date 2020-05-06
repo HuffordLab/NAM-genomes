@@ -12,4 +12,4 @@
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2/
 
 # calculate LD
-plink --file ld/NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.duplicated-SVs-removed.plk --make-founders --r2 gz --ld-window-r2 0 --ld-window 100000 --ld-window-kb 100 --out /scratch.global/della028/hirsch_lab/ld_files/NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.duplicated-SVs-removed_ld-w-100_v2
+plink --file ld/NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.plk --make-founders --r2 gz --ld-window-r2 0 --ld-window 100000 --ld-window-kb 100 --out /scratch.global/della028/hirsch_lab/ld_files/NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected

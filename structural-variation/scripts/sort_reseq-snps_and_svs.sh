@@ -11,4 +11,4 @@
 # go to project folder
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
-run_pipeline.pl -Xmx100g -SortGenotypeFilePlugin -inputFile NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.duplicated-SVs-removed.hmp.txt -outputFile NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.duplicated-SVs-removed.hmp.txt -fileType Hapmap
+run_pipeline.pl -Xmx100g -SortGenotypeFilePlugin -inputFile NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -outputFile NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -fileType Hapmap

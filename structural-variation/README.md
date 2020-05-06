@@ -5,9 +5,39 @@ by Rafael Della Coletta and Candice Hirsch (September, 2019 - April, 2020)
 > The goal of this analysis is to project structural variants (SVs) indentified in the NAM founders onto the RILs of each NAM population. To do this, we need both SNP and SV calls for the founders, and SNP data for all NAM lines.
 
 
-<mark> TO DO:</mark>
-* Fix `help` functions of all scripts
-* Create a Table of Content for this README
+
+<!-- TOC START min:1 max:3 link:true asterisk:false update:true -->
+- [Projecting SVs to NAM lines](#projecting-svs-to-nam-lines)
+  - [Project folder](#project-folder)
+  - [Transfering data from CyVerse to local folder](#transfering-data-from-cyverse-to-local-folder)
+  - [Requirements](#requirements)
+  - [Resequencing data](#resequencing-data)
+    - [Transform VCF into Hapmap format](#transform-vcf-into-hapmap-format)
+    - [Collapse overlapping SVs](#collapse-overlapping-svs)
+    - [Merge SV calls from SNIFFLES and BioNano](#merge-sv-calls-from-sniffles-and-bionano)
+    - [Identifying SNPs that are within the boundaries of a SV](#identifying-snps-that-are-within-the-boundaries-of-a-sv)
+  - [GBS data](#gbs-data)
+    - [Creating hapmap files for each NAM population and removing SNPs within SVs](#creating-hapmap-files-for-each-nam-population-and-removing-snps-within-svs)
+    - [Collapsing duplicated SNPs](#collapsing-duplicated-snps)
+    - [Overlaying resequencing data into parental GBS data](#overlaying-resequencing-data-into-parental-gbs-data)
+    - [Select best GBS markers](#select-best-gbs-markers)
+    - [Summary](#summary)
+  - [Merge SNPs with SVs](#merge-snps-with-svs)
+  - [Projection](#projection)
+  - [Merge all projected SVs of each population in one file](#merge-all-projected-svs-of-each-population-in-one-file)
+  - [Upload final hapmap to Cyverse](#upload-final-hapmap-to-cyverse)
+- [Projecting resequencing SNPs to NAM lines](#projecting-resequencing-snps-to-nam-lines)
+  - [Remove parental SNPs within SVs for each family](#remove-parental-snps-within-svs-for-each-family)
+  - [Prepare datasets for projection](#prepare-datasets-for-projection)
+  - [Projection](#projection-1)
+  - [Merge all projected SNPs of each family in one file](#merge-all-projected-snps-of-each-family-in-one-file)
+  - [Upload final hapmap to Cyverse](#upload-final-hapmap-to-cyverse-1)
+- [Creating SNP subsets for GWAS](#creating-snp-subsets-for-gwas)
+  - [LD calculation](#ld-calculation)
+  - [Subsets for GWAS](#subsets-for-gwas)
+- [Full SNP and SV dataset](#full-snp-and-sv-dataset)
+<!-- TOC END -->
+
 
 
 ## Project folder
@@ -25,7 +55,7 @@ mkdir -p sv_nams/{analysis,data,scripts}
 
 ## Transfering data from CyVerse to local folder
 
-On November 27th, Dr. Arun Seetharam shared the data needed for SV projection via CyVerse. The CyVerse path to the data is `/iplant/home/shared/NAM/PANDA/SVs-impute`. The following commands were used to transfer this data to my folder at MSI so I can do my analyses.
+On November 27th, Dr. Arun Seetharam shared the data needed for SV projection via CyVerse (SNPs) and Slack (SVs). The SNP data was located in the CyVerse folder `/iplant/home/shared/NAM/PANDA/SVs-impute`. The following commands were used to transfer this data to my folder at MSI so I can do my analyses.
 
 
 ```bash
@@ -39,23 +69,28 @@ icd /iplant/home/shared/NAM/PANDA/SVs-impute
 # check if files match what Arun described
 ils
 # download data
-iget -K NAM-structural-variations-v2.0.vcf.gz
 iget -K GBS-output.tar.gz
 iget -K B73v5.NAM-illumina_filtered-pass-only-two-round-gatk-snps.vcf.gz
 
 # decompress files
-gunzip NAM-structural-variations-v2.0.vcf.gz
 tar xvzf GBS-output.tar.gz
 gunzip B73v5.NAM-illumina_filtered-pass-only-two-round-gatk-snps.vcf.gz
 ```
 
+The SV dataset was sent via Slack, and they were two files from two different SV calling methods (SNIFFLES and BioNano), which were merged into a single file later. I downloaded the files on my personal Mac and transferred them to the `data` folder in my MSI account via FileZilla.
+
+```bash
+# decompress files
+gunzip data/NAM-SVs_SNIFFLES-min100-max1Mb-depth25_v6.vcf.gz
+gunzip data/NAM-SVs_BioNano-min1Mb.txt.gz
+```
+
 After downloading and decompressing the files, these are the data that I will be using:
 
-* `NAM-structural-variations-v2.0.vcf`: file with SV calls for NAM founders.
+* `NAM-SVs_SNIFFLES-min100-max1Mb-depth25_v6.vcf`: file with SNIFFLES SV calls (up to 1 Mb) for NAM founders.
+* `NAM-SVs_BioNano-min1Mb.txt`: file with BioNano SV calls (curated SVs larger than 1 Mb) for NAM founders.
 * `B73v5.NAM-illumina_filtered-pass-only-two-round-gatk-snps.vcf`: file with SNP calls for NAM founders.
 * `GBS-output/populations.snps.vcf`: file with SNP calls (GBS) for all NAM lines.
-
-**UPDATE:** on February 5th, Arun sent me the newest version of the SV calls via Slack. This version corrects the high amount of missing data called on previous versions. The filename is `data/NAM-structural-variations-v3.0.txt` and will be used for the rest of the analysis.
 
 
 
@@ -116,27 +151,106 @@ done
 
 > TASSEL throws this error when sorting vcf files `ERROR net.maizegenetics.dna.map.PositionListBuilder - validateOrdering: Position	Chr:SCAF_100	Pos:79721	InsertionPos:0	Name:SSCAF_100_79721	Variants:A/C	MAF:NaN	Ref:A and Position	Chr:SCAF_99	Pos:109272	InsertionPos:0	Name:SSCAF_99_109272	Variants:T/A	MAF:NaN	Ref:T out of order`. However, I think it's just a warning showing which positions were in the wrong position. I'm able to load the sorted vcf file and transform it into hapmap format without problems. Also, no SNP is lost when sorting the file.
 
-Then, I converted the file with SV calls for all NAM founders into hapmap with the following commands:
+Then, I converted the two files with SV calls (SNIFFLES and BioNano) for all NAM founders into hapmap with two different python scripts, since each file has a different format.
 
 ```bash
 # go to project folder
 cd ~/projects/sv_nams
 
-# for explanation on how to use the script...
+# for explanation on how to use the scripts...
+python scripts/vcf2hapmap.py -h
 python scripts/variants2hapmap.py -h
 
 # convert SVs vcf to hmp
-python scripts/variants2hapmap.py data/NAM-structural-variations-v3.0.txt data/NAM_founders_SVs.not-sorted.hmp.txt
+python scripts/vcf2hapmap.py data/NAM-SVs_SNIFFLES-min100-max1Mb-depth25_v6.vcf data/NAM_founders_SVs.sniffles.not-sorted.hmp.txt
+python scripts/variants2hapmap.py data/NAM-SVs_BioNano-min1Mb.txt data/NAM_founders_SVs.bionano.not-sorted.hmp.txt
 
 # sort hmp file
-run_pipeline.pl -Xmx10g -SortGenotypeFilePlugin -inputFile data/NAM_founders_SVs.not-sorted.hmp.txt -outputFile data/NAM_founders_SVs.sorted.hmp.txt -fileType Hapmap
-# convert to diploid format
-run_pipeline.pl -Xmx10g -importGuess data/NAM_founders_SVs.sorted.hmp.txt -export data/NAM_founders_SVs.hmp.txt -exportType HapmapDiploid
+run_pipeline.pl -Xmx10g -SortGenotypeFilePlugin \
+                -inputFile data/NAM_founders_SVs.sniffles.not-sorted.hmp.txt \
+                -outputFile data/NAM_founders_SVs.sniffles.sorted.hmp.txt \
+                -fileType Hapmap
+run_pipeline.pl -Xmx10g -SortGenotypeFilePlugin \
+                -inputFile data/NAM_founders_SVs.bionano.not-sorted.hmp.txt \
+                -outputFile data/NAM_founders_SVs.bionano.sorted.hmp.txt \
+                -fileType Hapmap
+# convert to diploid format (need to exclude B73 from sniffles since it's not
+# present in the bionano dataset)
+run_pipeline.pl -Xmx10g -importGuess data/NAM_founders_SVs.sniffles.sorted.hmp.txt \
+                -excludeTaxa B73 \
+                -export data/NAM_founders_SVs.sniffles.hmp.txt,data/filter_json \
+                -exportType HapmapDiploid
+run_pipeline.pl -Xmx10g -importGuess data/NAM_founders_SVs.bionano.sorted.hmp.txt \
+                -export data/NAM_founders_SVs.bionano.hmp.txt \
+                -exportType HapmapDiploid
 ```
 
 Additional information about the SV is displayed on its ID, since hapmap format doesn't have fields available for adding such information. For example, the ID `del.chr1.51711.71809` on the first column of the hapmap file means that the SV is a deletion on chr1 that starts at 51,711 and ends at 71,809. The second column will also have the chromosome location for that deletion, but the third column will contain the **midpoint position** for that SV (i.e. 61,760). These two columns will always be the coordinates according to the reference genome. Although there will be somewhat redundant information on IDs of most SVs (like DELs, DUPs, INSs, and INVs), the ID will contain very important info about translocations, as it will show the respective location of the TRA in the **non-reference chromosome**.
 
 Importantly, any SV called as heterozygous in the VCF file (i.e. `0/1`) was considered as **not** having a SV, therefore they were coded as `AA`.
+
+
+
+### Collapse overlapping SVs
+
+One problem with the BioNano SV calls is that the same SV can have slightly different, but overlapping, boundaries. The boundaries are fuzzy because of the methodology itself that cannot accurately tell what the start and end position of the SV are. Thus, we decided to collapse the information of SVs that have overlapping boundaries as they may actually represent the same SV. The approach for collapsing was: for each SV type that had overlapping boundaries, I selected the smallest start position and the greatest end position to be the coordinates for the collapsed SV. Then, I just merged their genotypic calls. I wrote `scripts/collapse_bionano_SVs.R` to do this.
+
+```bash
+module load R
+# go to project folder
+cd ~/projects/sv_nams
+
+# collapse SVs
+Rscript scripts/collapse_bionano_SVs.R data/NAM_founders_SVs.bionano.hmp.txt
+```
+
+SV calls by SNIFFLES also had similar problem. The difference is that same genotype can have different calls for the overlapping SV (which was not the case for bionano; i.e. all bionano overlapping SVs didn't have conflicts within a parent). Thus, in order to identify and remove these duplicated SVs in the SNIFFLES calls, I wrote `scripts/collapse_sniffles_SVs.R`. The conditions for collapsing or not overlapping SVs are as follows:
+
+* If calls for overlapping SVs **are the same** across all parents:
+  - Keep only the SV with less missing data;
+  - If they have the same amount of missing data; keep the largest SV.
+* If calls for overlapping SVs **are not the same** across all parents:
+  - Keep both SVs (i.e. don't collapse)
+
+```bash
+module load R
+# go to project folder
+cd ~/projects/sv_nams/
+
+Rscript scripts/collapse_sniffles_SVs.R data/NAM_founders_SVs.sniffles.hmp.txt
+```
+
+> Translocations were not considered in this filtering.
+
+
+
+
+### Merge SV calls from SNIFFLES and BioNano
+
+After collapsing SVs, I merged information from SNIFFLES and BioNano in a single file called `data/NAM_founders_SVs.hmp.txt`.
+
+```bash
+# go to project folder
+cd ~/projects/sv_nams
+
+# make sure the order of NAMs in hapmaps are the same
+head -n 1 data/NAM_founders_SVs.sniffles.collapsed.hmp.txt data/NAM_founders_SVs.bionano.collapsed.hmp.txt
+# they are
+
+# merge files (use "sed 1d" to skip header of the bionano hapmap)
+cat data/NAM_founders_SVs.sniffles.collapsed.hmp.txt > data/NAM_founders_SVs.not-sorted.hmp.txt
+sed 1d data/NAM_founders_SVs.bionano.collapsed.hmp.txt >> data/NAM_founders_SVs.not-sorted.hmp.txt
+# sort hmp file
+run_pipeline.pl -Xmx10g -SortGenotypeFilePlugin \
+                -inputFile data/NAM_founders_SVs.not-sorted.hmp.txt \
+                -outputFile data/NAM_founders_SVs.sorted.hmp.txt \
+                -fileType Hapmap
+# convert to diploid format
+run_pipeline.pl -Xmx10g -importGuess data/NAM_founders_SVs.sorted.hmp.txt \
+                -export data/NAM_founders_SVs.hmp.txt \
+                -exportType HapmapDiploid
+```
+
 
 
 ### Identifying SNPs that are within the boundaries of a SV
@@ -149,7 +263,9 @@ SNPs that are found inside deletions are problematic, because they will have seg
 # go to project folder
 cd ~/projects/sv_nams
 
-# column numbers corresponding to NAM parents range from 13 to 37
+# correct name of a NAM parent in the merged file
+sed -i "s/IL14/IL14H/" data/NAM_founders_SVs.hmp.txt
+# column numbers corresponding to NAM parents range from 13 to 37 (skip B73_Ab10)
 for i in {13..37}; do
   # get NAM name
   NAM=$(head -n 1 data/NAM_founders_SVs.hmp.txt | cut -f $i)
@@ -214,47 +330,40 @@ head -n 1 data/GBS-output/populations.sumstats.tsv | cut -f 2 > data/nam_ril_pop
 # rearrange information in a table
 python scripts/create_file_with_nam_rils_info.py data/nam_ril_populations.txt
 
-# read "data/nam_ril_populations.txt" file line by line for each chromosome
-for chr in chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 scaffs; do
-  {
-    # skip header of "nam_ril_populations.txt" file
-    read
-    # set delimeter to tab
-    IFS="\t"
-    # read file line by line
-    while read -r line; do
-      # get name of the cross being parsed
-      cross=$(echo $line | cut -f 1)
-      # check if directory exists; if it doesnt, create one to store results
-      [[ -d data/GBS-output/tmp/$cross ]] || mkdir -p data/GBS-output/tmp/$cross
-      # transform line of the file into multiple lines so that vcftools recognize 1 genotype to keep per line
-      echo $line |  tr "\t" "\n" | tr "," "\n" > data/GBS-output/tmp/$cross/genotypes_to_keep.txt
-      # use vcftools to filter a vcf file
-      vcftools --vcf data/GBS-output/tmp/NAM_rils_SNPs.$chr.vcf \
-               --keep data/GBS-output/tmp/$cross/genotypes_to_keep.txt \
-               --exclude-bed data/tmp/SNPs_to_remove_$cross.bed \
-               --out data/GBS-output/tmp/$cross/NAM_rils_SNPs.$cross.$chr.not-in-SVs \
-               --recode \
-               --recode-INFO-all
-    done
-  } < "data/nam_ril_populations.txt"
+# filter vcf files for each chromosome...
+for chr in {1..10}; do
+  qsub -v CHR=$chr ~/projects/sv_nams/scripts/filter_nam_rils_and_snps_within_svs_vcf.sh
 done
+# ...and for scaffolds
+{
+  # skip header of "nam_ril_populations.txt" file
+  read
+  # set delimeter to tab
+  IFS="\t"
+  # read file line by line
+  while read -r line; do
+    # get name of the cross being parsed
+    cross=$(echo $line | cut -f 1)
+    # check if directory exists; if it doesnt, create one to store results
+    [[ -d data/GBS-output/tmp/$cross ]] || mkdir -p data/GBS-output/tmp/$cross
+    # transform line of the file into multiploe lines so that vcftools recognize 1 genotype to keep per line
+    echo $line |  tr "\t" "\n" | tr "," "\n" > data/GBS-output/tmp/$cross/genotypes_to_keep.txt
+    # use vcftools to filter a vcf file
+    vcftools --vcf data/GBS-output/tmp/NAM_rils_SNPs.scaffs.vcf \
+             --keep data/GBS-output/tmp/$cross/genotypes_to_keep.txt \
+             --exclude-bed data/tmp/SNPs_to_remove_$cross.bed \
+             --out data/GBS-output/tmp/$cross/NAM_rils_SNPs.$cross.scaffs.not-in-SVs \
+             --recode \
+             --recode-INFO-all
+  done
+} < "data/nam_ril_populations.txt"
 
 # once the above is done, i have to sort each vcf file and export to hapmap format
 cd ~/projects/sv_nams/data/GBS-output/tmp/
 
-# commands for sorting
+# commands for sorting and transforming to hapmap
 for cross in $(ls -d B73x*); do
-  for chr in chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 scaffs; do
-  vcf-sort $cross/NAM_rils_SNPs.$cross.$chr.not-in-SVs.recode.vcf > $cross/NAM_rils_SNPs.$cross.$chr.not-in-SVs.sorted.vcf
-  done
-done
-
-# commands for transforming to hapmap
-for cross in $(ls -d B73x*); do
-  for chr in chr1 chr2 chr3 chr4 chr5 chr6 chr7 chr8 chr9 chr10 scaffs; do
-  run_pipeline.pl -Xmx10g -importGuess $cross/NAM_rils_SNPs.$cross.$chr.not-in-SVs.sorted.vcf -export $cross/NAM_rils_SNPs.$cross.$chr.not-in-SVs.hmp.txt -exportType HapmapDiploid
-  done
+  qsub -v CROSS=$cross ~/projects/sv_nams/scripts/vcf2hmp_nam-rils_snps-not-in-svs.sh
 done
 ```
 
@@ -344,7 +453,9 @@ cd ~/projects/sv_nams/data/GBS-output/tmp/
 #   Rscript ~/projects/sv_nams/scripts/select_best_SNPs_per_pop.R $cross $cross/NAM_rils_SNPs.$cross.not-in-SVs.not-imputed.hmp.txt $cross/NAM_gbs-parents_SNPs.$cross.not-in-SVs.reseq-overlay.hmp.txt ~/projects/sv_nams/analysis/qc/filter_best_SNPs --max_missing=0.3 --window_size=15 --window_step=1 --min_snps_per_window=5
 # done
 
-qsub ~/projects/sv_nams/scripts/select_best_SNPs_per_pop.sh
+for cross in $(ls -d B73x*); do
+  qsub -v CROSS=$cross ~/projects/sv_nams/scripts/select_best_SNPs_per_pop.sh
+done
 
 # check how many SNPs remained
 wc -l B73x*/*.not-imputed.best-markers.hmp.txt
@@ -365,7 +476,7 @@ I wrote `scripts/summary_raw_gbs.R` to plot some basic statistics of the raw GBS
 
 | Average number SNPs | Average missing data | Average polymorphic |
 | ------------------- | -------------------- | ------------------- |
-| 2,730,043           | 85.48%               | 29.32%              |
+| 2,733,429           | 85.48%               | 29.32%              |
 
 ```bash
 cd ~/projects/sv_nams/
@@ -487,25 +598,15 @@ for cross in $(ls -d B73x*); do
 done
 ```
 
-After some preliminary tests, I found that using a haplotype block size of 2,000 sites (`-hapSize 2000`) gives the best projection rate without compromising accuracy too much. Also, since I'm creating haplotypes for each parent individually, I need to set the minimum number of taxa to create a haplotype to 1 (`-minTaxa 1`). Importantly, the option `-hybNN` should be turned to `false`, otherwise the algorithm will combine haplotypes in recombination breakpoints if it thinks that region is heterozygous. If this option is not turned off, some projected regions will be messy and can end up with more than two alleles. It it's off, nothing is projected for that region.
+After some preliminary tests, I found that using a haplotype block size of 3,000 sites (`-hapSize 3000`) gives the best projection rate without compromising accuracy too much. Also, since I'm creating haplotypes for each parent individually, I need to set the minimum number of taxa to create a haplotype to 1 (`-minTaxa 1`). Importantly, the option `-hybNN` should be turned to `false`, otherwise the algorithm will combine haplotypes in recombination breakpoints if it thinks that region is heterozygous. If this option is not turned off, some projected regions will be messy and can end up with more than two alleles. It it's off, nothing is projected for that region.
 
 ```bash
 # create new folder
 mkdir ~/projects/sv_nams/analysis/projection
 
-# create haplotypes from parents
+# project svs
 for cross in $(ls -d B73x*); do
-  run_pipeline.pl -Xmx10g -FILLINFindHaplotypesPlugin  -hmp ~/projects/sv_nams/data/NAM_parents_SVs-SNPs.$cross.sorted.hmp.txt  -o ~/projects/sv_nams/analysis/projection/donors_$cross -hapSize 2000 -minTaxa 1
-done
-
-# impute ril genotypes based on parental haplotypes
-for cross in $(ls -d B73x*); do
-  run_pipeline.pl -Xmx10g -FILLINImputationPlugin -hmp ~/projects/sv_nams/data/NAM_rils_SVs-SNPs.$cross.best-markers.not-projected.sorted.hmp.txt -d ~/projects/sv_nams/analysis/projection/donors_$cross -o ~/projects/sv_nams/analysis/projection/NAM_rils_SVs-SNPs.$cross.best-markers.projected.hmp.txt -hapSize 2000 -accuracy -hybNN false
-done
-
-# convert projected hapmap to diploid format
-for cross in $(ls -d B73x*); do
-  run_pipeline.pl -Xmx10g -importGuess ~/projects/sv_nams/analysis/projection/NAM_rils_SVs-SNPs.$cross.best-markers.projected.hmp.txt -export ~/projects/sv_nams/analysis/projection/NAM_rils_SVs-SNPs.$cross.best-markers.projected.hmp.txt -exportType HapmapDiploid
+  qsub -v CROSS=$cross,HAPSIZE=3000 ~/projects/sv_nams/scripts/project_svs.sh
 done
 ```
 
@@ -515,7 +616,7 @@ After projection, I wrote `scripts/count_projected_SVs.R` to compute how many SV
 cd ~/projects/sv_nams/data/GBS-output/tmp/
 
 # calculate amount of projected SVs
-Rscript ~/projects/sv_nams/scripts/count_projected_SVs.R ~/projects/sv_nams/data ~/projects/sv_nams/analysis/projection
+qsub ~/projects/sv_nams/scripts/count_projected_svs.sh
 
 # plot karyotypes of SVs present in each parent of a cross
 for cross in $(ls -d B73x*); do
@@ -538,7 +639,7 @@ done
 # average missing data 0.09
 ```
 
-The average percentage of projected SVs across all populations was **87%** (~180k SVs) with average accuracy of **93%**. The amount projected was a bit higher (88%) if considering only polymorphic SVs between the two parents of a cross. Only five crosses had projection rate below 75% (B73xCML322, B73xCML333, B73xOh7B, B73xP39, and B73xTzi8).
+The average percentage of projected SVs across all populations was **86%** (~135k SVs) with average accuracy of **93%**. The amount projected was a bit higher (87%) if considering only polymorphic SVs between the two parents of a cross. Only five crosses had projection rate below 75% (B73xCML322, B73xCML333, B73xOh7B, B73xP39, and B73xTzi8).
 
 
 
@@ -549,14 +650,8 @@ The final file that will be sent to Jianming's group for GWAS will be a hapmap f
 ```bash
 cd ~/projects/sv_nams/analysis/projection
 
-# make sure files are sorted
-for file in NAM_rils_projected-SVs-only.B73x*; do
-  run_pipeline.pl -Xmx10g -SortGenotypeFilePlugin -inputFile $file -outputFile $file -fileType Hapmap
-  run_pipeline.pl -Xmx10g -importGuess $file -export $file -exportType HapmapDiploid
-done
-
 # merge hapmaps
-Rscript ~/projects/sv_nams/scripts/merge_SVs_after_projection.R
+qsub ~/projects/sv_nams/scripts/merge_SVs_after_projection.sh
 
 # make sure final file is sorted and let TASSEL correct the alleles' column
 run_pipeline.pl -Xmx10g \
@@ -570,15 +665,32 @@ run_pipeline.pl -Xmx10g \
                 -exportType HapmapDiploid
 ```
 
+After that, I performed a quick QC to check the total amount of missing data in the projected RILs.
+
+```bash
+cd ~/projects/sv_nams/analysis/projection
+
+# get summary
+run_pipeline.pl -Xmx40g -importGuess NAM_rils_projected-SVs-only.all-RILs.final.hmp.txt \
+                -GenotypeSummaryPlugin -endPlugin \
+                -export tassel_summary_NAM_rils_projected_svs
+
+# plot missing data
+Rscript ~/projects/sv_nams/scripts/qc_tassel_summary.R tassel_summary_NAM_rils_projected_svs3.txt \
+                                                       missing_data_RILs_after_projection.png
+```
 
 
 ## Upload final hapmap to Cyverse
 
-Lastly, I uploaded the final hapmap file `~/projects/sv_nams/analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.hmp.txt` to the shared folder on Cyverse.
+Lastly, I uploaded the final hapmap file `~/projects/sv_nams/analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.v7.hmp.txt` to the shared folder on Cyverse.
 
 ```bash
 # go to data folder of the project
 cd ~/projects/sv_nams/analysis/projection
+
+# change name to avoid conflict with previous versions
+mv NAM_rils_projected-SVs-only.all-RILs.final.hmp.txt NAM_rils_projected-SVs-only.all-RILs.final.v7.hmp.txt
 
 # log in to cyverse
 iinit
@@ -587,34 +699,10 @@ icd /iplant/home/shared/NAM/Misc
 # check if files match what Arun described
 ils
 # upload data
-iput -K NAM_rils_projected-SVs-only.all-RILs.final.hmp.txt
+iput -K NAM_rils_projected-SVs-only.all-RILs.final.v7.hmp.txt
 # exit iRods
 iexit full
 ```
-
-
-
-## Collapse duplicated SVs
-
-At this point, we realized that many SVs had overlaping boundaries, which may indicate that they represent actually the same SV. Thus, in order to identify and remove these duplicated SVs, I wrote `scripts/remove_duplicated_SVs.R`. The conditions for collapsing or not overlapping SVs are as follows:
-
-* If calls for overlapping SVs **are the same** across all parents:
-  - Keep only the SV with less missing data;
-  - If they have the same amount of missing data; keep the largest SV.
-* If calls for overlapping SVs **are not the same** across all parents:
-  - Keep both SVs (i.e. don't collapse)
-
-After filtering the parental dataset, the script will extract the names of remaining SVs and filter the RIl dataset. The output file is `analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.duplicated-SVs-removed.hmp.txt`
-
-```bash
-module load R
-cd ~/projects/sv_nams/
-
-Rscript scripts/remove_duplicated_SVs.R data/NAM_founders_SVs.hmp.txt analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.hmp.txt
-```
-
-> Translocations were not considered in this filtering.
-
 
 
 
@@ -641,33 +729,32 @@ done
 # add the rest of data
 grep -v "^#" data/B73v5.NAM-illumina_filtered-pass-only-two-round-gatk-snps.vcf >> data/tmp/NAM_founders_SNPs.vcf
 
+# # remove SNPs within SVs and divide file into NAM families
+# {
+#   # skip header of "nam_ril_populations.txt" file
+#   read
+#   # set delimeter to tab
+#   IFS="\t"
+#   # read file line by line
+#   while read -r line; do
+#     # get name of the cross being parsed
+#     cross=$(echo $line | cut -f 1)
+#     echo "$cross"
+#     # check if directory exists; if it doesnt, create one to store results
+#     [[ -d data/tmp/$cross ]] || mkdir -p data/tmp/$cross
+#     # add the two parents of a cross in a file so that vcftools recognize 1 genotype to keep per line
+#     echo "B73" > data/tmp/$cross/genotypes_to_keep.txt
+#     echo $cross | cut -d "x" -f 2-3 >> data/tmp/$cross/genotypes_to_keep.txt
+#     # use vcftools to filter a vcf file
+#     vcftools --vcf data/tmp/NAM_founders_SNPs.vcf \
+#              --keep data/tmp/$cross/genotypes_to_keep.txt \
+#              --exclude-bed data/tmp/SNPs_to_remove_$cross.bed \
+#              --out data/tmp/$cross/NAM_parents-reseq_SNPs.$cross.not-in-SVs \
+#              --recode
+#   done
+# } < "data/nam_ril_populations.txt"
 
-# remove SNPs within SVs and divide file into NAM families
-{
-  # skip header of "nam_ril_populations.txt" file
-  read
-  # set delimeter to tab
-  IFS="\t"
-  # read file line by line
-  while read -r line; do
-    # get name of the cross being parsed
-    cross=$(echo $line | cut -f 1)
-    echo "$cross"
-    # check if directory exists; if it doesnt, create one to store results
-    [[ -d data/tmp/$cross ]] || mkdir -p data/tmp/$cross
-    # add the two parents of a cross in a file so that vcftools recognize 1 genotype to keep per line
-    echo "B73" > data/tmp/$cross/genotypes_to_keep.txt
-    echo $cross | cut -d "x" -f 2-3 >> data/tmp/$cross/genotypes_to_keep.txt
-    # use vcftools to filter a vcf file
-    vcftools --vcf data/tmp/NAM_founders_SNPs.vcf \
-             --keep data/tmp/$cross/genotypes_to_keep.txt \
-             --exclude-bed data/tmp/SNPs_to_remove_$cross.bed \
-             --out data/tmp/$cross/NAM_parents-reseq_SNPs.$cross.not-in-SVs \
-             --recode
-  done
-} < "data/nam_ril_populations.txt"
-
-# qsub scripts/filter_nam_parents_and_snps_witihin_svs_reseq_vcf.sh
+qsub scripts/filter_nam_parents_and_snps_within_svs_reseq_vcf.sh
 ```
 
 Once the above job is done, I have to sort each vcf file and export into diploid hapmap format:
@@ -685,35 +772,46 @@ done > ~/projects/sv_nams/scripts/commands_sort_vcf_reseq.txt
 # run_pipeline.pl -Xmx10g -importGuess B73xB97/NAM_parents-reseq_SNPs.B73xB97.not-in-SVs.sorted.vcf -export B73xB97/NAM_parents-reseq_SNPs.B73xB97.not-in-SVs.hmp.txt -exportType HapmapDiploid
 for cross in $(ls -d B73x*); do
   echo "run_pipeline.pl -Xmx10g -importGuess $cross/NAM_parents-reseq_SNPs.$cross.not-in-SVs.sorted.vcf -export $cross/NAM_parents-reseq_SNPs.$cross.not-in-SVs.hmp.txt -exportType HapmapDiploid"
-done > ~/projects/sv_nams/scripts/commands_vc2hmp_reseq.txt
+done > ~/projects/sv_nams/scripts/commands_vcf2hmp_reseq.txt
 
 module load parallel
-parallel --jobs 5 < ~/projects/sv_nams/scripts/commands_sort_vcf_reseq.txt
-parallel --jobs 5 < ~/projects/sv_nams/scripts/commands_vc2hmp_reseq.txt
+parallel --jobs 10 < ~/projects/sv_nams/scripts/commands_sort_vcf_reseq.txt
+parallel --jobs 10 < ~/projects/sv_nams/scripts/commands_vcf2hmp_reseq.txt
 ```
 
 
 
 ## Prepare datasets for projection
 
-Before projections, I will keep only the polymorphic parental SNPs for each NAM family to reduce computational time during projections (since they are the only informative SNPs anyways). Since I will use the best GBS markers + projected SVs from previous analysis as anchors for projections, the donor datasets will have these markers and the polymorphic resequencing SNPs from the parents. On the other hand, the RIL datasets will have the same anchor markers, but all polymorphic resequencing SNPs from parents will be set to missing data (`NN`).
+Before projections, I will keep only the polymorphic parental SNPs for each NAM family to reduce computational time during projections (since they are the only informative SNPs anyways). The donor datasets will have the anchor markers and the polymorphic resequencing SNPs from the parents, while the RIL datasets will have the same anchor markers, but all polymorphic resequencing SNPs from parents will be set to missing data (`NN`).
 
 
 ```bash
 # get only polymorphic snps
 cd ~/projects/sv_nams/data/tmp/
 for cross in $(ls -d B73x*); do
-  Rscript ~/projects/sv_nams/scripts/keep_poly_reseq-snps_only.R $cross ~/projects/sv_nams/data/tmp/$cross/NAM_parents-reseq_SNPs.$cross.not-in-SVs.hmp.txt
+  qsub -v CROSS=$cross ~/projects/sv_nams/scripts/keep_poly_reseq-snps_only.sh
 done
 
 # merge svs
 cd ~/projects/sv_nams/data/tmp/
 for cross in $(ls -d B73x*); do
-  echo "Rscript ~/projects/sv_nams/scripts/merge_SNPs-reseq_and_SNPs-SVs.R ~/projects/sv_nams/data/tmp/$cross/NAM_parents-reseq_SNPs.$cross.poly.not-in-SVs.hmp.txt ~/projects/sv_nams/data/NAM_parents_SVs-SNPs.$cross.sorted.hmp.txt ~/projects/sv_nams/analysis/projection/NAM_rils_SVs-SNPs.$cross.best-markers.projected.hmp.txt ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.hmp.txt ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.not-projected.hmp.txt"
-done > ~/projects/sv_nams/scripts/commands_merge-reseq-SNPs.txt
+  qsub -v CROSS=$cross ~/projects/sv_nams/scripts/merge_SNPs-reseq_and_SNPs-SVs.sh
+done
+```
 
-module load parallel
-parallel --jobs 3 < ~/projects/sv_nams/scripts/commands_merge-reseq-SNPs.txt
+After running the above commands, I talked to Candy and we decided to use only SNPs (not SNPs and SVs) as anchors for projection. So I need to remove the SVs for each of the files created above.
+
+```bash
+# parents
+for file in NAM_parents_SNPs-reseq_and_SVs-SNPs.*.poly.hmp.txt; do
+  grep -v -P "^del|^dup|^ins|^inv|^tra" $file > ${file/SNPs-reseq_and_SVs-SNPs/SNPs-reseq_and_best-SNPs}
+done
+
+# rils
+for file in B73x*/NAM_rils_SNPs-reseq_and_SVs-SNPs.*.poly.chr-*.not-projected.hmp.txt; do
+  grep -v -P "^del|^dup|^ins|^inv|^tra" $file > ${file/SNPs-reseq_and_SVs-SNPs/SNPs-reseq_and_best-SNPs}
+done
 ```
 
 In order to speed up analysis, I will break the datasets into chromosomes so I can run more things in parallel:
@@ -722,14 +820,14 @@ In order to speed up analysis, I will break the datasets into chromosomes so I c
 # break parental data into chromosomes
 for cross in $(ls -d B73x*); do
   for chr in {1..10}; do
-    head -n 1 ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.hmp.txt > ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.hmp.txt
-    awk -v chr="$chr" '$3 == chr' ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.hmp.txt >> ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.hmp.txt
+    head -n 1 ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.hmp.txt > ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.hmp.txt
+    awk -v chr="$chr" '$3 == chr' ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.hmp.txt >> ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.hmp.txt
   done
 done
 
 for cross in $(ls -d B73x*); do
-  head -n 1 ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.hmp.txt > ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-scaffs.hmp.txt
-  grep -P "\tSCAF_" ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.hmp.txt >> ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-scaffs.hmp.txt
+  head -n 1 ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.hmp.txt > ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-scaffs.hmp.txt
+  grep -P "\tSCAF_" ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.hmp.txt >> ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-scaffs.hmp.txt
 done
 ```
 
@@ -745,26 +843,26 @@ cd ~/projects/sv_nams/data/tmp/
 # sort parents sv+snps
 for cross in $(ls -d B73x*); do
   for chr in 1 2 3 4 5 6 7 8 9 10 scaffs; do
-    echo "run_pipeline.pl -Xmx5g -SortGenotypeFilePlugin -inputFile ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.hmp.txt -outputFile ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -fileType Hapmap"
+    echo "run_pipeline.pl -Xmx5g -SortGenotypeFilePlugin -inputFile ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.hmp.txt -outputFile ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -fileType Hapmap"
   done
 done > ~/projects/sv_nams/scripts/commands_sort-parents_reseq-SNPs.txt
 
 # sort rils sv+snps
 for cross in $(ls -d B73x*); do
   for chr in 1 2 3 4 5 6 7 8 9 10 scaffs; do
-    echo "run_pipeline.pl -Xmx5g -SortGenotypeFilePlugin -inputFile ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.not-projected.hmp.txt -outputFile ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.not-projected.sorted.hmp.txt -fileType Hapmap"
+    echo "run_pipeline.pl -Xmx5g -SortGenotypeFilePlugin -inputFile ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.not-projected.hmp.txt -outputFile ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.not-projected.sorted.hmp.txt -fileType Hapmap"
   done
 done > ~/projects/sv_nams/scripts/commands_sort-rils_reseq-SNPs.txt
 
 # submit job
-qsub sort_parents-rils_reseq-SNPs.sh
-
+qsub ~/projects/sv_nams/scripts/sort_parents-rils_reseq_SNPs.sh
 
 # make sure the number of SNPs match among datasets
 for cross in $(ls -d B73x*); do
   for chr in 1 2 3 4 5 6 7 8 9 10 scaffs; do
-    wc -l ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt
-    wc -l ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.not-projected.sorted.hmp.txt
+    wc -l ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt
+    wc -l ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.not-projected.sorted.hmp.txt
+    echo ""
   done
 done
 
@@ -774,14 +872,14 @@ mkdir ~/projects/sv_nams/analysis/reseq_snps_projection2/
 # create haplotypes from parents
 for cross in $(ls -d B73x*); do
   for chr in 1 2 3 4 5 6 7 8 9 10 scaffs; do
-    echo "run_pipeline.pl -Xmx5g -FILLINFindHaplotypesPlugin -hmp ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -o ~/projects/sv_nams/analysis/reseq_snps_projection2/donors_$cross-chr-$chr -hapSize 70000 -minTaxa 1"
+    echo "run_pipeline.pl -Xmx5g -FILLINFindHaplotypesPlugin -hmp ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -o ~/projects/sv_nams/analysis/reseq_snps_projection2/donors_$cross-chr-$chr -hapSize 70000 -minTaxa 1"
   done
 done > ~/projects/sv_nams/scripts/commands_donors_reseq-SNPs2.txt
 
 # impute ril genotypes based on parental haplotypes
 for cross in $(ls -d B73x*); do
   for chr in 1 2 3 4 5 6 7 8 9 10 scaffs; do
-    echo "run_pipeline.pl -Xmx5g -FILLINImputationPlugin -hmp ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.not-projected.sorted.hmp.txt -d ~/projects/sv_nams/analysis/reseq_snps_projection2/donors_$cross-chr-$chr -o ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.projected.hmp.txt -hapSize 70000 -accuracy -hybNN false"
+    echo "run_pipeline.pl -Xmx5g -FILLINImputationPlugin -hmp ~/projects/sv_nams/data/tmp/$cross/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.not-projected.sorted.hmp.txt -d ~/projects/sv_nams/analysis/reseq_snps_projection2/donors_$cross-chr-$chr -o ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.projected.hmp.txt -hapSize 70000 -accuracy -hybNN false"
   done
 done > ~/projects/sv_nams/scripts/commands_project_reseq-SNPs2.txt
 
@@ -796,7 +894,7 @@ I will run the sliding window approach again (but with higher window size: 45-bp
 cd ~/projects/sv_nams/data/tmp/
 for cross in $(ls -d B73x*); do
   for chr in {1..10}; do
-    run_pipeline.pl -Xmx10g -importGuess NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -export ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_parents_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -exportType HapmapDiploid
+    run_pipeline.pl -Xmx10g -importGuess NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -export ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_parents_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.sorted.hmp.txt -exportType HapmapDiploid
   done
 done
 
@@ -804,12 +902,12 @@ done
 cd ~/projects/sv_nams/data/tmp/
 for cross in $(ls -d B73x*); do
   for chr in {1..10}; do
-    echo "run_pipeline.pl -Xmx10g -importGuess ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.projected.hmp.txt -export ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.projected.hmp.txt -exportType HapmapDiploid"
+    echo "run_pipeline.pl -Xmx10g -importGuess ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.projected.hmp.txt -export ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.projected.hmp.txt -exportType HapmapDiploid"
   done
 done > ~/projects/sv_nams/scripts/commands_diploid-hmp_rils.txt
 
 module load parallel
-parallel --jobs 5 < ~/projects/sv_nams/scripts/commands_diploid-hmp_rils.txt
+parallel --jobs 10 < ~/projects/sv_nams/scripts/commands_diploid-hmp_rils.txt
 
 # submit jobs for sliding window
 cd ~/projects/sv_nams/data/tmp/
@@ -821,16 +919,16 @@ done
 
 # merge chromosomes from projected hmp
 for cross in $(ls -d B73x*); do
-  cat ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-1.projected.sliding-window.hmp.txt > ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.projected.hmp.txt
+  cat ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-1.projected.sliding-window.hmp.txt > ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.projected.hmp.txt
   for chr in 2 3 4 5 6 7 8 9 10 scaffs; do
-    sed 1d ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.chr-$chr.projected.sliding-window.hmp.txt >> ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.projected.hmp.txt
+    sed 1d ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.chr-$chr.projected.sliding-window.hmp.txt >> ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.projected.hmp.txt
   done
   echo "$cross done!"
 done
 
 # correct alleles' column of hapmap
 for cross in $(ls -d B73x*); do
-  run_pipeline.pl -Xmx10g -importGuess ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.projected.hmp.txt -export ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.projected.hmp.txt -exportType HapmapDiploid
+  run_pipeline.pl -Xmx10g -importGuess ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.projected.hmp.txt -export ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.projected.hmp.txt -exportType HapmapDiploid
 done
 ```
 
@@ -854,7 +952,7 @@ for cross in $(ls -d B73x*); do
           ~/projects/sv_nams/analysis/qc/centromeres_Schneider-2016-pnas_v4.bed \
           $cross \
           ~/projects/sv_nams/analysis/qc/karyotypes/reseq_snps_projection2 \
-          ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.poly.projected.hmp.txt \
+          ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.poly.projected.hmp.txt \
           ~/projects/sv_nams/data/tmp/$cross/NAM_parents-reseq_SNPs.$cross.poly.not-in-SVs.hmp.txt \
           --rils=$rils
 done
@@ -888,13 +986,13 @@ for chr in {1..10}; do
   qsub -v CHR=$chr ~/projects/sv_nams/scripts/create_empty_reseq-snps_file.sh
 done
 
-# add back snps not present in a cros
+# add back snps not present in a cross
 for chr in {1..10}; do
   qsub -v CHR=$chr ~/projects/sv_nams/scripts/merge_reseq-snps_per_chr.sh
 done
 ```
 
-Write final RIL file with all resequencing SNPs and SVs projected (after removing duplicated SVs).
+Write final RIL file with all resequencing SNPs and SVs projected.
 
 ```bash
 # merge all crosses with projected resequencing SNPs
@@ -903,59 +1001,59 @@ for chr in {1..10}; do
   cd ~/projects/sv_nams/data/tmp/
   for cross in $(ls -d B73x*); do
     echo $chr $cross
-    cut -f 1-11 --complement ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.reseq-snps-all-crosses.chr-$chr.projected.hmp.txt > ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.$cross.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt
+    cut -f 1-11 --complement ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.reseq-snps-all-crosses.chr-$chr.projected.hmp.txt > ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.$cross.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt
   done
   # join all rils in one file (keep entire hmp file for cross B73xB97 though)
   cd ~/projects/sv_nams/analysis/reseq_snps_projection2
-  paste NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xB97.reseq-snps-all-crosses.chr-$chr.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML103.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML228.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML247.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML277.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML322.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML333.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML52.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xCML69.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xHp301.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xIl14H.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xKi11.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xKi3.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xKy21.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xM162W.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xM37W.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xMo18W.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xMS71.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xNC350.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xNC358.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xOh43.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xOh7B.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xP39.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xTx303.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
-        NAM_rils_SNPs-reseq_and_SVs-SNPs.B73xTzi8.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt > NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-$chr.projected.duplicated-SVs-removed.hmp.txt
+  paste NAM_rils_SNPs-reseq_and_best-SNPs.B73xB97.reseq-snps-all-crosses.chr-$chr.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML103.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML228.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML247.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML277.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML322.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML333.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML52.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xCML69.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xHp301.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xIl14H.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xKi11.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xKi3.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xKy21.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xM162W.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xM37W.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xMo18W.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xMS71.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xNC350.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xNC358.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xOh43.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xOh7B.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xP39.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xTx303.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt \
+        NAM_rils_SNPs-reseq_and_best-SNPs.B73xTzi8.reseq-snps-all-crosses.chr-$chr.rils-only.projected.hmp.txt > NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-$chr.projected.hmp.txt
 done
 
 # merge projected svs with projected snps
 # but first need to break parental data of SVs into chromosomes
 for chr in {1..10}; do
-  head -n 1 ~/projects/sv_nams/analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.duplicated-SVs-removed.hmp.txt > ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_projected-SVs-only.all-RILs.duplicated-SVs-removed.chr-$chr.hmp.txt
-  awk -v chr="$chr" '$3 == chr' ~/projects/sv_nams/analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.duplicated-SVs-removed.hmp.txt >> ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_projected-SVs-only.all-RILs.duplicated-SVs-removed.chr-$chr.hmp.txt
+  head -n 1 ~/projects/sv_nams/analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.v7.hmp.txt > ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_projected-SVs-only.all-RILs.chr-$chr.hmp.txt
+  awk -v chr="$chr" '$3 == chr' ~/projects/sv_nams/analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.v7.hmp.txt >> ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_projected-SVs-only.all-RILs.chr-$chr.hmp.txt
 done
 
 # # make sure order of columns are the same
-# head -n 1 ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_projected-SVs-only.all-RILs.duplicated-SVs-removed.chr-1.hmp.txt > ~/projects/sv_nams/header_svs_dup-rem.txt
-# head -n 1 ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-1.projected.hmp.txt > ~/projects/sv_nams/header_snps2_dup-rem.txt
+# head -n 1 ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_projected-SVs-only.all-RILs.chr-1.hmp.txt > ~/projects/sv_nams/header_svs_dup-rem.txt
+# head -n 1 ~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-1.projected.hmp.txt > ~/projects/sv_nams/header_snps2_dup-rem.txt
 # diff ~/projects/sv_nams/header_svs_dup-rem.txt ~/projects/sv_nams/header_snps2_dup-rem.txt
 
 # and then finally merge svs to snps
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 for chr in {1..10}; do
   echo $chr
-  sed 1d NAM_rils_projected-SVs-only.all-RILs.duplicated-SVs-removed.chr-$chr.hmp.txt >> NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-$chr.projected.duplicated-SVs-removed.hmp.txt
+  sed 1d NAM_rils_projected-SVs-only.all-RILs.chr-$chr.hmp.txt >> NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-$chr.projected.hmp.txt
 done
 
 # sort snps + svs
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
-for chr in {2..10}; do
+for chr in {1..10}; do
   qsub -v CHR=$chr ~/projects/sv_nams/scripts/sort_reseq-snps_and_svs.sh
 done
 
@@ -967,24 +1065,26 @@ done
 
 # merge all chromosomes
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
-cp NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-1.projected.duplicated-SVs-removed.hmp.txt NAM_rils_SNPs-reseq_and_SVs-SNPs.projected.final.v4.hmp.txt
+cp NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-1.projected.hmp.txt NAM_rils_SNPs-reseq_and_best-SNPs.projected.final.v7.hmp.txt
+
 for chr in {2..10}; do
   echo $chr
-  sed 1d NAM_rils_SNPs-reseq_and_SVs-SNPs.reseq-snps-all-crosses.chr-$chr.projected.duplicated-SVs-removed.hmp.txt >> NAM_rils_SNPs-reseq_and_SVs-SNPs.projected.final.v4.hmp.txt
+  sed 1d NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-$chr.projected.hmp.txt >> NAM_rils_SNPs-reseq_and_best-SNPs.projected.final.v7.hmp.txt
 done
 ```
 
 ## Upload final hapmap to Cyverse
 
-Lastly, I uploaded the final hapmap file `~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs-SNPs.projected.final.v5.hmp.txt` to the shared folder on Cyverse.
+Lastly, I uploaded the final hapmap file `~/projects/sv_nams/analysis/reseq_snps_projection2/NAM_rils_SNPs-reseq_and_SVs.projected.final.v7.hmp.txt` to the shared folder on Cyverse.
 
 ```bash
 # go to data folder of the project
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
-# i have a problem while uploading the file and couldn't delete it in cyverse (no privilege)
-# so i just created a copy of the final file and uploaded again (this time without problems)
-cp NAM_rils_SNPs-reseq_and_SVs-SNPs.projected.final.v4.hmp.txt NAM_rils_SNPs-reseq_and_SVs-SNPs.projected.final.v5.hmp.txt
+# i realized that the I haven't renamed the file after adding the SVs
+mv NAM_rils_SNPs-reseq_and_best-SNPs.projected.final.v7.hmp.txt NAM_rils_SNPs-reseq_and_SVs.projected.final.v7.hmp.txt
+# compress for faster upload
+gzip -c NAM_rils_SNPs-reseq_and_SVs.projected.final.v7.hmp.txt > NAM_rils_SNPs-reseq_and_SVs.projected.final.v7.hmp.txt.gz
 
 # log in to cyverse
 iinit
@@ -993,7 +1093,7 @@ icd /iplant/home/shared/NAM/Misc
 # check if files match what Arun described
 ils
 # upload data
-iput -K NAM_rils_SNPs-reseq_and_SVs-SNPs.projected.final.v5.hmp.txt
+iput -K NAM_rils_SNPs-reseq_and_SVs.projected.final.v7.hmp.txt.gz
 # exit iRods
 iexit full
 ```
@@ -1037,13 +1137,10 @@ done
 To reduce interference of missing data in downstream analyses, we will select only non-translocation SVs with more than 80% data across the families that had information in the founders, and SNPs that have more than 80% data across all families (because we want to make sure to use SNPs that have low amount of missing data, otherwise, the LD between an SV and a SNP can be biased).
 
 ```bash
-cd ~/projects/sv_nams/analysis/reseq_snps_projection2
-
-# create directory to store file
-mkdir -p ld/missing_data_filter
+cd ~/projects/sv_nams
 
 # get name of all SVs after removing duplicates
-cut -f 1 analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.duplicated-SVs-removed.hmp.txt | sed 1d > analysis/projection/SV_names_after_removing_duplicates.txt
+cut -f 1 analysis/projection/NAM_rils_projected-SVs-only.all-RILs.final.v7.hmp.txt | sed 1d > analysis/projection/SV_names_after_removing_duplicates.txt
 # get summary of the number of projected RILs per SV ("summary_projected_RILs_per_sv.txt")
 Rscript scripts/count_projected_SVs.R ~/projects/sv_nams/data ~/projects/sv_nams/analysis/projection
 
@@ -1053,7 +1150,7 @@ grep -v -P "^#" data/tmp/NAM_founders_SNPs.vcf | cut -f 1-2 | grep -v "scaf" | t
 Rscript scripts/count_projected_reseq-SNPs.R ~/projects/sv_nams/data/tmp ~/projects/sv_nams/analysis/reseq_snps_projection2
 
 # keep only SNPs present in 80% or more families in the LD file
-
+cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 # create directory to store file
 mkdir -p ld/missing_data_filter
 # run tassel to determine amount of missing data per marker
@@ -1108,40 +1205,45 @@ for chr in {2..10}; do
 done
 ```
 
-There were **277,527 non-translocation SVs** with more than 80% data among RILs that had information on the founders. Then, we randomly selected SNPs to match that number of filtered SVs (subset 1), selected a single SNP in highest LD for each SV (or closest one if more than one SNP with highest LD; subset 2), and randomly selected SNPs that were not in LD with any SV (R2 < 0.2; subset 3).
+There were **169,793 non-translocation SVs** with more than 80% data among RILs that had information on the founders. Then, we randomly selected SNPs to match that number of filtered SVs (subset 1), selected a single SNP in highest LD for each SV (or closest one if more than one SNP with highest LD; subset 2), and randomly selected SNPs that were not in LD with any SV (R2 < 0.2; subset 3).
 
 ```bash
 # there are 277,527 SVs in total to sample
 wc -l ~/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr*.txt
-# 21244 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr10.txt
-# 45737 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr1.txt
-# 25858 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr2.txt
-# 30790 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr3.txt
-# 26823 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr4.txt
-# 31454 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr5.txt
-# 25659 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr6.txt
-# 20805 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr7.txt
-# 26389 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr8.txt
-# 22768 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr9.txt
+# 14424 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr10.txt
+# 27830 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr1.txt
+# 13358 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr2.txt
+# 18647 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr3.txt
+# 16229 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr4.txt
+# 18624 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr5.txt
+# 16421 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr6.txt
+# 13169 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr7.txt
+# 16273 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr8.txt
+# 14818 /home/hirschc1/della028/projects/sv_nams/data/subset-NAM-snps/SVs-to-keep.missing-filter.no-tra.chr9.txt
 
 # make sure to use SNPs that have R2 calculated to an SV with more than 80% data
 cd /scratch.global/della028/hirsch_lab/ld_files
 for chr in {1..10}; do
   echo $chr
-  grep -Fxf SNPs_after_plink_ld-w-100_v2.$chr.no-tra.snp-sv.txt ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep.missing-filter.chr$chr.txt > SNPs_after_plink_ld-w-100_v2.$chr.no-tra.snp-sv.missing-filter.txt
+  sed 1d NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-$chr.projected.no-tra.snp-sv.ld | tr -s [:space:] | sed -e 's/^ //g' | tr " " "\t" | cut -f 3,6 | tr "\t" "\n" | grep -v -P "^del|^dup|^ins|^inv" | sort | uniq > SNPs_after_plink_ld.$chr.no-tra.snp-sv.txt
+done
+
+for chr in {1..10}; do
+  echo $chr
+  grep -Fxf SNPs_after_plink_ld.$chr.no-tra.snp-sv.txt ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep.missing-filter.chr$chr.txt > SNPs_after_plink_ld.$chr.no-tra.snp-sv.missing-filter.txt
 done
 
 # subsample SNPs by chromosome based on number of SVs above
-shuf SNPs_after_plink_ld-w-100_v2.1.no-tra.snp-sv.missing-filter.txt -n 45737 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr1.txt
-shuf SNPs_after_plink_ld-w-100_v2.2.no-tra.snp-sv.missing-filter.txt -n 25858 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr2.txt
-shuf SNPs_after_plink_ld-w-100_v2.3.no-tra.snp-sv.missing-filter.txt -n 30790 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr3.txt
-shuf SNPs_after_plink_ld-w-100_v2.4.no-tra.snp-sv.missing-filter.txt -n 26823 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr4.txt
-shuf SNPs_after_plink_ld-w-100_v2.5.no-tra.snp-sv.missing-filter.txt -n 31454 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr5.txt
-shuf SNPs_after_plink_ld-w-100_v2.6.no-tra.snp-sv.missing-filter.txt -n 25659 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr6.txt
-shuf SNPs_after_plink_ld-w-100_v2.7.no-tra.snp-sv.missing-filter.txt -n 20805 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr7.txt
-shuf SNPs_after_plink_ld-w-100_v2.8.no-tra.snp-sv.missing-filter.txt -n 26389 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr8.txt
-shuf SNPs_after_plink_ld-w-100_v2.9.no-tra.snp-sv.missing-filter.txt -n 22768 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr9.txt
-shuf SNPs_after_plink_ld-w-100_v2.10.no-tra.snp-sv.missing-filter.txt -n 21244 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr10.txt
+shuf SNPs_after_plink_ld.1.no-tra.snp-sv.missing-filter.txt -n 27830 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr1.txt
+shuf SNPs_after_plink_ld.2.no-tra.snp-sv.missing-filter.txt -n 13358 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr2.txt
+shuf SNPs_after_plink_ld.3.no-tra.snp-sv.missing-filter.txt -n 18647 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr3.txt
+shuf SNPs_after_plink_ld.4.no-tra.snp-sv.missing-filter.txt -n 16229 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr4.txt
+shuf SNPs_after_plink_ld.5.no-tra.snp-sv.missing-filter.txt -n 18624 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr5.txt
+shuf SNPs_after_plink_ld.6.no-tra.snp-sv.missing-filter.txt -n 16421 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr6.txt
+shuf SNPs_after_plink_ld.7.no-tra.snp-sv.missing-filter.txt -n 13169 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr7.txt
+shuf SNPs_after_plink_ld.8.no-tra.snp-sv.missing-filter.txt -n 16273 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr8.txt
+shuf SNPs_after_plink_ld.9.no-tra.snp-sv.missing-filter.txt -n 14818 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr9.txt
+shuf SNPs_after_plink_ld.10.no-tra.snp-sv.missing-filter.txt -n 14424 -o ~/projects/sv_nams/data/subset-NAM-snps/SNPs-to-keep_random-missing-filter_chr10.txt
 
 
 # subsample random SNPs based on SNPs with very high or with very low LD
@@ -1149,32 +1251,32 @@ for chr in {1..10}; do
   qsub -v CHR=$chr ~/projects/sv_nams/scripts/subsample_high-low_ld.sh
 done
 
-# # results: 272,009 snps in high ld
-# 42473 SNPs-to-keep_subsample-high-ld_chr1.missing-filter.txt
-# 25726 SNPs-to-keep_subsample-high-ld_chr2.missing-filter.txt
-# 30648 SNPs-to-keep_subsample-high-ld_chr3.missing-filter.txt
-# 26701 SNPs-to-keep_subsample-high-ld_chr4.missing-filter.txt
-# 31352 SNPs-to-keep_subsample-high-ld_chr5.missing-filter.txt
-# 25267 SNPs-to-keep_subsample-high-ld_chr6.missing-filter.txt
-# 20740 SNPs-to-keep_subsample-high-ld_chr7.missing-filter.txt
-# 26282 SNPs-to-keep_subsample-high-ld_chr8.missing-filter.txt
-# 22412 SNPs-to-keep_subsample-high-ld_chr9.missing-filter.txt
-# 20408 SNPs-to-keep_subsample-high-ld_chr10.missing-filter.txt
+# # results: 152,408 snps in high ld
+# 24230 SNPs-to-keep_subsample-high-ld_chr1.missing-filter.txt
+# 11885 SNPs-to-keep_subsample-high-ld_chr2.missing-filter.txt
+# 16699 SNPs-to-keep_subsample-high-ld_chr3.missing-filter.txt
+# 14540 SNPs-to-keep_subsample-high-ld_chr4.missing-filter.txt
+# 16875 SNPs-to-keep_subsample-high-ld_chr5.missing-filter.txt
+# 14793 SNPs-to-keep_subsample-high-ld_chr6.missing-filter.txt
+# 12110 SNPs-to-keep_subsample-high-ld_chr7.missing-filter.txt
+# 14928 SNPs-to-keep_subsample-high-ld_chr8.missing-filter.txt
+# 13450 SNPs-to-keep_subsample-high-ld_chr9.missing-filter.txt
+# 12898 SNPs-to-keep_subsample-high-ld_chr10.missing-filter.txt
 
-# # results: 277,527 snps in low ld
-# 45737 SNPs-to-keep_subsample-low-ld_chr1.missing-filter.txt
-# 25858 SNPs-to-keep_subsample-low-ld_chr2.missing-filter.txt
-# 30790 SNPs-to-keep_subsample-low-ld_chr3.missing-filter.txt
-# 26823 SNPs-to-keep_subsample-low-ld_chr4.missing-filter.txt
-# 31454 SNPs-to-keep_subsample-low-ld_chr5.missing-filter.txt
-# 25659 SNPs-to-keep_subsample-low-ld_chr6.missing-filter.txt
-# 20805 SNPs-to-keep_subsample-low-ld_chr7.missing-filter.txt
-# 26389 SNPs-to-keep_subsample-low-ld_chr8.missing-filter.txt
-# 22768 SNPs-to-keep_subsample-low-ld_chr9.missing-filter.txt
-# 21244 SNPs-to-keep_subsample-low-ld_chr10.missing-filter.txt
+# # results: 169,793 snps in low ld
+# 27830 SNPs-to-keep_subsample-low-ld_chr1.missing-filter.txt
+# 13358 SNPs-to-keep_subsample-low-ld_chr2.missing-filter.txt
+# 18647 SNPs-to-keep_subsample-low-ld_chr3.missing-filter.txt
+# 16229 SNPs-to-keep_subsample-low-ld_chr4.missing-filter.txt
+# 18624 SNPs-to-keep_subsample-low-ld_chr5.missing-filter.txt
+# 16421 SNPs-to-keep_subsample-low-ld_chr6.missing-filter.txt
+# 13169 SNPs-to-keep_subsample-low-ld_chr7.missing-filter.txt
+# 16273 SNPs-to-keep_subsample-low-ld_chr8.missing-filter.txt
+# 14818 SNPs-to-keep_subsample-low-ld_chr9.missing-filter.txt
+# 14424 SNPs-to-keep_subsample-low-ld_chr10.missing-filter.txt
 ```
 
-> The reason why the subset with SNPs in high LD with an SV had less SNPs than 277k is that plink doesn't compute LD for markers that have minimum allele frequency less than 0.05 or that are monomorphic. Since the difference is minimal, it is unlikely to interfere with the GWAS.
+> The reason why the subset with SNPs in high LD with an SV had less SNPs than 169k is that plink doesn't compute LD for markers that have minimum allele frequency less than 0.05 or that are monomorphic. Since the difference is minimal, it is unlikely to interfere with the GWAS.
 
 I ploted and summarized the R2 distribution for each subset.
 
@@ -1224,11 +1326,6 @@ for chr in {2..10}; do
   echo $chr
   sed 1d NAM_rils_subset_SNPs.chr-$chr.snps-random.hmp.txt >> NAM_rils_subset_SNPs.snps-random.hmp.txt
 done
-
-# compress for faster upload on cyverse later
-gzip NAM_rils_subset_SNPs.snps-high-ld-sv.hmp.txt
-gzip NAM_rils_subset_SNPs.snps-low-ld-sv.hmp.txt
-gzip NAM_rils_subset_SNPs.snps-random.hmp.txt
 ```
 
 I also created a hapmap only with SV subset to be used in GWAS comparisons.
@@ -1246,9 +1343,6 @@ for chr in {2..10}; do
   echo $chr
   sed 1d NAM_rils_subset_SVs.chr-$chr.hmp.txt >> NAM_rils_subset_SVs.hmp.txt
 done
-
-# compress for faster upload
-gzip NAM_rils_subset_SVs.hmp.txt
 ```
 
 After creating all subsets, I performed some QC to make sure the data is ready for GWAS. I ploted the distribution of SNPs along the chromosome to see where the markers are in the genome, ploted the distribution of missing data for each dataset, and also the distribution of R2 values between SNPs and SVs.
@@ -1257,14 +1351,14 @@ After creating all subsets, I performed some QC to make sure the data is ready f
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
 # distribution SNPs (or SNPs + SV) along chromosomes
-Rscript scripts/distribution_snps-svs_chrom.R ld/subset_high-ld-snps/SNPs-kept_chr1.txt \
-                                              ld/subset_high-ld-snps/distribution_snps_chrom_high.png
+Rscript ~/projects/sv_nams/scripts/distribution_snps-svs_chrom.R ld/subset_high-ld-snps/SNPs-kept_chr1.txt \
+                                                                 ld/subset_high-ld-snps/distribution_snps_chrom_high.png
 
-Rscript scripts/distribution_snps-svs_chrom.R ld/subset_low-ld-snps/SNPs-kept_chr1.txt \
-                                              ld/subset_low-ld-snps/distribution_snps_chrom_low.png
+Rscript ~/projects/sv_nams/scripts/distribution_snps-svs_chrom.R ld/subset_low-ld-snps/SNPs-kept_chr1.txt \
+                                                                 ld/subset_low-ld-snps/distribution_snps_chrom_low.png
 
-Rscript scripts/distribution_snps-svs_chrom.R ld/subset_random-snps/SNPs-kept_chr1.txt \
-                                              ld/subset_random-snps/distribution_snps_chrom_random.png
+Rscript ~/projects/sv_nams/scripts/distribution_snps-svs_chrom.R ld/subset_random-snps/SNPs-kept_chr1.txt \
+                                                                 ld/subset_random-snps/distribution_snps_chrom_random.png
 
 
 # histogram percent missing data for each subset
@@ -1284,28 +1378,27 @@ run_pipeline.pl -Xmx40g -importGuess NAM_rils_subset_SVs.hmp.txt \
                 -GenotypeSummaryPlugin -endPlugin \
                 -export ld/tassel_summary_sv
 
-Rscript scripts/qc_tassel_summary.R ld/subset_high-ld-snps/tassel_summary3.txt \
-                                    ld/subset_high-ld-snps/missing_snps_high.png
+Rscript ~/projects/sv_nams/scripts/qc_tassel_summary.R ld/subset_high-ld-snps/tassel_summary3.txt \
+                                                       ld/subset_high-ld-snps/missing_snps_high.png
 
-Rscript scripts/qc_tassel_summary.R ld/subset_low-ld-snps/tassel_summary3.txt \
-                                    ld/subset_low-ld-snps/missing_snps_low.png
+Rscript ~/projects/sv_nams/scripts/qc_tassel_summary.R ld/subset_low-ld-snps/tassel_summary3.txt \
+                                                       ld/subset_low-ld-snps/missing_snps_low.png
 
-Rscript scripts/qc_tassel_summary.R ld/subset_random-snps/tassel_summary3.txt \
-                                    ld/subset_random-snps/missing_snps_random.png
+Rscript ~/projects/sv_nams/scripts/qc_tassel_summary.R ld/subset_random-snps/tassel_summary3.txt \
+                                                       ld/subset_random-snps/missing_snps_random.png
 
-Rscript scripts/qc_tassel_summary.R ld/tassel_summary_sv3.txt \
-                                    ld/missing_svs_subset.png
+Rscript ~/projects/sv_nams/scripts/qc_tassel_summary.R ld/tassel_summary_sv3.txt \
+                                                       ld/missing_svs_subset.png
 
 # plot distribution R2
-Rscript scripts/distribution_snps-LD-svs_all-chr.R ld/subset_high-ld-snps \
-                                                   ld/subset_high-ld-snps/dist-LD_SNPs-SVs_high.png
+Rscript ~/projects/sv_nams/scripts/distribution_snps-LD-svs_all-chr.R ld/subset_high-ld-snps \
+                                                                      ld/subset_high-ld-snps/dist-LD_SNPs-SVs_high.png
 
-Rscript scripts/distribution_snps-LD-svs_all-chr.R ld/subset_low-ld-snps \
-                                                   ld/subset_low-ld-snps/dist-LD_SNPs-SVs_low.png
+Rscript ~/projects/sv_nams/scripts/distribution_snps-LD-svs_all-chr.R ld/subset_low-ld-snps \
+                                                                      ld/subset_low-ld-snps/dist-LD_SNPs-SVs_low.png
 
-Rscript scripts/distribution_snps-LD-svs_all-chr.R ld/subset_random-snps \
-                                                   ld/subset_random-snps/dist-LD_SNPs-SVs_random.png
-
+Rscript ~/projects/sv_nams/scripts/distribution_snps-LD-svs_all-chr.R ld/subset_random-snps \
+                                                                      ld/subset_random-snps/dist-LD_SNPs-SVs_random.png
 ```
 
 Finally, I uploaded the 4 subsets (3 SNP subsets and 1 SV subset) to Cyverse:
@@ -1314,11 +1407,17 @@ Finally, I uploaded the 4 subsets (3 SNP subsets and 1 SV subset) to Cyverse:
 # go to data folder of the project
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
-# i made a mistake the first time I uploaded this into cyverse, so i will create a copy
-# (because i don't have authorization to remove a file from cyverse folder)
-cp NAM_rils_subset_SNPs.snps-high-ld-sv.hmp.txt.gz NAM_rils_subset_SNPs.snps-high-ld-sv.v2.hmp.txt.gz
-cp NAM_rils_subset_SNPs.snps-low-ld-sv.hmp.txt.gz NAM_rils_subset_SNPs.snps-low-ld-sv.v2.hmp.txt.gz
-cp NAM_rils_subset_SNPs.snps-random.hmp.txt.gz NAM_rils_subset_SNPs.snps-random.v2.hmp.txt.gz
+# compress for faster upload
+gzip NAM_rils_subset_SNPs.snps-high-ld-sv.hmp.txt
+gzip NAM_rils_subset_SNPs.snps-low-ld-sv.hmp.txt
+gzip NAM_rils_subset_SNPs.snps-random.hmp.txt
+gzip NAM_rils_subset_SVs.hmp.txt
+
+# rename files for consistency with versions of projected snps and svs
+cp NAM_rils_subset_SNPs.snps-high-ld-sv.hmp.txt.gz NAM_rils_subset_SNPs.snps-high-ld-sv.v7.hmp.txt.gz
+cp NAM_rils_subset_SNPs.snps-low-ld-sv.hmp.txt.gz NAM_rils_subset_SNPs.snps-low-ld-sv.v7.hmp.txt.gz
+cp NAM_rils_subset_SNPs.snps-random.hmp.txt.gz NAM_rils_subset_SNPs.snps-random.v7.hmp.txt.gz
+cp NAM_rils_subset_SVs.hmp.txt.gz NAM_rils_subset_SVs.v7.hmp.txt.gz
 
 # log in to cyverse
 iinit
@@ -1327,17 +1426,12 @@ icd /iplant/home/shared/NAM/Misc
 # check if files match what Arun described
 ils
 # upload data
-iput -K NAM_rils_subset_SNPs.snps-high-ld-sv.v2.hmp.txt.gz
-iput -K NAM_rils_subset_SNPs.snps-low-ld-sv.v2.hmp.txt.gz
-iput -K NAM_rils_subset_SNPs.snps-random.v2.hmp.txt.gz
-iput -K NAM_rils_subset_SVs.hmp.txt.gz
+iput -K NAM_rils_subset_SNPs.snps-high-ld-sv.v7.hmp.txt.gz
+iput -K NAM_rils_subset_SNPs.snps-low-ld-sv.v7.hmp.txt.gz
+iput -K NAM_rils_subset_SNPs.snps-random.v7.hmp.txt.gz
+iput -K NAM_rils_subset_SVs.v7.hmp.txt.gz
 # exit iRods
 iexit full
-
-# gunzip NAM_rils_subset_SNPs.snps-random.hmp.txt.gz
-# gunzip NAM_rils_subset_SNPs.snps-high-ld-sv.hmp.txt.gz
-# gunzip NAM_rils_subset_SNPs.snps-low-ld-sv.hmp.txt.gz
-# gunzip NAM_rils_subset_SVs.hmp.txt.gz
 ```
 
 
@@ -1352,7 +1446,7 @@ cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 # svs
 for chr in {1..10}; do
   echo $chr
-  gzip -c NAM_rils_projected-SVs-only.all-RILs.duplicated-SVs-removed.chr-$chr.hmp.txt > NAM_rils_projected-SVs-only.all-RILs.duplicated-SVs-removed.chr-$chr.hmp.txt.gz
+  gzip -c NAM_rils_projected-SVs-only.all-RILs.chr-$chr.hmp.txt > NAM_rils_projected-SVs-only.all-RILs.chr-$chr.v7.hmp.txt.gz
 done
 
 # snps
@@ -1368,12 +1462,14 @@ icd /iplant/home/shared/NAM/Misc
 ils
 # upload SV dataset
 for chr in {1..10}; do
-  iput -K NAM_rils_projected-SVs-only.all-RILs.duplicated-SVs-removed.chr-$chr.hmp.txt.gz
+  iput -K NAM_rils_projected-SVs-only.all-RILs.chr-$chr.v7.hmp.txt.gz
 done
 # upload SNP datasets
 for chr in {1..10}; do
-  iput -K NAM_rils_projected-reseq-SNPs-only.all-RILs.duplicated-SVs-removed.chr-$chr.hmp.txt.gz
+  iput -K NAM_rils_projected-reseq-SNPs-only.all-RILs.chr-$chr.v7.hmp.txt.gz
 done
 # exit iRods
 iexit full
 ```
+
+All files were moved to Cyverse folder: `/iplant/home/shared/NAM/Misc/NAM-SV-projected-V7`
