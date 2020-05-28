@@ -14,4 +14,4 @@ Please follow this structure for your contribution.
 
 Go, NAMsters!
 
-![NAMsters](assets/NAMster2.png)
+![NAMsters](/assets/NAMster2.png)
