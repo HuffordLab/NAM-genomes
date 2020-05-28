@@ -8,8 +8,10 @@ Please follow this structure for your contribution.
 
 2. Add a README.md file within the folder, specifically addressing the order and inputs required for the scripts you put in the folder
 
-3. If you have any figures, please create a folder within that section folder  (please name it "assets") and drop them there. You can also add other files or things that doesn't qualify as scripts in there. 
+3. If you have any figures, please create a folder within that section folder  (please name it "assets") and drop them there. You can also add other files or things that doesn't qualify as scripts in there.
 
 4. Please let me know if you have any questions or have any suggestions!
 
 Go, NAMsters!
+
+![NAMsters](assets/NAMster2.png)
