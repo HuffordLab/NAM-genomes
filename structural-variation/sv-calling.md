@@ -129,3 +129,5 @@ Merge
 cd r2_vcf
 ../merge-second-round-vcf.sh
 ```
+
+## 3. Calling variants using BioNano Solve
