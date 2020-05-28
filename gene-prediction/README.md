@@ -2,10 +2,10 @@
 
 ## Overview:
 
-1. Methods for Direct-Evidence predictions:
-2. Methods for _ab initio_ predictions:
-3. Refining, merging and post-processing predictions:
-4. Ensembl compara pipeline overview:
+1. [Methods for Direct-Evidence predictions](evidence-based.md):
+2. [Methods for _ab initio_ predictions](ab-initios.md):
+3. [Refining, merging and post-processing predictions](merge-predictions.md):
+4. [Ensembl compara pipeline overview](compara.md):
 
 
 ## Workflow
