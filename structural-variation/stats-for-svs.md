@@ -1,5 +1,5 @@
 
-# 1. file preprocessing 
+# 1. File Processing 
 *input File: NAM_founders_SVs.sniffles-bionano.hmp.txt*
 
 ``sed -e 's+AA+0/0+g' -e 's+TT+1/1+g' -e 's+NN+./.+g' NAM_founders_SVs.sniffles-bionano.hmp.txt > Nam_replaced.txt``
@@ -67,7 +67,7 @@
 #### seperate different SVs
 
 
-# 2.sv_count
+# 2. SV Count Analysis
 
  ``wc -l *bed > sv_count.bed``
  ``sed -e 's/INS_merged_sorted_ordered_//g' -e 's/_combined_wIDs.bed//g' sv_count.bed >ins_count.bed``
@@ -79,7 +79,7 @@ run `sv_summary_stat_v8.Rmd` for corresponding plots
 
 
 
-# 3.sv_size
+# 3. SV Size Analysis
 
 ``for i in *wIDs.bed; do awk '{$5 = $3-$2} 1' ${i} > diff_${i} ;done``
 #### Substract the stop and start position of the SV
@@ -95,7 +95,7 @@ run `sv_summary_stat_v8.Rmd` for corresponding plots
 run `sv_summary_stat_v8.Rmd` for corresponding plots
 
 
-# 4.bootstrap500
+# 4. Cumulative SV count analysis(bootstrap500)
 
 ``grep -v tra combined.txt > combined2.txt``
 #### exclude tra
@@ -118,7 +118,7 @@ run `sv_summary_stat_v8.Rmd` for corresponding plots
 run `bootstrapSV_v8.Rmd` for corresponding plots
 
 
-# 5.MAF
+# 5. MAF Analysis
 
 ``cut -f 2 site-summary.txt| sed 's/\./\t/g' > temp.txt``
 ``cut -f 3,4 temp.txt | tail -n +2 > temp1.txt``
@@ -146,7 +146,7 @@ run `bootstrapSV_v8.Rmd` for corresponding plots
 run `bootstrapSV_v8.Rmd` for corresponding plots
 
 
-# 6. SV density
+# 6. SV Density Analysis
 
 ``genome.txt (for B73_V5)``
 
