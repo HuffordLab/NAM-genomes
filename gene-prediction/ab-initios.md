@@ -99,5 +99,28 @@ braker.pl \
    --cores 36 \
    --gff3
 ```
+</details>
 
+
+
+<details><summary> GTF to GFF error</summary> 
+
+If you get the error saying that the conversion of GTF to GFF3 failed, 
+
+```
+gtf2gff.pl: transcript jg1.t1 has conflicting gene parents: and jg1
+```
+
+you can fix this file and convert it to GFF3 as follows.
+The script [fix_joingenes_gtf.pl](https://github.com/Gaius-Augustus/Augustus/blob/master/scripts/fix_joingenes_gtf.pl) is needed.
+
+```bash
+fix_joingenes_gtf.pl < joingenes.gtf > joingenes.fixed.gtf
+```
+
+After this, the fixed joingenes output will contain the gene feature line and correctly formatted transcript line that is fully comptabile with gtf2gff.pl:
+
+```bash
+gtf2gff.pl < joingenes.fixed.gtf --gff3 --out=joingenes.gff3
+```
 </details>
