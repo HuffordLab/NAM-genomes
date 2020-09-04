@@ -72,9 +72,9 @@ braker.pl \
 ```
 
 
-<details><summary>If using `hintsfile.gff` and `protein_alignment_gth.gff3`, see here </summary>
+<details><summary>If using alignment files, see here </summary>
 
-The `hintsfile.gff` and `protein_alignment_gth.gff3` created in the first round can be provided and retrained on the whole genome as well:
+The `hintsfile.gff` and `protein_alignment_gth.gff3` created in the first round can be provided and retrained on the whole genome as well (see script [here](scripts-braker/runBraker-with-aln-files.sh) ):
 
 ```bash
 #!/bin/bash
