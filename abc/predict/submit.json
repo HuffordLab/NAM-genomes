@@ -1,0 +1,13 @@
+{
+    "__default__" :
+    {
+        "p" : "bigmemm",
+        "mem" : "6G",
+        "time" : "5:00:00",
+        "cpus-per-task" : 1,
+        "name" : "{rule}.{wildcards}",
+        "o" : "slurm_log/{rule}.{wildcards}.%j.out",
+        "e" : "slurm_log/{rule}.{wildcards}.%j.err"
+    }
+}
+

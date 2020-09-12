@@ -1,0 +1,130 @@
+#bedfile of windows
+#from fixed import *
+import pandas as pd
+import random 
+
+n_samp = 26 #downsample!!
+window_size = 20000000
+bedfile = f"data/ref/Zm-B73-REFERENCE-NAM-5.0_{int(window_size / 1e6)}Mb.bed"
+gff = "data/ref/zea_maysb73_core_3_87_1_chr-added.gff", #NOTE, scaffolds are dropped and chrom names have chr prefixed!
+svs = ["SFS-dup_inv_tra_ins_del", "SFS-dup", "SFS-inv", "SFS-tra"]
+svs = ["SFS-dup_inv_tra_ins_del"]
+svsfs_files = [f"data/sfs/NAM_{s}_SV.txt" for s in svs]
+final_files = [f"data/sfs/NAM_{s}_all.txt" for s in svs]
+
+sv_all="data/variants/NAM_founders_SVs.sniffles-bionano.hmp.txt"
+
+sv_cds = "data/variants/NAM-structural-variations_CDS.txt"
+
+posts = [f"data/NAM_abc_out/NAM_ABC_{s}_df.csv" for s in svs]
+
+
+#random.seed(11125)
+#abc_df = pd.read_csv("data/NAM_abc_out/NAM_ABC_SFS-dup_inv_tra_ins_del_df.csv", sep = ",").query('N0 > 26 and Nb > 26 and mu_sv > 0 and sfs1_mean > 0 and sfs2_mean > 0 and sfs1_shape > 0 and sfs2_shape > 0').groupby('window').apply(lambda x: x.sample(50)).astype({'N0': 'int32', 'Nb': 'int32'})
+#postcheck_files = [f"data/postcheck_out/window__{row['window']}_Na__1000_N0__{row['N0']}_Nb__{row['Nb']}_Bt__67_musv__{row['mu_sv']}_sfs1shape__{row['sfs1_shape']}_sfs1mean__{-row['sfs1_mean']}_sfs2shape__{row['sfs2_shape']}_sfs2mean__{-row['sfs2_mean']}_sumstats.txt" for index, row in abc_df.iterrows()]
+
+#window = list(abc_df['window'])
+#N0 = list(abc_df['N0'])
+#Nb = list(abc_df['Nb'])
+#mu_sv = list(abc_df['mu_sv'])
+#sfs1_mean = list(abc_df['sfs1_mean'])
+#sfs2_mean = list(abc_df['sfs2_mean'])
+#sfs1_shape = list(abc_df['sfs1_shape'])
+#sfs2_shape = list(abc_df['sfs2_shape'])
+
+rule all:
+    input:
+        bedfile,
+        sv_cds,
+        "data/ref/Zm-B73-REFERENCE-NAM-5.0_FOLD.txt",
+        "data/sfs/NAM_SFS_4fold_vcf.txt", 
+        "data/sfs/NAM_SFS_0fold_vcf.txt",
+        svsfs_files,
+        final_files, posts
+
+rule windows:
+    input:
+        "data/ref/Zm-B73-REFERENCE-NAM-5.0.gbed"
+    output:
+        bedfile
+    params:
+        Mb = window_size
+    shell:
+        "bedtools makewindows -g {input} -w {params.Mb} > {output}"
+
+rule fold:
+    input:
+        myscript = "src/cds_fold/cds_fold.py",
+        gff = gff,
+        ref = "data/ref/Zm-B73-REFERENCE-NAM-5.0.fa"
+    output:
+        logfile = "data/ref/Zm-B73-REFERENCE-NAM-5.0_FOLD.log",
+        fold = "data/ref/Zm-B73-REFERENCE-NAM-5.0_FOLD.txt"
+    shell:
+        "python {input.myscript} {input.ref} {input.gff} -o {output.fold} > {output.logfile}"
+
+
+rule make_sv_cds:
+    input:
+        gff = gff,
+        sv = sv_all
+    output:
+        sv_cds
+    shell:
+        "bash src/make_SV_cds.sh"
+
+rule sfs_vcf:
+    input:
+        myscript = "src/get_nam_sfs.py",
+        #bed="data/ref/Zm-B73-REFERENCE-NAM-5.0_2Mb.bed",
+        bed = bedfile,
+        fold="data/ref/Zm-B73-REFERENCE-NAM-5.0_FOLD.txt",
+        #vcf="data/variants/B73v5.NAM-illumina-snps-only_filtered.vcf.gz"
+        vcf="data/variants/B73v5.NAM-illumina_filtered-pass-only-two-round-gatk-snps.vcf.gz"
+    output:
+        "data/sfs/NAM_SFS_{fold}fold_vcf.txt"
+    params:
+        fold = "{fold}",
+        n_samp = n_samp
+
+    shell:
+        "python src/get_nam_sfs.py -I {params.n_samp} -b {input.bed} -v {input.vcf} -t vcf -f {input.fold} -F {params.fold} > {output}"
+
+rule sfs_sv:
+    input:
+        myscript = "src/get_nam_sfs.py",
+        bed = bedfile,
+        sv=sv_all
+    output:
+        "data/sfs/NAM_SFS-{svs}_SV.txt"
+    params:
+        svs = "{svs}",
+        n_samp = n_samp
+    shell:
+        #"python src/get_nam_sfs.py -I {params.n_samp} -b {input.bed} -v {input.sv} -t sv -T {params.svs} > {output}" #!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        "python src/get_nam_sfs.py -I 26 -b data/ref/Zm-B73-REFERENCE-NAM-5.0_20Mb.bed  -v data/variants/SNIFFLES_v5_20200618_80pc_presence.vcf.gz -t vcf  -A > {output}"
+
+rule make_full:
+    input:
+        fold0 = "data/sfs/NAM_SFS_0fold_vcf.txt",
+        fold4 = "data/sfs/NAM_SFS_4fold_vcf.txt",
+        sv = "data/sfs/NAM_{svtype}_SV.txt"
+    output:
+        "data/sfs/NAM_{svtype}_all.txt"
+    shell:
+        "paste {input.fold4} {input.fold0} {input.sv} > {output}"
+
+
+rule run_abc:
+    input:
+        myscript = "src/abc_sfs.R",
+        sim = "pop_sfs.txt",
+        param = "pop.txt",
+        sfs = "data/sfs/NAM_{svtype}_all.txt"
+    output:
+        "data/NAM_abc_out/NAM_ABC_{svtype}_df.csv"
+    shell:
+        "Rscript src/abc_sfs.R -c 0 -s {input.sim} -p {input.param} -e {input.sfs} -o {output}"
+
+
+
