@@ -1,0 +1,33 @@
+# extracting pairs from one to one mapping and adjacent pairs 
+# optional, could apply filter on the one to one mapping type
+for j in *.txt ; do
+  grep 'adjacent_genes_syntenic' "$j" | cut -f 1,12 | awk '{split($2,a,";");for(i in a)print $1"\t"a[i]}' | awk -F"," '$1=$1' OFS="\t" | cut -f 1,2 | sed 's/\t/,/g' >  $(basename "$j")_adj_pairs.txt 
+  awk -F":" '$1=$1' OFS="\t" "$j" | cut -f 1-18 | grep -v NA | awk 'NR >1, $19=$18/$16'| awk '(NR>0) && ($19 >= 0.0 )'| sed 's/ /,/g' | grep one_to_one_mapping | cut -d ',' -f 1,12 >  $(basename "$j")_flt121_pair.txt 
+  cat $(basename "$j")_adj_pairs.txt $(basename "$j")_flt121_pair.txt  > $(basename "$j")_combine.txt
+done
+
+# carry out the files named as _combine.txt, this file has pairs from both adjacent and one to one mapping type
+
+# change comma separated rows into "\t" separated rows 
+sed -i 's/,/\t/g' *
+
+# sort all gene ID before the first merging by reference 
+
+for j in *.txt; do
+ sort "$j" > $(basename "$j")_sort.txt
+done 
+
+# for duplicates, merge back to semi comma separated 
+for j in *sort.txt; do
+  awk '
+      BEGIN{FS="\t"; OFS=FS}; 
+      { arr[$1] = arr[$1] == ""? $2 : arr[$1] ";" $2 }   
+      END {for (i in arr) print i, arr[i] }
+    ' "$j" > $(basename "$j")_merge.txt
+done 
+
+# add header to the gene pairs before downloading for R processing 
+for i in *.txt; do
+    id=$(echo "$i" | cut -d'_' -f2)
+    sed "1iQuery_gene\t$id" $i > $(basename "$i")_fmt_col_name.txt
+done

@@ -1,0 +1,105 @@
+NAM,Gene_Type,Gene_Count
+B73,Core Gene       ,27856
+B73,Dispensible Gene,15207
+B73,Private Gene    ,412
+B73,Soft Gene       ,3984
+B97,Core Gene       ,27856
+B97,Dispensible Gene,15371
+B97,Private Gene    ,531
+B97,Soft Gene       ,3998
+CML103,Core Gene       ,27856
+CML103,Dispensible Gene,14785
+CML103,Private Gene    ,798
+CML103,Soft Gene       ,3948
+CML228,Core Gene       ,27856
+CML228,Dispensible Gene,14830
+CML228,Private Gene    ,780
+CML228,Soft Gene       ,3764
+CML247,Core Gene       ,27856
+CML247,Dispensible Gene,14820
+CML247,Private Gene    ,907
+CML247,Soft Gene       ,3970
+CML277,Core Gene       ,27856
+CML277,Dispensible Gene,14730
+CML277,Private Gene    ,962
+CML277,Soft Gene       ,3948
+CML322,Core Gene       ,27856
+CML322,Dispensible Gene,14797
+CML322,Private Gene    ,781
+CML322,Soft Gene       ,3772
+CML333,Core Gene       ,27856
+CML333,Dispensible Gene,15025
+CML333,Private Gene    ,864
+CML333,Soft Gene       ,3983
+CML52,Core Gene       ,27856
+CML52,Dispensible Gene,14429
+CML52,Private Gene    ,805
+CML52,Soft Gene       ,3568
+CML69,Core Gene       ,27856
+CML69,Dispensible Gene,14782
+CML69,Private Gene    ,894
+CML69,Soft Gene       ,3969
+HP301,Core Gene       ,27856
+HP301,Dispensible Gene,14739
+HP301,Private Gene    ,706
+HP301,Soft Gene       ,3954
+Il14H,Core Gene       ,27856
+Il14H,Dispensible Gene,14547
+Il14H,Private Gene    ,808
+Il14H,Soft Gene       ,3915
+Ki11,Core Gene       ,27856
+Ki11,Dispensible Gene,14862
+Ki11,Private Gene    ,773
+Ki11,Soft Gene       ,3937
+Ki3,Core Gene       ,27856
+Ki3,Dispensible Gene,15099
+Ki3,Private Gene    ,703
+Ki3,Soft Gene       ,4003
+Ky21,Core Gene       ,27856
+Ky21,Dispensible Gene,15383
+Ky21,Private Gene    ,563
+Ky21,Soft Gene       ,3951
+M162W,Core Gene       ,27856
+M162W,Dispensible Gene,15584
+M162W,Private Gene    ,602
+M162W,Soft Gene       ,3902
+M37W,Core Gene       ,27856
+M37W,Dispensible Gene,15290
+M37W,Private Gene    ,841
+M37W,Soft Gene       ,3961
+Mo18W,Core Gene       ,27856
+Mo18W,Dispensible Gene,14685
+Mo18W,Private Gene    ,1241
+Mo18W,Soft Gene       ,3820
+Ms71,Core Gene       ,27856
+Ms71,Dispensible Gene,15249
+Ms71,Private Gene    ,558
+Ms71,Soft Gene       ,3968
+NC350,Core Gene       ,27856
+NC350,Dispensible Gene,15047
+NC350,Private Gene    ,684
+NC350,Soft Gene       ,3995
+NC358,Core Gene       ,27856
+NC358,Dispensible Gene,14940
+NC358,Private Gene    ,681
+NC358,Soft Gene       ,3986
+Oh43,Core Gene       ,27856
+Oh43,Dispensible Gene,15098
+Oh43,Private Gene    ,616
+Oh43,Soft Gene       ,3929
+Oh7B,Core Gene       ,27856
+Oh7B,Dispensible Gene,14995
+Oh7B,Private Gene    ,1204
+Oh7B,Soft Gene       ,3512
+P39,Core Gene       ,27856
+P39,Dispensible Gene,14673
+P39,Private Gene    ,868
+P39,Soft Gene       ,3828
+Tx303,Core Gene       ,27856
+Tx303,Dispensible Gene,14848
+Tx303,Private Gene    ,796
+Tx303,Soft Gene       ,3979
+Tzi8,Core Gene       ,27856
+Tzi8,Dispensible Gene,14886
+Tzi8,Private Gene    ,936
+Tzi8,Soft Gene       ,3875
