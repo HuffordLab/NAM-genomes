@@ -1,5 +1,0 @@
-# intersecting gmap_gff with annotation gff files using bedtools
-# gff model in gmap_gff has to cover at least 90% of the gene model in the master_gff file 
-module load bedtools 
-
-intersectBed -a gmap_cutoff_90.gff -b /home/hirschc1/qiuxx221/nam_pan_genome/NAM_annotation/canonical_gff/master_gff_for_intersect.gff -F 0.90 -wa -wb > 90_intersect_90_gmap_cutoff.gff
