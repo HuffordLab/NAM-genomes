@@ -1,5 +1,5 @@
-setwd("~/Desktop/NAM_26_genomes/fill_NA/gff_fetch_pipeline/")
-fill_info <- read.csv("~/Desktop/NAM_26_genomes/fill_NA/gff_fetch_pipeline/final_list_for_merge.txt",sep = "\t",header=FALSE)
+setwd("")
+fill_info <- read.csv("final_list_for_merge.txt",sep = "\t",header=FALSE)
 colnames(fill_info) <- c("Query_gene","NAM_genome","Gmap_coordinate")
 
 #reshape the dataset 
@@ -12,7 +12,7 @@ write.csv(reshaped_datafram, file= "reshaped_matrix.csv")
 matrix_for_merge = subset(reshaped_datafram, select = c(Query_gene,B73,Tzi8,Ky21,M162W,Ms71,Oh7B,Oh43,M37W,Mo18W,NC350,HP301,Il14H,P39,CML52,CML69,Ki11,CML228,CML247,CML277,CML322,CML333,Ki3,CML103,Tx303,NC358,B97))
 
 # read existing matrix 
-pan_26_matrix <- read.csv("~/Desktop/NAM_26_genomes/pan_26_final_1000_10/pan26_all.collapsed.csv")
+pan_26_matrix <- read.csv("pan26_all.collapsed.csv")
 pan_26_for_merge = subset(pan_26_matrix, select = c(Query_gene,B73,Tzi8,Ky21,M162W,Ms71,Oh7B,Oh43,M37W,Mo18W,NC350,HP301,Il14H,P39,CML52,CML69,Ki11,CML228,CML247,CML277,CML322,CML333,Ki3,CML103,Tx303,NC358,B97))
 
 merged <- rbind(pan_26_for_merge,matrix_for_merge)
@@ -21,7 +21,7 @@ write.csv(merged,file="gmap_join_matrix.csv")
 library(data.table)
 
 
-dup.matrix.file <- "~/Desktop/NAM_26_genomes/fill_NA/R_join_matrix/gmap_join_matrix.csv"
+dup.matrix.file <- "gmap_join_matrix.csv"
 
 # load libraries
 library(data.table)
@@ -86,5 +86,5 @@ for (curr.parent in 1:NCOL(dup.matrix)) {
 }
 
 # write file
-outfile.name <- gsub(".csv", ".gmap_collapsed2.csv", dup.matrix.file)
+outfile.name <- gsub(".csv", ".gmap_collapsed.csv", dup.matrix.file)
 fwrite(dup.matrix, file = outfile.name, sep = ",", row.names = FALSE, col.names = FALSE, na = "NA", quote = FALSE)
