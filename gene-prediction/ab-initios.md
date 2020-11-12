@@ -125,3 +125,26 @@ After this, the fixed joingenes output will contain the gene feature line and co
 gtf2gff.pl < joingenes.fixed.gtf --gff3 --out=joingenes.gff3
 ```
 </details>
+
+### Post processing of BRAKER models
+
+Additional structural improvements for the Mikado generated transcripts were completed using the PASA (v2.3.3) genome annotation tool. The inputs for PASA included 2,019,896 maize EST derived from genbank, linage specific Mikado transcripts, 69,163 B73 full length cDNA from genbank and 46,311 maize iso-seq transcripts from 11 developmental tissues that were filtered for intron retention. Details on how the evidence for PASA was curated is provided here:?? PASA updated the models, providing UTR extensions, novel and additional alternative isoforms. 
+
+PASA was run in there steps:
+
+Step 1. included aligning the evidence to the repeatmasked genome sequence. All the evidences were combined into a single fasta input, along with masked genome, pasa-config file and Full-length accession list to the script [pasa_run_1.sh](/gene-prediction/cshl-scripts/pasa_run_1.sh) 
+```
+qsub pasa_run_1.sh 
+```
+
+Step 2. included loading the pasa transcript assemblies to sqlite database for comparsion and updating the Mikado models. This was done using script [pasa_run_2.sh](/gene-prediction/cshl-scripts/pasa_run_2.sh)
+
+```
+qsub pasa_run_2.sh
+```
+
+Step 3. Lastly PASA was again run updating models from Step 2 usng the script [pasa_run_3.sh](/gene-prediction/cshl-scripts/pasa_run_3.sh)
+
+```
+qsub pasa_run_2.sh
+```
