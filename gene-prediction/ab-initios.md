@@ -1,4 +1,3 @@
-
 # BRAKER predictions
 
 
@@ -126,8 +125,6 @@ After this, the fixed joingenes output will contain the gene feature line and co
 gtf2gff.pl < joingenes.fixed.gtf --gff3 --out=joingenes.gff3
 ```
 </details>
-
-
 
 ### Post processing of BRAKER models
 

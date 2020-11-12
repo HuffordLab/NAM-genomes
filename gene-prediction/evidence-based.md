@@ -81,6 +81,7 @@ finalize-files-and-pick.sh NAM
 
 ### 5. Post processing of evidence-based predictions
 
+
 Additional structural improvements for the Mikado generated transcripts were completed using the PASA (v2.3.3) genome annotation tool. The inputs for PASA included 2,019,896 maize EST derived from genbank, linage specific Mikado transcripts, 69,163 B73 full length cDNA from genbank and 46,311 maize iso-seq transcripts from 11 developmental tissues that were filtered for intron retention. Details on how the evidence for PASA was curated is provided here:?? PASA updated the models, providing UTR extensions, novel and additional alternative isoforms. 
 
 PASA was run in there steps:
