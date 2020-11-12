@@ -1,0 +1,22 @@
+{
+    "__default__" :
+    {
+        "p" : "med2",
+        "mem" : "5G",
+        "time" : "5:00:00",
+        "cpus-per-task" : 1,
+        "name" : "{rule}.{wildcards}",
+        "o" : "slurm_log/{rule}.{wildcards}.%j.out",
+        "e" : "slurm_log/{rule}.{wildcards}.%j.err"
+    }, 
+    "val_slim":
+    {
+        "cpus-per-task" : 1,
+        "mem" : "5G",
+        "time" : "3:00:00",
+        "p" : "low2",
+        "o" : "slurm_log/{rule}.{wildcards}.%j.out",
+        "e" : "slurm_log/{rule}.{wildcards}.%j.err"
+    }
+}
+

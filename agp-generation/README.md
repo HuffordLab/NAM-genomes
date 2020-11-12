@@ -25,7 +25,9 @@ for f in *.map; do
 done
 ```
 
-stdout:
+<details><summary> stdout:</summary>
+
+The example output for Mo18W
 ```
 For M018W Chr 1, orignal file had 113 markers, but only 103 had information and 103 sequences were able to extract
 For M018W Chr 2, orignal file had 75 markers, but only 65 had information and 65 sequences were able to extract
@@ -39,6 +41,8 @@ For M018W Chr 8, orignal file had 56 markers, but only 43 had information and 43
 For M018W Chr 9, orignal file had 57 markers, but only 46 had information and 46 sequences were able to extract
 For M018W Chr 10, orignal file had 35 markers, but only 31 had information and 31 sequences were able to extract
 ```
+
+</details>
 
 You will see `.fasta` and `.tsv` for each chr separately
 

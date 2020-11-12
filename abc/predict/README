@@ -1,0 +1,12 @@
+This directory contains the files and workflow to make predictions about the strength of selection on the NAM SNP and Structural variants. The workflow includes steps to generate the site frequency spectra, 0-fold and 4-fold sites, density of functional bases.
+
+Assuming computation is done on an HPC with slurm queue manager, all steps of the workflow can be implemented with
+
+`bash submit.sh`
+
+The `Snakefile` and `post_check.smk` contain all the steps of the workflow. 
+
+Before attempting to run the workflow, please download the data from NEED TO ADD: 
+
+
+Make sure the directory is named `data` and appears in the same working directory as this readme file. 

@@ -1,0 +1,27 @@
+#!/bin/bash
+#featureCounts -p -T 16 --verbose -M -g Parent -a B73_mikado.loci.gff3 -o B73_mikado.loci-counts.txt merged_B73.bam &> B73_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a B97_mikado.loci.gff3 -o B97_mikado.loci-counts.txt merged_B97.bam &> B97_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a CML103_mikado.loci.gff3 -o CML103_mikado.loci-counts.txt merged_CML103.bam &> CML103_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a CML228_mikado.loci.gff3 -o CML228_mikado.loci-counts.txt merged_CML228.bam &> CML228_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a CML247_mikado.loci.gff3 -o CML247_mikado.loci-counts.txt merged_CML247.bam &> CML247_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a CML277_mikado.loci.gff3 -o CML277_mikado.loci-counts.txt merged_CML277.bam &> CML277_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a CML322_mikado.loci.gff3 -o CML322_mikado.loci-counts.txt merged_CML322.bam &> CML322_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a CML333_mikado.loci.gff3 -o CML333_mikado.loci-counts.txt merged_CML333.bam &> CML333_mikado.loci.stdout
+#featureCounts -p -T 16 --verbose -M -g Parent -a CML52_mikado.loci.gff3 -o CML52_mikado.loci-counts.txt merged_CML52.bam &> CML52_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a CML69_mikado.loci.gff3 -o CML69_mikado.loci-counts.txt merged_CML69.bam &> CML69_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a HP301_mikado.loci.gff3 -o HP301_mikado.loci-counts.txt merged_HP301.bam &> HP301_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a IL14H_mikado.loci.gff3 -o IL14H_mikado.loci-counts.txt merged_IL14H.bam &> IL14H_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Ki11_mikado.loci.gff3 -o Ki11_mikado.loci-counts.txt merged_Ki11.bam &> Ki11_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Ki3_mikado.loci.gff3 -o Ki3_mikado.loci-counts.txt merged_Ki3.bam &> Ki3_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Ky21_mikado.loci.gff3 -o Ky21_mikado.loci-counts.txt merged_Ky21.bam &> Ky21_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a M162W_mikado.loci.gff3 -o M162W_mikado.loci-counts.txt merged_M162W.bam &> M162W_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a M37W_mikado.loci.gff3 -o M37W_mikado.loci-counts.txt merged_M37W.bam &> M37W_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Mo18W_mikado.loci.gff3 -o Mo18W_mikado.loci-counts.txt merged_Mo18W.bam &> Mo18W_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a MS71_mikado.loci.gff3 -o MS71_mikado.loci-counts.txt merged_MS71.bam &> MS71_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a NC350_mikado.loci.gff3 -o NC350_mikado.loci-counts.txt merged_NC350.bam &> NC350_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a NC358_mikado.loci.gff3 -o NC358_mikado.loci-counts.txt merged_NC358.bam &> NC358_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Oh43_mikado.loci.gff3 -o Oh43_mikado.loci-counts.txt merged_Oh43.bam &> Oh43_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Oh7b_mikado.loci.gff3 -o Oh7b_mikado.loci-counts.txt merged_Oh7b.bam &> Oh7b_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a P39_mikado.loci.gff3 -o P39_mikado.loci-counts.txt merged_P39.bam &> P39_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Tx303_mikado.loci.gff3 -o Tx303_mikado.loci-counts.txt merged_Tx303.bam &> Tx303_mikado.loci.stdout
+featureCounts -p -T 16 --verbose -M -g Parent -a Tzi8_mikado.loci.gff3 -o Tzi8_mikado.loci-counts.txt merged_Tzi8.bam &> Tzi8_mikado.loci.stdout
