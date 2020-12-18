@@ -416,7 +416,8 @@ final.svs.to.keep <- sv.parents[, 1]
 
 # write parental filtered file
 cat("Writing filtered file\n", sep = "")
-outfile.parents <- gsub("hmp.txt", "collapsed.hmp.txt", sv.parents.file)
+outfile.parents <- unlist(strsplit(sv.parents.file, ".", fixed = TRUE))[1]
+outfile.parents <- paste0(outfile.parents, ".hmp.txt")
 
 fwrite(x = sv.parents, file = outfile.parents, na = NA, quote = FALSE, sep = "\t")
 cat("  parents done!\n", sep = "")
