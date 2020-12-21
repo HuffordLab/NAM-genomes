@@ -4,8 +4,8 @@
 
 ### Figure 1
 
-Data file: 
-Script:
+* Data file: 
+* Script:
 
 
 
@@ -17,8 +17,11 @@ Script:
 
 ### Supp. Figure 1
 
-Data file:
+* Data file
+* Script
 
-Script:
 
+### Supp. Figure 25:
 
+* [Script](scripts-and-files/S25.ipynb)
+* [Data](scripts-and-files/matrix-b73-ref.csv)
