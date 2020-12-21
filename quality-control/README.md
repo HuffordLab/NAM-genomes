@@ -40,6 +40,7 @@ find $(pwd) -name "*scraps.bam"  > scraps.txt
 # Run SequeTools with default options
 bash SequelTools.sh -t Q -u subreads.txt -c scraps.txt
 ```
+The full Excel Sheet with summary stats for each SMRTcell is [available here](assets/PacBio_SequelTools_stats.xlsx).
 
 #### Summary Stats
 

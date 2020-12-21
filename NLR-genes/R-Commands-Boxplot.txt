@@ -1,0 +1,13 @@
+#Install ggplot2
+library(ggplot2)
+#############################
+getwd()
+/Volumes/Orthofinder-KVK/ERIN-3-migration/project/MaizePangenome/R
+##############################
+violin2<-read.table('NLR-violin-col.csv', sep=',')
+violin2$V2 <- as.factor(violin2$V2)
+violin2$V3 <- as.factor(violin2$V3)
+plot3 <- ggplot(violin2, aes(x=V2, y=V1)) +
+    geom_violin()
+
+plot3 + stat_summary(fun.y=mean, geom="point", shape=23, size=2) + labs(x="NLR prediction", y="Copy Number of NLRs") + theme_minimal() +geom_jitter(position = position_jitter(height = .3, width = .3), aes(colour = factor(V3)),size=0.5) + scale_colour_manual(name="colour", values=c("goldenrod1","royalblue","gray47","orchid","orangered","limegreen","brown", "darkgreen"))
