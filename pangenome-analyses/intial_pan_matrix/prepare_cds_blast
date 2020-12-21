@@ -1,0 +1,130 @@
+# to extract canonical transcript ID 
+# this script generate the canonical transcript id from the gff file 
+for i in *.gff; do
+  grep "canonical_transcript" "$i" | cut -f 9 | tr ";" "\n" | grep "transcript_id" | sed 's/transcript_id=//g' > $(basename "$i")canonical_transcript.txt
+done  
+
+# extract the canonical transcript gff
+
+# first round 4 genomes 
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysb73_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/B73_canonical_transcript.txt -o B73_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysp39_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/P39_canonical_transcript.txt -o P39_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysnc350_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/NC350_canonical_transcript.txt -o NC350_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayski11_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ki11_canonical_transcript.txt -o Ki11_canonical.gff
+
+# second round 5 genomes 
+
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysm162w_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/M162W_canonical_transcript.txt -o M162W_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysoh43_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Oh43_canonical_transcript.txt -o Oh43_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysoh7b_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Oh7B_canonical_transcript.txt -o Oh7B_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysms71_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ms71_canonical_transcript.txt -o Ms71_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysky21_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ky21_canonical_transcript.txt -o Ky21_canonical.gff
+
+# third around 
+# 6 CML genomes 
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml52_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML52_canonical_transcript.txt -o CML52_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml69_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML69_canonical_transcript.txt -o CML69_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml228_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML228_canonical_transcript.txt -o CML228_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml247_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML247_canonical_transcript.txt -o CML247_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml277_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML277_canonical_transcript.txt -o CML277_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml322_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML322_canonical_transcript.txt -o CML322_canonical.gff
+
+# 5 other genomes  
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysm37w_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/M37W_canonical_transcript.txt -o M37W_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysmo18w_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Mo18W_canonical_transcript.txt -o Mo18W_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayshp301_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/HP301_canonical_transcript.txt -o HP301_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysil14h_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Il14H_canonical_transcript.txt -o Il14H_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maystzi8_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Tzi8_canonical_transcript.txt -o Tzi8_canonical.gff
+
+
+# the last 6 genomes 
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml333_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML333_canonical_transcript.txt -o CML333_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayscml103_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML103_canonical_transcript.txt -o CML103_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_mayski3_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ki3_canonical_transcript.txt -o Ki3_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysb97_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/B97_canonical_transcript.txt -o B97_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maystx303_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/Tx303_canonical_transcript.txt -o Tx303_canonical.gff
+perl pull_out_caononical_transcript_coded_from_gff.pl -i ~/nam_pan_genome/NAM_annotation/gff/zea_maysnc358_core_3_87_1.gff -l  ~/nam_pan_genome/NAM_annotation/canonical_transcript/NC358_canonical_transcript.txt -o NC358_canonical.gff
+
+# change the second column of the gff into the NAM genome names instead of NAM. 
+# modified gff is stored at 
+/home/hirschc1/qiuxx221/nam_pan_genome/NAM_annotation/canonical_gff
+#orignal gff before modify the info is stored at 
+/home/hirschc1/qiuxx221/nam_pan_genome/NAM_annotation/canonical_gff/orignal_gff
+
+# making blast database using canonical sequences fasta 
+module load ncbi_blast+/2.8.1
+
+
+## extract fasta file from the canonical fasta cds using new canonical transcript ID name 
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/B73_canonical_transcript.txt zea_maysb73_core_3_87_1.canonical.cds.fasta > zea_maysb73_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/B97_canonical_transcript.txt zea_maysb97_core_3_87_1.canonical.cds.fasta > zea_maysb97_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML52_canonical_transcript.txt zea_mayscml52_core_3_87_1.canonical.cds.fasta > zea_mayscml52_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/P39_canonical_transcript.txt zea_maysp39_core_3_87_1.canonical.cds.fasta > zea_maysp39_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/NC350_canonical_transcript.txt zea_maysnc350_core_3_87_1.canonical.cds.fasta > zea_maysnc350_core_3_87_1.canonical.cds.fasta_1
+
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ki11_canonical_transcript.txt zea_mayski11_core_3_87_1.canonical.cds.fasta > zea_mayski11_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ki3_canonical_transcript.txt zea_mayski3_core_3_87_1.canonical.cds.fasta > zea_mayski3_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ky21_canonical_transcript.txt zea_maysky21_core_3_87_1.canonical.cds.fasta > zea_maysky21_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML69_canonical_transcript.txt zea_mayscml69_core_3_87_1.canonical.cds.fasta > zea_mayscml69_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML103_canonical_transcript.txt zea_mayscml103_core_3_87_1.canonical.cds.fasta > zea_mayscml103_core_3_87_1.canonical.cds.fasta_1
+
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML228_canonical_transcript.txt zea_mayscml228_core_3_87_1.canonical.cds.fasta > zea_mayscml228_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML247_canonical_transcript.txt zea_mayscml247_core_3_87_1.canonical.cds.fasta > zea_mayscml247_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML277_canonical_transcript.txt zea_mayscml277_core_3_87_1.canonical.cds.fasta > zea_mayscml277_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML322_canonical_transcript.txt zea_mayscml322_core_3_87_1.canonical.cds.fasta > zea_mayscml322_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/CML333_canonical_transcript.txt zea_mayscml333_core_3_87_1.canonical.cds.fasta > zea_mayscml333_core_3_87_1.canonical.cds.fasta_1
+
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/HP301_canonical_transcript.txt zea_mayshp301_core_3_87_1.canonical.cds.fasta > zea_mayshp301_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/M37W_canonical_transcript.txt zea_maysm37w_core_3_87_1.canonical.cds.fasta > zea_maysm37w_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Mo18W_canonical_transcript.txt zea_maysmo18w_core_3_87_1.canonical.cds.fasta > zea_maysmo18w_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/M162W_canonical_transcript.txt zea_maysm162w_core_3_87_1.canonical.cds.fasta > zea_maysm162w_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/NC358_canonical_transcript.txt zea_maysnc358_core_3_87_1.canonical.cds.fasta > zea_maysnc358_core_3_87_1.canonical.cds.fasta_1
+
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Tx303_canonical_transcript.txt zea_maystx303_core_3_87_1.canonical.cds.fasta > zea_maystx303_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Tzi8_canonical_transcript.txt zea_maystzi8_core_3_87_1.canonical.cds.fasta > zea_maystzi8_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Ms71_canonical_transcript.txt zea_maysms71_core_3_87_1.canonical.cds.fasta > zea_maysms71_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Il14H_canonical_transcript.txt zea_maysil14h_core_3_87_1.canonical.cds.fasta > zea_maysil14h_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Oh7B_canonical_transcript.txt zea_maysoh7b_core_3_87_1.canonical.cds.fasta > zea_maysoh7b_core_3_87_1.canonical.cds.fasta_1
+perl -ne 'if(/^>(\S+)/){$c=$i{$1}}$c?print:chomp;$i{$_}=1 if @ARGV' ~/nam_pan_genome/NAM_annotation/canonical_transcript/Oh43_canonical_transcript.txt zea_maysoh43_core_3_87_1.canonical.cds.fasta > zea_maysoh43_core_3_87_1.canonical.cds.fasta_1
+
+# remove fasta, and rename new file as the same name to avoild changing script downwards 
+rename fasta_1 'fasta' *.fasta_1
+
+
+# making cds blast db 
+module load ncbi_toolkit
+
+# first round 4 genomes 
+makeblastdb -in zea_maysb73_core_3_87_1.canonical.cds.fasta -out B73_cds_db -dbtype nucl
+makeblastdb -in zea_maysp39_core_3_87_1.canonical.cds.fasta -out P39_cds_db -dbtype nucl
+makeblastdb -in zea_maysnc350_core_3_87_1.canonical.cds.fasta -out NC350_cds_db -dbtype nucl
+makeblastdb -in zea_mayski11_core_3_87_1.canonical.cds.fasta -out Ki11_cds_db -dbtype nucl
+
+# second round 5 genomes 
+makeblastdb -in zea_maysky21_core_3_87_1.canonical.cds.fasta -out Ky21_cds_db -dbtype nucl
+makeblastdb -in zea_maysm162w_core_3_87_1.canonical.cds.fasta -out M162W_cds_db -dbtype nucl
+makeblastdb -in zea_maysms71_core_3_87_1.canonical.cds.fasta -out Ms71_cds_db -dbtype nucl
+makeblastdb -in zea_maysoh43_core_3_87_1.canonical.cds.fasta -out Oh43_cds_db -dbtype nucl
+makeblastdb -in zea_maysoh7b_core_3_87_1.canonical.cds.fasta -out Oh7B_cds_db -dbtype nucl
+
+# thrid round 11 genomes 
+makeblastdb -in zea_mayscml228_core_3_87_1.canonical.cds.fasta -out CML228_cds_db -dbtype nucl
+makeblastdb -in zea_mayscml247_core_3_87_1.canonical.cds.fasta -out CML247_cds_db -dbtype nucl
+makeblastdb -in zea_mayscml277_core_3_87_1.canonical.cds.fasta -out CML277_cds_db -dbtype nucl
+makeblastdb -in zea_mayscml322_core_3_87_1.canonical.cds.fasta -out CML322_cds_db -dbtype nucl
+makeblastdb -in zea_mayscml52_core_3_87_1.canonical.cds.fasta -out CML52_cds_db -dbtype nucl
+makeblastdb -in zea_mayscml69_core_3_87_1.canonical.cds.fasta -out CML69_cds_db -dbtype nucl
+
+makeblastdb -in zea_mayshp301_core_3_87_1.canonical.cds.fasta -out HP301_cds_db -dbtype nucl
+makeblastdb -in zea_maysil14h_core_3_87_1.canonical.cds.fasta -out Il14H_cds_db -dbtype nucl
+makeblastdb -in zea_maysmo18w_core_3_87_1.canonical.cds.fasta -out Mo18W_cds_db -dbtype nucl
+makeblastdb -in zea_maysm37w_core_3_87_1.canonical.cds.fasta -out M37W_cds_db -dbtype nucl
+makeblastdb -in zea_maystzi8_core_3_87_1.canonical.cds.fasta -out Tzi8_cds_db -dbtype nucl
+
+# the last 6 genomes 
+makeblastdb -in zea_mayscml333_core_3_87_1.canonical.cds.fasta -out CML333_cds_db -dbtype nucl
+makeblastdb -in zea_maystx303_core_3_87_1.canonical.cds.fasta -out Tx303_cds_db -dbtype nucl
+makeblastdb -in zea_mayski3_core_3_87_1.canonical.cds.fasta -out Ki3_cds_db -dbtype nucl
+makeblastdb -in zea_mayscml103_core_3_87_1.canonical.cds.fasta -out CML103_cds_db -dbtype nucl
+makeblastdb -in zea_maysnc358_core_3_87_1.canonical.cds.fasta -out NC358_cds_db -dbtype nucl
+makeblastdb -in zea_maysb97_core_3_87_1.canonical.cds.fasta -out B97_cds_db -dbtype nucl
