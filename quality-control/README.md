@@ -1,17 +1,20 @@
-## Quality Control
+# Table of Contents
+[Quality Control](#Quality Control)
 
-_Illumina short reads_ generated for each NAM were inspected to make sure that sequencing was done on the right NAM line before proceeding with the PacBio sequencing and assembly.
+# Quality Control
+
+1. _Illumina short reads_ generated for each NAM were inspected to make sure that sequencing was done on the right NAM line before proceeding with the PacBio sequencing and assembly.
 The data was compared with the HapMap data to make sure the newly sequenced line clusters with the correct accession within the HapMap data.
 RawSequence obtained from `BaseSpace` were already inspected for the sequencing quality, so it was skipped.
 
-_PacBio data_ generated from multiple sequencing facility was tested using **SequelTools** which provides various quality metrics for inspecting and accessing the data quality.
+2. _PacBio data_ generated from multiple sequencing facility was tested using **SequelTools** which provides various quality metrics for inspecting and accessing the data quality.
 
-_RNA-seq data_ downloaded from BaseSpace (which was already tested for quality, demultiplexed and trimmed of any adapter sequences) and were tested by first mapping against V4 B73 (to check the mapping percent), counts were generated against genic features provided by the V4 annotation, and count based clustering using DESeq2 was performed to test correct clustering of various tissues within the NAM genome. The RNAseq data was further tested to verify its source (accession and tissue) by calling variants using GATK recommended workflow.
+3. _RNA-seq data_ downloaded from BaseSpace (which was already tested for quality, demultiplexed and trimmed of any adapter sequences) and were tested by first mapping against V4 B73 (to check the mapping percent), counts were generated against genic features provided by the V4 annotation, and count based clustering using DESeq2 was performed to test correct clustering of various tissues within the NAM genome. The RNAseq data was further tested to verify its source (accession and tissue) by calling variants using GATK recommended workflow.
 
-_Assembly QC_
+4. _Assembly QC_
 
 
-### Illumina QC:
+## Illumina QC:
 
 1. A clean data set containing HapMap2 reference maize SNPs was prepared
 	- HapMap2 maize SNP reference data was downloaded from the panzea website in the condensed HapMap format
@@ -29,7 +32,7 @@ _Assembly QC_
 
 Scripts used for this parts are in the [scripts](./scripts) directory.
 
-### PacBio QC:
+## PacBio QC:
 
 [SequelTools](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-020-03751-8) was run on PacBio data to collect QC metrics. SequelTools was run as described in the manual.
 
@@ -42,7 +45,7 @@ bash SequelTools.sh -t Q -u subreads.txt -c scraps.txt
 ```
 The full Excel Sheet with summary stats for each SMRTcell is [available here](assets/PacBio_SequelTools_stats.xlsx).
 
-#### Summary Stats
+### Summary Stats
 
 | NAM     | Gsize (Gb) | Facility | SMRT cells | Mean SR read length | Median SR read length | Mean N50 | Depth of coverage (SR) |
 |:--------|-----------:|:---------|-----------:|--------------------:|----------------------:|---------:|-----------------------:|
@@ -77,8 +80,8 @@ The full Excel Sheet with summary stats for each SMRTcell is [available here](as
 
 
 
-### RNA-Seq QC:
+## RNA-Seq QC:
 
 
 
-### Assembly QC
+## Assembly QC
