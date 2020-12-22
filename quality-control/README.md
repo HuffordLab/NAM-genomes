@@ -1,9 +1,18 @@
 # Table of Contents
 
-[Quality Control] (#Quality Control)
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
+- [Table of Contents](#table-of-contents)
+- [Quality Control](#quality-control)
+	- [Illumina QC:](#illumina-qc)
+	- [PacBio QC:](#pacbio-qc)
+- [for each NAM, collect the names of scraps and subread bam files](#for-each-nam-collect-the-names-of-scraps-and-subread-bam-files)
+- [Run SequeTools with default options](#run-sequetools-with-default-options)
+		- [Summary Stats](#summary-stats)
+	- [RNA-Seq QC:](#rna-seq-qc)
+	- [Assembly QC](#assembly-qc)
 
-
+<!-- /TOC -->
 
 # Quality Control
 
