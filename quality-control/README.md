@@ -84,6 +84,29 @@ The full Excel Sheet with summary stats for each SMRTcell is [available here](as
 
 ## RNA-Seq QC:
 
+### Read and Sample integrity
+
+RNA-seq data downloaded from BaseSpace were mapped to B73.v4 genome using STAR (2-pass mapping), counts were gathered using the v4 annotation in gff3 format using `featureCounts`, followed by clustering using DESeq2. Methods are as follows:
+
+Steps:
+1. soft-link all the input-files creating directory for each NAM: [`soft-link-rnaseq-files.sh`](scripts/soft-link-rnaseq-files.sh)
+2. Download B73.v4 and index the genome using STAR: [`runSTARmap_index.sh`](scripts/runSTARmap_index.sh)
+3. Create commands for each NAM directory: [`star-cmds-gen.sh`](scripts/star-cmds-gen.sh), this will generate commands for
+     - Map raw reads to the indexed genome using STAR (1st pass): [`runSTARmap_round1.sh`](scripts/runSTARmap_round1.sh)
+		 - Aggregate splice sites to generate a file for reliable splice sites found in the genome: [`sjCollapseSamples.awk`](scripts/sjCollapseSamples.awk)
+		 - Map raw reads to the indexed genome again, but using the splice sites to recalibrate alignment and generate a bam file: [`runSTARmap_round2.sh`](scripts/runSTARmap_round2.sh)
+		 - Run the `featureCoutns` from subread package to get counts for each gene present in the annotation: [`runSubreads.sh`](scripts/runSubreads.sh)
+		 - Clean the counts file and generate R script process it with DESeq2 package using: [`cleanSubreadCounts.sh`](scripts/cleanSubreadCounts.sh). The base R-script is: [`DESeq2.R`](scripts/DESeq2.R), which needs to be run to create plots and clustering data.
+		 - Gather summary stats using scripts [`tabulator.sh`](scripts/tabulator.sh) and [`getCoverageStats.sh`](scripts/getCoverageStats.sh)
+		 
+
+
+
+
+
+```bash
+
+
 
 
 ## Assembly QC
