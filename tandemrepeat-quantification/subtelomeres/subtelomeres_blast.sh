@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#This script blast the 7 maize subtelomeric sequences to each chromosome of the genome 
+#This script blast the 7 maize subtelomeric sequences (NCBI accessions: EU253568.1, S46927.1, S46926.1, S46925.1, CL569186.1, AF020266.1, AF020265.1) to each chromosome of the genome 
 
 module load blast-plus
 
