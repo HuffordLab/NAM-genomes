@@ -1,20 +1,8 @@
-# Table of Contents
-
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
-
-- [Table of Contents](#table-of-contents)
-- [Quality Control](#quality-control)
-	- [Illumina QC:](#illumina-qc)
-	- [PacBio QC:](#pacbio-qc)
-- [for each NAM, collect the names of scraps and subread bam files](#for-each-nam-collect-the-names-of-scraps-and-subread-bam-files)
-- [Run SequeTools with default options](#run-sequetools-with-default-options)
-		- [Summary Stats](#summary-stats)
-	- [RNA-Seq QC:](#rna-seq-qc)
-	- [Assembly QC](#assembly-qc)
-
-<!-- /TOC -->
-
 # Quality Control
+
+Methods and scripts used for checking the quality of datasets at various stages of the project are documented here. Some methods are for the raw data inspection, while others are to check the source/line integrity, as well as the final data results quality.  
+
+Quality inspection was done for:
 
 1. _Illumina short reads_ generated for each NAM were inspected to make sure that sequencing was done on the right NAM line before proceeding with the PacBio sequencing and assembly.
 The data was compared with the HapMap data to make sure the newly sequenced line clusters with the correct accession within the HapMap data.
@@ -24,7 +12,9 @@ RawSequence obtained from `BaseSpace` were already inspected for the sequencing 
 
 3. _RNA-seq data_ downloaded from BaseSpace (which was already tested for quality, demultiplexed and trimmed of any adapter sequences) and were tested by first mapping against V4 B73 (to check the mapping percent), counts were generated against genic features provided by the V4 annotation, and count based clustering using DESeq2 was performed to test correct clustering of various tissues within the NAM genome. The RNAseq data was further tested to verify its source (accession and tissue) by calling variants using GATK recommended workflow.
 
-4. _Assembly QC_
+4. _Assembly QC_ Nancy, add your section small intro here.
+
+
 
 
 ## Illumina QC:
@@ -89,7 +79,6 @@ The full Excel Sheet with summary stats for each SMRTcell is [available here](as
 | KI11    | 2.381      | UGA      | 18         | 16579.53            | 11814.5               | 29169.9  | 65.9                   |
 | B97     | 2.284      | Arizona  | 23         | 16339.04            | 13496.0               | 29428.0  | 71.3                   |
 | NC350   | 2.394      | UGA      | 19         | 18654.96            | 14166.0               | 31717.6  | 65.9                   |
-
 
 
 
