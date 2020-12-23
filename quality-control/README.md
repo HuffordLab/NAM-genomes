@@ -84,7 +84,7 @@ The full Excel Sheet with summary stats for each SMRTcell is [available here](as
 
 ## RNA-Seq QC:
 
-### Read and Sample integrity
+### General Data Quality
 
 RNA-seq data downloaded from BaseSpace were mapped to B73.v4 genome using STAR (2-pass mapping), counts were gathered using the v4 annotation in gff3 format using `featureCounts`, followed by clustering using DESeq2. Methods are as follows:
 
@@ -95,20 +95,21 @@ Steps:
      - Map raw reads to the indexed genome using STAR (1st pass): [`runSTARmap_round1.sh`](scripts/runSTARmap_round1.sh)
 		 - Aggregate splice sites to generate a file for reliable splice sites found in the genome: [`sjCollapseSamples.awk`](scripts/sjCollapseSamples.awk)
 		 - Map raw reads to the indexed genome again, but using the splice sites to recalibrate alignment and generate a bam file: [`runSTARmap_round2.sh`](scripts/runSTARmap_round2.sh)
-		 - Run the `featureCoutns` from subread package to get counts for each gene present in the annotation: [`runSubreads.sh`](scripts/runSubreads.sh)
+		 - Run the `featureCoutns` from subread package to get counts for each gene present in the annotation: [`runSubreads.sh`](scripts/runSubreads.sh). It also runs `multiqc` for gathering quality metrics.
 		 - Clean the counts file and generate R script process it with DESeq2 package using: [`cleanSubreadCounts.sh`](scripts/cleanSubreadCounts.sh). The base R-script is: [`DESeq2.R`](scripts/DESeq2.R), which needs to be run to create plots and clustering data.
 		 - Gather summary stats using scripts [`tabulator.sh`](scripts/tabulator.sh) and [`getCoverageStats.sh`](scripts/getCoverageStats.sh)
-		 
+4. The plots and tables were imported to Excel and PowerPoint to evaluating the quality. The files are available here: [RNA_seq_v5.2.pptx](assets/RNA_seq_v5.2.pptx) and [RNAseq_inventory_V5.2.xlsx](assets/RNAseq_inventory_V5.2.xlsx).
+
+### Read and Sample integrity
 
 
 
-
-
-```bash
 
 
 
 
 ## Assembly QC
 
+```bash
 sh pipeline.sh genome.fasta output_assembly_stats output_buscometrics embryophyta_odb9 maize 32
+```
