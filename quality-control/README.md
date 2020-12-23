@@ -87,3 +87,5 @@ The full Excel Sheet with summary stats for each SMRTcell is [available here](as
 
 
 ## Assembly QC
+
+sh pipeline.sh genome.fasta output_assembly_stats output_buscometrics embryophyta_odb9 maize 32
