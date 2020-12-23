@@ -1,5 +1,7 @@
 #!/bin/bash
-e
+
+#This script blast the 7 maize subtelomeric sequences to each chromosome of the genome 
+
 module load blast-plus
 
 
