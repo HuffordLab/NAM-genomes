@@ -92,23 +92,22 @@ Steps:
 1. soft-link all the input-files creating directory for each NAM: [`soft-link-rnaseq-files.sh`](scripts/soft-link-rnaseq-files.sh)
 2. Download B73.v4 and index the genome using STAR: [`runSTARmap_index.sh`](scripts/runSTARmap_index.sh)
 3. Create commands for each NAM directory: [`star-cmds-gen.sh`](scripts/star-cmds-gen.sh), this will generate commands for
-
-     - Map raw reads to the indexed genome using STAR (1st pass): [`runSTARmap_round1.sh`](scripts/runSTARmap_round1.sh)
-		 - Aggregate splice sites to generate a file for reliable splice sites found in the genome: [`sjCollapseSamples.awk`](scripts/sjCollapseSamples.awk)
-		 - Map raw reads to the indexed genome again, but using the splice sites to recalibrate alignment and generate a bam file: [`runSTARmap_round2.sh`](scripts/runSTARmap_round2.sh)
-		 - Run the `featureCoutns` from subread package to get counts for each gene present in the annotation: [`runSubreads.sh`](scripts/runSubreads.sh). It also runs `multiqc` for gathering quality metrics.
-		 - Clean the counts file and generate R script process it with DESeq2 package using: [`cleanSubreadCounts.sh`](scripts/cleanSubreadCounts.sh). The base R-script is: [`DESeq2.R`](scripts/DESeq2.R), which needs to be run to create plots and clustering data.
-		 - Gather summary stats using scripts [`tabulator.sh`](scripts/tabulator.sh) and [`getCoverageStats.sh`](scripts/getCoverageStats.sh)
+     * Map raw reads to the indexed genome using STAR (1st pass): [`runSTARmap_round1.sh`](scripts/runSTARmap_round1.sh)
+		 * Aggregate splice sites to generate a file for reliable splice sites found in the genome: [`sjCollapseSamples.awk`](scripts/sjCollapseSamples.awk)
+		 * Map raw reads to the indexed genome again, but using the splice sites to recalibrate alignment and generate a bam file: [`runSTARmap_round2.sh`](scripts/runSTARmap_round2.sh)
+		 * Run the `featureCoutns` from subread package to get counts for each gene present in the annotation: [`runSubreads.sh`](scripts/runSubreads.sh). It also runs `multiqc` for gathering quality metrics.
+		 * Clean the counts file and generate R script process it with DESeq2 package using: [`cleanSubreadCounts.sh`](scripts/cleanSubreadCounts.sh). The base R-script is: [`DESeq2.R`](scripts/DESeq2.R), which needs to be run to create plots and clustering data.
+		 * Gather summary stats using scripts [`tabulator.sh`](scripts/tabulator.sh) and [`getCoverageStats.sh`](scripts/getCoverageStats.sh)
 4. The plots and tables were imported to Excel and PowerPoint to evaluating the quality. The files are available here: [RNA_seq_v5.2.pptx](assets/RNA_seq_v5.2.pptx) and [RNAseq_inventory_V5.2.xlsx](assets/RNAseq_inventory_V5.2.xlsx).
 
 ### Accession and Tissue integrity
 
 Each RNAseq library was mapped to B73.v4 and SNPs were called using GATK. The SNPs were then clustered to generate a phylogenetic tree, compared to the NAM founder phylogenetic tree (from HapMap2) to detect any sample/tissue/accession mislabeling or switching. The methods/scripts are listed below:
 
- 1.
-
-
-
+ 1. The bam file generated from the previous step was processed using GATK and Picard toolkit using the script [`process-rnaseq-bams.sh`](scripts/process-rnaseq-bams.sh). Breifly, this scripts adds read-group information, marks duplicate reads in the mapped bam file, and splits N cigar string in mapped reads.
+ 2. Run GATK HaplotypeCaller on the processed bam files. To speed it up, the commands were generated using intervals, processing 3Mb regions at a time, simultaneously, running them on the cluster. The script used: [`gatkcmds-gen.sh`](scripts/gatkcmds-gen.sh). The jobs script wrapper [`makeSLURMp.py`](https://github.com/ISUgenomics/common_scripts/blob/master/makeSLURMp.py) was used.
+ 3. The VCF files for each region were gathered and filtered to generate a single VCF file.
+ 4. SNPphylo was used to contruct phylogenetic tree and the tree was inspected to check if the tissue samples from each accession clustered correctly. Any irregularities were flagged and removed from the final analyses (samples that could be easily obtained were re-sequenced). Script [`snp-phylo-run.sh`](scripts/snp-phylo-run.sh).
 
 
 ## Assembly QC
