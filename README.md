@@ -24,7 +24,7 @@ Go, NAMsters!
 
 1.  Genome assembly methods (contig, hybrid scaffold and pseudomolecule construction)
 2. [Quality control (raw data: Illumina, PacBio, RNA-Seq; and Assembly)](quality-control/README.md)
-3. Gene prediction and annotation (Evidence based, BRAKER, )
+3. Gene prediction and annotation (Evidence based, BRAKER, merging annotations)
 4. Centromere annotation
 5. DNA methylation analyses
 6. Accessible Chromatin Regions (ACR)/ATAC-seq data analyses
@@ -32,7 +32,7 @@ Go, NAMsters!
 8. Transposable Element Annotation
 9. Tandem Repeat Arrays
 10. Structural variation detection
-11. Analyses of disease resistance Genes
-12. Population Genetic Analysis
+11. [Analyses of disease resistance Genes](NLR-genes/README.md)
+12. Population Genetic Analysis ([GERP](gerp/README.md), [abc](abc/README.md)
 13. Genome-wide Association Study and Variance Component Analysis
 14. Plots and figures
