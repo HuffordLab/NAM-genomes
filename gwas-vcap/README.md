@@ -7,8 +7,11 @@ Mixed linear model based association analysis.
 the other allele, frequency of the reference allele, SNP effect, standard error and p-value).
 
 The significant QTLs are defined by -log10(p-value) > FDR (0.05).
-	library("IHW")
-	get_bh_threshold(GWAS.Results$p[!is.na(GWAS.Results$p)], 0.05)
+```
+library("IHW")
+get_bh_threshold(GWAS.Results$p[!is.na(GWAS.Results$p)], 0.05)
+```
+
 For a few of traits, FDR threshold is not there, 5 is used.
 
 36 output files are for 36 traits, each having 10 chromosomes.
@@ -23,8 +26,12 @@ Mixed linear model based association analysis.
 the other allele, frequency of the reference allele, SNP effect, standard error and p-value).
 
 The significant QTLs are defined by -log10(p-value) > FDR (0.05).
-	library("IHW")
-	get_bh_threshold(GWAS.Results$p[!is.na(GWAS.Results$p)], 0.05)
+
+```
+library("IHW")
+get_bh_threshold(GWAS.Results$p[!is.na(GWAS.Results$p)], 0.05)
+```
+
 For a few of traits, FDR threshold is not there, 5 is used.
 
 360 output files are combinations of 36 traits and 10 chromosomes.
