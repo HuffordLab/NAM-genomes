@@ -12,7 +12,7 @@ RawSequence obtained from `BaseSpace` were already inspected for the sequencing 
 
 3. _RNA-seq data_ downloaded from BaseSpace (which was already tested for quality, demultiplexed and trimmed of any adapter sequences) and were tested by first mapping against V4 B73 (to check the mapping percent), counts were generated against genic features provided by the V4 annotation, and count based clustering using DESeq2 was performed to test correct clustering of various tissues within the NAM genome. The RNAseq data was further tested to verify its source (accession and tissue) by calling variants using GATK recommended workflow.
 
-4. _Assembly QC_ Nancy, add your section small intro here.
+4. _Assembly QC_ Finished assembled sequences (contigs/scaffolds/pseudomolecule) were used as input sequences in FASTA format to the GenomeQC pipeline to calculates different quality metrics for assessing the contiguity and gene space completness of the NAM genome assemblies. For assessing gene space completeness, Embryophyta odb9 (lineage specific profile) and maize (AUGUSTUS gene prediction species profile) were selected as the input parameters for calculating % BUSCO completeness. 
 
 
 
