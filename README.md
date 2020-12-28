@@ -1,5 +1,7 @@
 # NAM-genomes :corn: :corn: :corn:
 
+<details>
+  <summary>For co-authors (click to expand)</summary>
 ### NAM genome paper related scripts and workflows
 
 Please follow this structure for your contribution.
@@ -15,3 +17,22 @@ Please follow this structure for your contribution.
 Go, NAMsters!
 
 ![NAMsters](/assets/NAMster2.png)
+</details>
+
+
+# Table of contents:
+
+1.  Genome assembly methods (contig, hybrid scaffold and pseudomolecule construction)
+2. [Quality control (raw data: Illumina, PacBio, RNA-Seq; and Assembly)](quality-control/README.md)
+3. Gene prediction and annotation (Evidence based, BRAKER, )
+4. Centromere annotation
+5. DNA methylation analyses
+6. Accessible Chromatin Regions (ACR)/ATAC-seq data analyses
+7. [PanGenome analyses](pangenome-analyses/README.md)
+8. Transposable Element Annotation
+9. Tandem Repeat Arrays
+10. Structural variation detection
+11. Analyses of disease resistance Genes
+12. Population Genetic Analysis
+13. Genome-wide Association Study and Variance Component Analysis
+14. Plots and figures
