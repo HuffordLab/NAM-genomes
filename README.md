@@ -27,12 +27,12 @@ Go, NAMsters!
 3. Gene prediction and annotation ([evidence-based](gene-prediction/evidence-based.md), [BRAKER](gene-prediction/ab-initios.md), [merging annotations](gene-prediction/merge-predictions.md))
 4. Centromere annotation
 5. DNA methylation analyses
-6. Accessible Chromatin Regions (ACR)/ATAC-seq data analyses
+6. Accessible Chromatin Regions (ACR) and ATAC-seq data analyses
 7. [PanGenome analyses](pangenome-analyses/README.md)
 8. [Transposable Element Annotation](te-annotation/readme.txt)
-9. Tandem Repeat Arrays
+9. [Tandem Repeat Arrays](tandemrepeat-quantification/README.md)
 10. [Structural variation detection](structural-variation/README.md)
 11. [Analyses of disease resistance Genes](NLR-genes/README.md)
-12. Population Genetic Analysis ([GERP](gerp/README.md), [abc](abc/README.md)
+12. Population Genetic Analysis ([GERP](gerp/README.md), [abc](abc/README.md))
 13. [Genome-wide Association Study and Variance Component Analysis](structural-variation/gwas-vcap-svs.md)
-14. Plots and figures
+14. [Plots and figures](publication-plots/README.md)
