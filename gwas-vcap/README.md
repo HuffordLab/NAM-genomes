@@ -16,7 +16,7 @@ For a few of traits, FDR threshold is not there, 5 is used.
 
 36 output files are for 36 traits, each having 10 chromosomes.
 
-#GWAS SNPs
+# GWAS SNPs
 The number of RILs is 4,027 and the number of markers is 20,470,711.
 
 Mixed linear model based association analysis.
