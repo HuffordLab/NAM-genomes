@@ -32,7 +32,27 @@ Go, NAMsters!
 8. [Transposable Element Annotation](te-annotation/readme.txt)
 9. [Tandem Repeat Arrays](tandemrepeat-quantification/README.md)
 10. [Structural variation detection](structural-variation/README.md)
-11. [Analyses of disease resistance Genes](NLR-genes/README.md)
-12. Population Genetic Analysis ([GERP](gerp/README.md), [abc](abc/README.md))
-13. [Genome-wide Association Study and Variance Component Analysis](gwas-vcap/README.md)
-14. [Plots and figures](publication-plots/README.md)
+11. [Analysis of Flowering-time Genes]()
+12. [Analyses of disease resistance Genes](NLR-genes/README.md)
+13. Population Genetic Analysis ([GERP](gerp/README.md), [abc](abc/README.md))
+14. [Genome-wide Association Study and Variance Component Analysis](gwas-vcap/README.md)
+
+# Figures/Plots
+
+[Plots and figures](publication-plots/README.md)
+
+# Links for external data
+
+1. CyVerse Data Commons
+2. MaizeGDB NAM page, Genomes, [FTP site]().
+3. Gramene 
+3. Raw Datasets
+    - PacBio
+    - Illumina
+    - RNAseq
+    - BioNano
+    - ATAC-seq
+    - Methylation data
+ 4. NAM-webpage
+ 
+ 
