@@ -32,7 +32,7 @@ Go, NAMsters!
 8. [Transposable Element Annotation](te-annotation/readme.txt)
 9. [Tandem Repeat Arrays](tandemrepeat-quantification/README.md)
 10. [Structural variation detection](structural-variation/README.md)
-11. [Analysis of Flowering-time Genes]()
+11. [Analysis of Flowering-time Genes](structural-variation/FTGene_Expression_README.md)
 12. [Analyses of disease resistance Genes](NLR-genes/README.md)
 13. Population Genetic Analysis ([GERP](gerp/README.md), [abc](abc/README.md))
 14. [Genome-wide Association Study and Variance Component Analysis](gwas-vcap/README.md)
