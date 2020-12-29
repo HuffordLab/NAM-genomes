@@ -56,6 +56,9 @@ Go, NAMsters!
     - Methylation data
  4. [NAM-webpage](https://nam-genomes.org/)
 
+# Citation
+
+Coming Soon!
 
 # Contacts
 
