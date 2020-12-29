@@ -58,7 +58,13 @@ nohup perl ~/las/git_bin/EDTA/util/cleanup_nested.pl \
 remove a number of false TEs and rename IDs
 
 ```
-perl ~/las/git_bin/EDTA/util/output_by_list.pl 1 NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln 1 rm.list2 -ex -FA > NAM.EDTA1.8.0.EDTA.TElib.novel.v2.fa.raw.cln2
+perl ~/las/git_bin/EDTA/util/output_by_list.pl \
+     1 \
+     NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln \
+     1 \
+     rm.list2 \
+     -ex \
+     -FA > NAM.EDTA1.8.0.EDTA.TElib.novel.v2.fa.raw.cln2
 perl ~/las/git_bin/EDTA/util/rename_TE.pl NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln2 > NAM.EDTA1.8.0.EDTA.TElib.novel.fa
 ```
 make comprehensive TE library
@@ -166,7 +172,12 @@ count effective TEs
 
 ```bash
 grep -v -P 'long_terminal_repeat|repeat_region|target_site_duplication' *mod.EDTA.TEanno.gff3 |\
-perl -nle 'next unless s/ID=//; my ($cla, $id)=(split)[2,8]; $id=~s/.*;Name=(.*);Classific.*/$1/; $id=~s/;.*//; $id=~s/#/_/; print "$id\t$cla"' |\
+perl -nle 'next unless s/ID=//; \
+           my ($cla, $id)=(split)[2,8]; \
+           $id=~s/.*; \
+           Name=(.*);Classific.*/$1/; \
+           $id=~s/;.*//; $id=~s/#/_/; \
+           print "$id\t$cla"' |\
 grep -v -P "\)n|A-rich|G-rich|begin|position" |\
 sort -u > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.TEfam.list &
 grep -v : NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.TEfam.list|wc -l
@@ -193,7 +204,16 @@ get intact LTR info
 ```bash
 for i in `ls *mod.EDTA.intact.gff3 |grep -v -P 'Ab10|AB10'`; do
   grep LTR_retrotransposon $i |\
-  perl -nle 'my ($chr, undef, $supfam, $from, $to, undef, $str, undef, $info)=(split); my $genome = $1 if $chr=~s/^(.*?)_//; my ($id, $classification, $SO, $iden, $motif, $tsd)=($1, $2, $3, $4, $5, $6) if $info=~/Name=(.*);Classification=(.*);Sequence_ontology=(.*);ltr_identity=(.*);Method=structural;motif=(.*);tsd=(.*)$/; print "$genome\t$chr\t$supfam\t$classification\t$from\t$to\t$str\t$id\t$SO\t$motif\t$tsd\t$iden"'; done > NAM.26.intact.LTR.list &
+  perl -nle 'my ($chr, undef, $supfam, $from, $to, undef, $str, undef, $info)=(split); \
+             my $genome = $1 if $chr=~s/^(.*?)_//; \
+             my ($id, $classification, $SO, $iden, $motif, $tsd)=($1, $2, $3, $4, $5, $6) if $info=~/Name=(.*);\
+             Classification=(.*); \
+             Sequence_ontology=(.*); \
+             ltr_identity=(.*); \
+             Method=structural; \
+             motif=(.*);tsd=(.*)$/;\
+            print "$genome\t$chr\t$supfam\t$classification\t$from\t$to\t$str\t$id\t$SO\t$motif\t$tsd\t$iden"';
+done > NAM.26.intact.LTR.list &
 ```
 
 plot figures in R
