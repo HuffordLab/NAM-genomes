@@ -36,6 +36,7 @@ Go, NAMsters!
 12. [Analyses of disease resistance Genes](NLR-genes/README.md)
 13. Population Genetic Analysis ([GERP](gerp/README.md), [abc](abc/README.md))
 14. [Genome-wide Association Study and Variance Component Analysis](gwas-vcap/README.md)
+15. [Fractionation Analysis](fractionation/README.md)
 
 # Figures/Plots
 
