@@ -39,20 +39,29 @@ Go, NAMsters!
 
 # Figures/Plots
 
-[Plots and figures](publication-plots/README.md)
+[Figures and plots used in the publication](publication-plots/README.md)
 
 # Links for external data
 
-1. CyVerse Data Commons
-2. MaizeGDB NAM page, Genomes, [FTP site]().
-3. Gramene 
+1. [CyVerse Data Commons](https://datacommons.cyverse.org/browse/iplant/home/shared/NAM/NAM_genome_and_annotation_Jan2021_release)
+2. MaizeGDB [NAM-page](https://www.maizegdb.org/NAM_project), [Genomes](https://www.maizegdb.org/genome#sets), [FTP site](https://download.maizegdb.org/).
+3. [Gramene](http://ftp.gramene.org/nam/release-3/)
 3. Raw Datasets
-    - PacBio
-    - Illumina
-    - RNAseq
-    - BioNano
+    - [PacBio](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
+    - [Illumina](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
+    - [RNAseq](https://www.ebi.ac.uk/ena/browser/view/PRJEB32225)
+    - [BioNano](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
     - ATAC-seq
     - Methylation data
- 4. NAM-webpage
- 
- 
+ 4. [NAM-webpage](https://nam-genomes.org/)
+
+
+# Contacts
+
+1. [R. Kelly Dawe](http://www.dawelab.org/)
+2. [Doreen Ware](https://www.cshl.edu/research/faculty-staff/doreen-ware/)
+3. [Matthew Hufford](https://mhufford.public.iastate.edu/HuffordLab/home.html)
+4. [Candice Hirsch](http://hirschlab.cfans.umn.edu/)
+
+
+Please check our [contributions](https://github.com/HuffordLab/NAM-genomes/graphs/contributors) page for all the authors who worked on this GitHub documentation (and they sections they worked on!).
