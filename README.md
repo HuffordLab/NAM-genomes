@@ -29,7 +29,7 @@ Go, NAMsters!
 5. DNA methylation analyses
 6. Accessible Chromatin Regions (ACR) and ATAC-seq data analyses
 7. [PanGenome analyses](pangenome-analyses/README.md)
-8. [Transposable Element Annotation](te-annotation/readme.txt)
+8. [Transposable Element Annotation](te-annotation/readme.md)
 9. [Tandem Repeat Arrays](tandemrepeat-quantification/README.md)
 10. [Structural variation detection](structural-variation/README.md)
 11. [Analysis of Flowering-time Genes](structural-variation/FTGene_Expression_README.md)
