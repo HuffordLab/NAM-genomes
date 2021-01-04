@@ -1104,4 +1104,62 @@ colnames(test1)[1]<- "PanGeneID"
 namIDTPM_GOI<-inner_join(namIDs_GOI, test1, by = c("PanGeneID","Genome"))
 filter(namIDTPM_GOI, common_name == "zcn8") %>% write_tsv(., "zcn8_namIDsTPM.tsv")
 ```
+#Supplemental Quality Figures
+```{r}
+nam_colors<-c("M37W"="gray47", "Mo18W"="gray47", "Tx303"="gray47", "B97"="royalblue", "Ky21"="royalblue", "M162W"="royalblue", "MS71"="royalblue", "Oh7b"="royalblue", "Oh43"="royalblue", "HP301"="orchid", "IL14H"="orangered", "P39"="orangered", "CML52"="limegreen", "CML69"="limegreen", "CML103"="limegreen", "CML228"="limegreen", "CML247"="limegreen", "CML277"="limegreen", "CML322"="limegreen", "CML333"="limegreen", "Ki3"="limegreen", "Ki11"="limegreen", "NC350"="limegreen", "NC358"="limegreen", "Tzi8"="limegreen", "B73"="goldenrod1", "B73Ab10"="goldenrod1")
 
+#ZmCCT10
+zmcct10_labels<-c("del only", "ins only", "none")
+z<-ggplot(ZmCCT10_haplotypes, aes(x=haplotype, y=TPM)) + 
+  geom_boxplot() +
+  geom_jitter(height = 0, width = 0.1, aes(color = Genome), alpha = 0.95)+
+  geom_text(data = filter(ZmCCT10_haplotypes, TPM > 1), aes(label = Genome), check_overlap = TRUE, nudge_y = 0.05)+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  xlab("Haplotype")+ggtitle("ZmCCT10 Expression by Indel Haplotype")+
+  theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))
+z+scale_x_discrete(labels=zmcct10_labels)
+ggsave("Plots/Supplemental_ZmCCT10TPMbyHaplotype.png",device = "png", dpi = 500, height = 7, width = 7)
+
+#Dof21
+dof21_labels=c("Both ins","deletion and ins 1","ins 1","ins 2", "none")
+d<-ggplot(dof21_haplotypes, aes(x=haplotype, y=TPM)) + 
+  geom_boxplot() +
+  geom_jitter(height = 0, width = 0.1, aes(color = Genome), alpha = 0.95)+
+  geom_text(data = filter(dof21_haplotypes, TPM > 48), aes(label = Genome), check_overlap = TRUE, nudge_x = 0.25, nudge_y = 4)+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  xlab("Haplotype")+ggtitle("Dof21 Expression by Indel Haplotype")+
+  theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))
+d+scale_x_discrete(labels=dof21_labels)
+ggsave("Plots/Supplemental_Dof21TPMbyHaplotype.png",device = "png", dpi = 500, height = 7, width = 7)
+
+###GL15
+#to get this figure, you have to run expression_analysis.R and have that data in the environment, which will only work if you have FT_Indel_Analysis.Rmd run.
+
+p<-mutate(t, indel_name = case_when(Indel_haplotype == "both" ~ "both", Indel_haplotype == "none" ~ "none", Indel_haplotype == "899" ~ "long ins", Indel_haplotype == "900" ~ "short ins")) %>% filter(Tissue %in% c("V11_middle","V11_tip")) %>% 
+  ggplot(aes(x=indel_name))+
+  geom_boxplot(aes(y=TPM), alpha=0.75)+
+  geom_jitter(aes(y=TPM, color=Genome),width = 0.2, alpha=0.95)+
+  #geom_text(data = filter(t, Indel_haplotype == "900" & Tissue %in% c("V11_middle","V11_tip")), aes(y=TPM,label=Genome),size=3,nudge_x = 0.2, check_overlap = TRUE)+
+  facet_wrap(~Tissue, scales = "free")+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  ggtitle("GL15 Expression by Indel Haplotype and Tissue")+theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))+
+   xlab("Haplotype")
+p+geom_text(data = mutate(t, indel_name = case_when(Indel_haplotype == "both" ~ "both", Indel_haplotype == "none" ~ "none", Indel_haplotype == "899" ~ "long ins", Indel_haplotype == "900" ~ "short ins")) %>% filter( Indel_haplotype == "900" & Tissue %in% c("V11_middle","V11_tip") & TPM > 6), aes(y=TPM,label=Genome),size=3,nudge_x = 0.2, nudge_y = 0.5, check_overlap = TRUE)
+ggsave("Plots/Supplemental_GL15TPMbyHaplotype.png",device = "png", dpi = 500, height = 7, width = 7)
+
+###ZCN10
+candidate_TPM %>% filter(Geneid == "Pan_gene_6329") %>% select(contains(trop)) %>% t()
+candidate_TPM %>% filter(Geneid == "Pan_gene_6329") %>% select(contains(temp)) %>% t()
+ZCN10_tpm <- tibble(Genome = c("CML52","CML69","CML103","CML288","CML277","CML247","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8","B73","B97","Ky21","M162W","MS71","Oh7b","Oh43","HP301","IL14H","P39"),
+                    TPM = c(0,9.364546,4.995704,30.246162,4.668640,11.831873,3.079423,0,1.707185,0,39.376072,0,21.593580,5.046262,0,0,0,0,2.151063,0,1.004281,4.511501,0),
+                    Pop_Group = c("Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate"))
+ggplot(data = ZCN10_tpm, aes(x=Pop_Group, y=TPM)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.1, height = 0, aes(color=Genome)) +
+  geom_text(data = filter(ZCN10_tpm, TPM > 20), aes(label = Genome), check_overlap = TRUE, nudge_x = 0.05, nudge_y = 2)+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  ylab("TPM")+xlab("Group")+ggtitle("ZCN10 Expression by Temperate vs Tropical Population")+
+  theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))
+ggsave("Plots/Supplemental_ZCN10byGroup.png",device = "png", dpi = 500,height = 7, width = 7)
+
+```
