@@ -1,0 +1,13 @@
+# a table with pan gene type is prepared for the pan gene type (total, and gmap filled in "()")
+# the table start with B73, ended with pan gene type
+
+for ((i=1;i<27;i++)); do 
+  cut -d ',' -f "$i",27 pan_gene_type_table_base.csv | grep "gmap" | cut -d ',' -f 2 | sort | uniq -c > "$i"_gmap_type_count.txt
+  cut -d ',' -f "$i",27 pan_gene_type_table_base.csv | awk 'NR==1{print $1}' > "$i"_header.txt 
+  cat "$i"_header.txt "$i"_gmap_type_count.txt > "$i"_for_final_table.txt
+done 
+
+
+# these information is manually added into the table (wider_pan_gene_type_matrix) 
+
+
