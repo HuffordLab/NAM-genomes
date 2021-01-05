@@ -261,5 +261,7 @@ rm result.*
 
 plot figures in R
 ```bash
-Rscript pan-NAM.TE.R
+Rscript Suppl. Fig. S4.R
+Rscript Suppl. Fig. S5.R
+Rscript Suppl. Fig. S6.R
 ```
