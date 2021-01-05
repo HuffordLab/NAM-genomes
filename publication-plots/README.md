@@ -23,17 +23,20 @@
 ### Supp. Figure 4
 
 * [Script](</te-annotation/bin/Suppl. Fig. S4.R>)
-* [Data](</te-annotation/assets/Suppl. Fig. S4.pdf>)
+* [Data](</te-annotation/assets/>)
+* [Plot](</te-annotation/assets/Suppl. Fig. S4.pdf>)
 
 ### Supp. Figure 5
 
-* [Script](/te-annotation/bin/Suppl. Fig. S5.R)
-* [Data](/te-annotation/assets/Suppl. Fig. S5.pdf)
+* [Script](</te-annotation/bin/Suppl. Fig. S5.R>)
+* [Data](</te-annotation/assets/>)
+* [Plot](/te-annotation/assets/Suppl. Fig. S5.pdf>)
 
 ### Supp. Figure 6
 
-* [Script](/te-annotation/bin/Suppl. Fig. S6.R)
-* [Data](/te-annotation/assets/Suppl. Fig. S6.pdf)
+* [Script](</te-annotation/bin/Suppl. Fig. S6.R>)
+* [Data](</te-annotation/assets/>)
+* [Plot](</te-annotation/assets/Suppl. Fig. S6.pdf>)
 
 ### Supp. Figure 17:
 
