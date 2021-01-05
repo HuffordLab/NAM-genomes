@@ -22,8 +22,8 @@
 
 ### Supp. Figure 4
 
-* [Script](/te-annotation/bin/Suppl._Fig._S4.R)
-* [Data](/te-annotation/assets/Suppl. Fig. S4.pdf)
+* [Script](</te-annotation/bin/Suppl. Fig. S4.R>)
+* [Data](</te-annotation/assets/Suppl. Fig. S4.pdf>)
 
 ### Supp. Figure 5
 
