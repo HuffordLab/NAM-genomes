@@ -30,7 +30,7 @@
 
 * [Script](</te-annotation/bin/Suppl. Fig. S5.R>)
 * [Data](</te-annotation/assets/>)
-* [Plot](/te-annotation/assets/Suppl. Fig. S5.pdf>)
+* [Plot](</te-annotation/assets/Suppl. Fig. S5.pdf>)
 
 ### Supp. Figure 6
 
