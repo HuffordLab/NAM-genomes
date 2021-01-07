@@ -1,0 +1,131 @@
+---
+title: "sv-density-by-chr"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Set up environment
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+library(dplyr)
+library(plotly)
+library(RColorBrewer)
+library(data.table)
+```
+
+sv_density_chr
+```{r}
+
+chr1 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/1.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr1)<- c("NAM_Line","start","position","score")
+
+chr2 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/2.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr2)<- c("NAM_Line","start","position","score")
+
+chr3 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/3.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr3)<- c("NAM_Line","start","position","score")
+
+chr4 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/4.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr4)<- c("NAM_Line","start","position","score")
+
+chr5 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/5.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr5)<- c("NAM_Line","start","position","score")
+
+chr6 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/6.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr6)<- c("NAM_Line","start","position","score")
+
+chr7 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/7.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr7)<- c("NAM_Line","start","position","score")
+
+chr8 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/8.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr8)<- c("NAM_Line","start","position","score")
+
+chr9 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/9.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr9)<- c("NAM_Line","start","position","score")
+
+chr10 <-read.table("/Users/elena/Desktop/sv-analysis-nam/files/10.bed",header = FALSE, sep="\t",stringsAsFactors=FALSE, quote="")
+colnames(chr10)<- c("NAM_Line","start","position","score")
+
+```
+
+
+
+```{r}
+chr1$NAM_Line<- factor(chr1$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr2$NAM_Line<- factor(chr2$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr3$NAM_Line<- factor(chr3$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr4$NAM_Line<- factor(chr4$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr5$NAM_Line<- factor(chr5$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr6$NAM_Line<- factor(chr6$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr7$NAM_Line<- factor(chr7$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr8$NAM_Line<- factor(chr8$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr9$NAM_Line<- factor(chr9$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+chr10$NAM_Line<- factor(chr10$NAM_Line,
+levels=c("B97","Ky21","M162W","Ms71","Oh43","Oh7B","M37W","Mo18W","Tx303","HP301","P39","Il14H","CML52","CML69","CML103","CML228","CML247","CML277","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8"))
+
+```
+
+```{r}
+plot_ly(chr1, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(308452471, 0)), title = "chr1 SV Density across NAM Lines")
+
+plot_ly(chr2, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(243675191, 0)), title = "chr2 SV Density across NAM Lines")
+
+plot_ly(chr3, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(238017767, 0)), title = "chr3 SV Density across NAM Lines")
+
+plot_ly(chr4, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(250330460, 0)), title = "chr4 SV Density across NAM Lines")
+
+plot_ly(chr5, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(226353449, 0)), title = "chr5 SV Density across NAM Lines")
+
+plot_ly(chr6, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(181357234, 0)), title = "chr6 SV Density across NAM Lines")
+
+plot_ly(chr7, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(185808916, 0)), title = "chr7 SV Density across NAM Lines")
+
+plot_ly(chr8, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(182411202, 0)), title = "chr8 SV Density across NAM Lines")
+
+plot_ly(chr9, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(163004744, 0)), title = "chr9 SV Density across NAM Lines")
+
+plot_ly(chr10, x = ~NAM_Line, y = ~position, z = ~score, type = "heatmap",
+        colors = "Spectral", reversescale = T) %>%
+  layout(yaxis = list(range = c(152435371, 0)), title = "chr10 SV Density across NAM Lines")
+```
