@@ -1,10 +1,4 @@
-#gmap_id change 
-gmap_cord <- read.csv("~/Desktop/pan_genome_nov 2/QC_set/list_of_gmap_ID_change.csv",header = FALSE)
-table(gmap_cord$V3)
-
-
-
-setwd("~/Desktop/pan_genome_nov 2/QC_set/")
+setwd("~/Desktop/NAM_PAN_GENOME/pan_genome_nov 2/QC_set/gff_intersecting/")
 name_replace <- read.csv("gff_intersect_name_replace.csv")
 NA_fill_for_plot <- subset(name_replace, select = c(NAM,B73,B97,Ky21,M162W,Ms71,Oh43,Oh7B,M37W,Mo18W,Tx303,HP301,P39,Il14H,CML52,CML69,CML103,CML228,CML247,CML277,CML322,CML333,Ki3,Ki11,NC350,NC358,Tzi8))
 library(reshape2)
