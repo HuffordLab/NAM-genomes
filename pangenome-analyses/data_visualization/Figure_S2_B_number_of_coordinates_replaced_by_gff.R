@@ -10,5 +10,5 @@ color_fill <- c("#FFC125","#4169E1","#4169E1","#4169E1","#4169E1","#4169E1","#41
 
 ggplot(NA_fill_for_plot_reshape, aes(x=NAM, y=gff_fill_Count)) + 
   geom_bar(stat = "identity", width=0.5) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                                 panel.background = element_blank(), axis.line = element_line(colour = "black"),axis.text.x = element_text(angle = 45, hjust = 1, colour = color_fill)) + 
+                                                 panel.background = element_blank(), axis.line = element_line(colour = "black"),axis.text.x = element_text(angle = 90, hjust = 1, colour = color_fill)) + 
   xlab("NAM Genomes") + ylab("Number of Gmap Coordinates Replaced by Gene Model") + theme(text = element_text(size = 12)) 
