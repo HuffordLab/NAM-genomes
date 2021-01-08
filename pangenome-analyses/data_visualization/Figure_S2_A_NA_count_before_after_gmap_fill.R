@@ -1,6 +1,6 @@
 library(ggplot2)
 library(reshape2)
-setwd("~/Desktop/pan_genome_nov 2/QC_set/NA_before_after/")
+setwd("~/Desktop/NAM_PAN_GENOME/pan_genome_nov 2/QC_set/NA_before_after/")
 
 NA_count <- read.csv("NA_before_after_fill.csv")
 plot_type_dataset_for_plot_reshape <- setNames(melt(NA_count), c('NAM', 'NA_status', 'NA_count'))
@@ -13,7 +13,7 @@ plot_type_dataset_for_plot_reshape$NA_status = factor(plot_type_dataset_for_plot
 
 color_fill <- c("#FFC125","#4169E1","#4169E1","#4169E1","#4169E1","#4169E1","#4169E1","#787878","#787878","#787878","#DA70D6","#FF4500","#FF4500","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32","#32CD32")
 ggplot(plot_type_dataset_for_plot_reshape, aes(NAM, NA_count, fill=NA_status,.desc = FALSE))+ geom_bar(stat = "identity", position = 'dodge') + 
-  xlab("NAM Genomes") + ylab("Number of Absent Pan Genes") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
-                                                                   panel.background = element_blank(), axis.line = element_line(colour = "black"),axis.text.x = element_text(angle = 45, hjust = 1, colour = color_fill)) +
+  xlab("NAM Genomes") + ylab("Number of Absent Pan-Genes") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+                                                                   panel.background = element_blank(), axis.line = element_line(colour = "black"),axis.text.x = element_text(angle = 90, hjust = 1, colour = color_fill)) +
   scale_fill_manual(name="", values = c("grey","black"),labels=c("Before coordinate filling","After coordinate filling")) + 
   ylim(0,80000) +  theme(text = element_text(size = 12)) + theme(legend.position="top") 
