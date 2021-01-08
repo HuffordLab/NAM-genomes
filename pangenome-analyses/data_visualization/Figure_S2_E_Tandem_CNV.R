@@ -1,96 +1,51 @@
 library(plotrix)
 library(tidyr)
 library(matrixStats)
-setwd("~/Desktop/NAM_PAN_GENOME/pan_genome_nov 2/QC_set/tandem_QC/")
-
-tandem_list <- read.csv("Tandem_list_all_recode_copy_number.txt",sep = "\t",header=FALSE)
-colnames(tandem_list) <- c("Query_gene","NAM_genome","Tandem")
-head(tandem_list)
-#reshape the dataset 
-
-NAM_base <- subset(tandem_list,tandem_list$NAM_genome != "pan_gene" & tandem_list$NAM_genome !="Query_gene" )
-#fill_info[rowSums(tandem_list=="")!=ncol(tandem_list), ]
-reshaped_datafram <- pivot_wider(NAM_base, names_from = NAM_genome, values_from = Tandem)
-
-# reorder column name before joint the dataset 
-matrix_for_count= subset(reshaped_datafram, select = c(Query_gene,B73,Tzi8,Ky21,M162W,Ms71,Oh7B,Oh43,M37W,Mo18W,NC350,HP301,Il14H,P39,CML52,CML69,Ki11,CML228,CML247,CML277,CML322,CML333,Ki3,CML103,Tx303,NC358,B97))
-matrix_for_count$tandem_count <- rowSums(matrix_for_count == "Tandem")
-table(matrix_for_count$tandem_count)
-
-
-#tandem copy number matrix 
-tandem_copy_list <- read.csv("Tandem_list_all_recode_copy_number.txt",sep = "\t",header=FALSE)
-colnames(tandem_copy_list) <- c("Query_gene","NAM_genome","Tandem")
-head(tandem_copy_list)
-#reshape the dataset 
 library(tidyr)
-NAM_base_copy_number <- subset(tandem_copy_list,tandem_copy_list$NAM_genome != "pan_gene" & tandem_copy_list$NAM_genome !="Query_gene" )
-#fill_info[rowSums(tandem_copy_list=="")!=ncol(tandem_copy_list), ]
-reshaped_datafram_copy_number <- pivot_wider(NAM_base_copy_number, names_from = NAM_genome, values_from = Tandem)
 
-# reorder column name before joint the dataset 
-matrix_for_copy_count= subset(reshaped_datafram_copy_number, select = c(Query_gene,B73,Tzi8,Ky21,M162W,Ms71,Oh7B,Oh43,M37W,Mo18W,NC350,HP301,Il14H,P39,CML52,CML69,Ki11,CML228,CML247,CML277,CML322,CML333,Ki3,CML103,Tx303,NC358,B97))
-# add in pan gene type information, 0 will be considered as NA, missing gene
-matrix_for_copy_count$occurance_genome <- rowSums(matrix_for_copy_count[2:27]!=0)
+tandem_CNV <- read.csv('~/Desktop/NAM_PAN_GENOME/pan_genome_nov 2/QC_set/tandem_QC/tanden_gene_type_CNV_mean.csv')
 
+# replace 0 and 1 copy into missing data 
+library(naniar)
+library(tidyr)
+tandem_CNV[2:28] %>% replace_with_na_all(condition = ~.x == 1) %>% replace_with_na_all(condition = ~.x == 0) %>% write.csv(file = '~/Desktop/tanden_cnv_mean.csv')
 
 
-range_matrix <- as.matrix(matrix_for_copy_count[2:27])
-copy_number_range <- rowRanges(range_matrix, na.rm = FALSE, dims = 1, n = NULL)
-colnames(copy_number_range) <- c("Min_copy","Max_copy")
 
-tanden_gene_type_CNV_range_matrix <- as.data.frame(cbind(matrix_for_copy_count,copy_number_range))
-
-tanden_gene_type_CNV_range_matrix$spread <- tanden_gene_type_CNV_range_matrix$Max_copy-tanden_gene_type_CNV_range_matrix$Min_copy
-table(tanden_gene_type_CNV_range_matrix$spread)
-
-write.csv(tanden_gene_type_CNV_range_matrix,file = "tanden_gene_type_CNV_range_matrix.csv")
-as.data.frame(table(tanden_gene_type_CNV_range_matrix$spread))
-write.csv()
-mean(tanden_gene_type_CNV_range_matrix$spread)
-# 1.875761
-std.error(tanden_gene_type_CNV_range_matrix$spread)
-
-# whole set 
-table(tanden_gene_type_CNV_range_matrix$spread)
-whole_set <- ggplot(tanden_gene_type_CNV_range_matrix,aes(spread)) + stat_bin(binwidth=1) + #stat_bin(binwidth=1, geom="text", aes(label=..count..), vjust=-1.5) + 
-  scale_x_continuous(breaks = seq(0, 135, by = 10)) +
-  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5),text = element_text(size = 20)) + 
-  #scale_y_continuous(breaks = seq(0, 10, by = 1))  +
-  ylab("Number of Putative Tandem Duplicates") + xlab("Putative Tandem Duplicates Copy Number Variation (0-135)") + theme_classic()
+# modify the query gene by copying from the orignial matrix 
+library(ggplot2)
+library(plotrix)
+library(tidyr)
+library(matrixStats)
+visualization_tandem_CNV <- read.csv('~/Desktop/NAM_PAN_GENOME/pan_genome_nov 2/QC_set/tandem_QC/tanden_cnv_with_mean_value.csv')
+# mean of the mean
+mean(visualization_tandem_CNV$mean)
+#[1] 2.199297
+# sd of the mean
+std.error(visualization_tandem_CNV$mean)
+# [1] 0.007200943
 
 
-#subset for zoom in 
-copy_variation_10_and_below <- subset(tanden_gene_type_CNV_range_matrix,tanden_gene_type_CNV_range_matrix$spread <=10)
-table(copy_variation_10_and_below$spread )
-# creating grobs to add in 
-bp<- ggplotGrob(ggplot(copy_variation_10_and_below,aes(spread)) + stat_bin(binwidth=1) + #stat_bin(binwidth=1, geom="text", aes(label=..count..), vjust=-0.5,angle =0,colour="red",size=3) + 
-                  scale_x_continuous(breaks = seq(0, 10, by = 1)) + theme(axis.title.x=element_blank(),axis.title.y=element_blank(),text = element_text(size = 12)) + theme_classic() +
-                  ylab("Number of Putative Tandem Duplicates") +  xlab("Putative Tandem Duplicates Copy Number Variation (0-10)"))
+visualization_tandem_CNV <- read.csv("visualization_tandem_CNV_copy.csv")
 
 
-tanden_cnv <- whole_set + 
-  annotation_custom(
-    grob = bp,
-    xmin = 35,
-    xmax = 125,
-    ymin = 1000,
-    ymax = 7500
-  ) 
-tanden_cnv + theme(text = element_text(size = 14))
+visualization_tandem_CNV$bin <-ifelse(visualization_tandem_CNV$mean>=2 & visualization_tandem_CNV$mean <2.5,rr2<-"2",
+                             ifelse(visualization_tandem_CNV$mean>=2.5 & visualization_tandem_CNV$mean<3.5,rr2<-"3",
+                                    ifelse(visualization_tandem_CNV$mean>=3.5 & visualization_tandem_CNV$mean <4.5,rr2<-"4",
+                                           ifelse(visualization_tandem_CNV$mean>=4.5 & visualization_tandem_CNV$mean <5.5,rr2<-"5",
+                                                  ifelse(visualization_tandem_CNV$mean>=5.5 & visualization_tandem_CNV$mean <6.5,rr2<-"6",
+                                                         ifelse(visualization_tandem_CNV$mean>=6.5 & visualization_tandem_CNV$mean<7.5,rr2<-"7",
+                                                                ifelse(visualization_tandem_CNV$mean>=7.5 & visualization_tandem_CNV$mean <8.5,rr2<-"8",
+                                                                       ifelse(visualization_tandem_CNV$mean>=8.5 & visualization_tandem_CNV$mean <9.5,rr2<-"9",
+                                                                                     rr2<-">=10"))))))))
+visulization_tandem_mean <- as.data.frame(table(visualization_tandem_CNV$bin))
 
-tandem_type <- read.csv("tandem_type_stats.csv")
-freq_df <- as.data.frame(table(tandem_type$Tandem))
-
-write.csv(freq_df,file = "tandem_frequency_for_modify_11_above.csv")  
-
-# modifiy the frequency matrix and load for visulization
-
-freq_vis <- read.csv("tandem_11_above_visulization.csv")
-freq_vis$Var1 <- factor(freq_vis$Var1, levels=c("1", "2", "3","4","5","6","7","8","9","10",">=11"))
+visulization_tandem_mean$Var1 <- factor(visulization_tandem_mean$Var1, levels=c("2", "3","4","5","6","7","8","9",">=10"))
 
 
-ggplot(freq_vis, aes(x = Var1, y = Freq)) + theme_bw() + geom_bar(stat = "identity") + geom_text(aes(label=Freq),vjust=-0.5) +
-  ylab("Number of Putative Tandem Duplicates") + xlab("Putative Tandem Duplicates Copy Number Variation (1-135)") + theme_classic() + 
+ggplot(visulization_tandem_mean, aes(x = Var1, y = Freq)) + theme_bw() + geom_bar(stat = "identity") + geom_text(aes(label=Freq),vjust=-0.5) +
+  ylab("Number of Putative Tandem Duplicates") + xlab("Putative Tandem Duplicates Mean Copy Number") + theme_classic() + 
   theme(text = element_text(size = 12),axis.text.x = element_text(size=10),axis.text.y = element_text(size=10))
+
+
 
