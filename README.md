@@ -71,4 +71,4 @@ Coming Soon!
 4. [Candice Hirsch](http://hirschlab.cfans.umn.edu/)
 
 
-Please check our [contributions](https://github.com/HuffordLab/NAM-genomes/graphs/contributors) page for all the authors who worked on this GitHub documentation (and they sections they worked on!).
+Please check our [contributions](https://github.com/HuffordLab/NAM-genomes/graphs/contributors) page for all the authors who worked on this GitHub documentation (and the sections they worked on!).
