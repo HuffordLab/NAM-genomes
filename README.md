@@ -28,9 +28,8 @@ Go, NAMsters!
 1.  Genome assembly methods ([contig, hybrid scaffold](genome-assembly/README.md) and [pseudomolecule construction](agp-generation/README.md) )
 2. [Quality control (raw data: Illumina, PacBio, RNA-Seq; and Assembly)](quality-control/README.md)
 3. Gene prediction and annotation ([evidence-based](gene-prediction/evidence-based.md), [BRAKER](gene-prediction/ab-initios.md), [merging annotations](gene-prediction/merge-predictions.md))
-4. Centromere annotation
-5. DNA methylation analyses
-6. Accessible Chromatin Regions (ACR) and ATAC-seq data analyses
+4. [Centromere annotation](centromere_annotation/README.md)
+5. [DNA methylation and Accessible Chromatin Regions (ACR) analyses](methylation/README.md)
 7. [PanGenome analyses](pangenome-analyses/README.md)
 8. [Transposable Element Annotation](te-annotation/readme.md)
 9. [Tandem Repeat Arrays](tandemrepeat-quantification/README.md)
