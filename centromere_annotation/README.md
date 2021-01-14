@@ -1,4 +1,16 @@
 # Centromere positions of each NAM line were projected to B73 by mapping both CENH3 ChIP-seq data and genomic input data to the B73 genome. 
+## 0. Read trimming and subsampling
+```
+for file in /scratch/jl03308/NAM_pancentromere/rawdata/ChIP_new/*.fq.gz
+do
+  sh /home/jl03308/git/NAM_pancentromere/NAM_centromere_toB73/SE_trimming.sh $file
+done
+for file in /scratch/jl03308/NAM_pancentromere/rawdata/ChIP_new/*_trimmed.fq.gz
+do
+  sh /home/jl03308/git/NAM_pancentromere/NAM_centromere_toB73/SE_subsampling.sh $file 5000000
+done
+
+```
 
 ## 1. Read alignment
  Both CENH3 ChIP-seq data and genomic input data to the B73 genome with bwa-mem (v0.7.17).
