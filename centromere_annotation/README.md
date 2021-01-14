@@ -18,7 +18,7 @@ for file in /scratch/jl03308/NAM_pancentromere/analysis/peak_call/*/*.ChIP.q20.s
 do
   prefix=$(basename $file | cut -f1 -d ".")
   input=/scratch/jl03308/NAM_pancentromere/analysis/peak_call/${prefix}/${prefix}.q20.sorted.bam
-  sh /home/jl03308/git/NAM_pancentromere/NAM_centromere_toB73/SE_alignment.sh $file $input
+  sh /home/jl03308/git/NAM_pancentromere/NAM_centromere_toB73/deeptools.sh $file $input
 done
 ```
 ## 3. Island identification
