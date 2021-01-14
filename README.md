@@ -48,15 +48,15 @@ Go, NAMsters!
 # Links for external data
 
 1. [CyVerse Data Commons](https://datacommons.cyverse.org/browse/iplant/home/shared/NAM/NAM_genome_and_annotation_Jan2021_release)
-2. MaizeGDB [NAM-page](https://www.maizegdb.org/NAM_project), [Genomes](https://www.maizegdb.org/genome#sets), [FTP site](https://download.maizegdb.org/).
+2. MaizeGDB [NAM-page](https://www.maizegdb.org/NAM_project), [GenomeBrowser](https://maizegdb.org/gene_center/gene), [FTP site](https://download.maizegdb.org/).
 3. [Gramene](http://ftp.gramene.org/nam/release-3/)
-3. Raw Datasets
+3. Raw Datasets (PRJEB31061 and PRJEB32225)
     - [PacBio](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
     - [Illumina](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
-    - [RNAseq](https://www.ebi.ac.uk/ena/browser/view/PRJEB32225)
+    - [RNAseq: E-MTAB-8633 and E-MTAB-8628](https://www.ebi.ac.uk/ena/browser/view/PRJEB32225)
     - [BioNano](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
-    - ATAC-seq
-    - Methylation data
+    - [Methylation data: E-MTAB-10028](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
+    - [NLR trees](https://itol.embl.de/shared/xCJbI9ndshEK)
  4. [NAM-webpage](https://nam-genomes.org/)
 
 # Citation
