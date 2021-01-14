@@ -1,6 +1,6 @@
-# Centromere positions of each NAM line were projected to B73 by mapping both CENH3 ChIP-seq data and genomic input data to the B73 genome. 
+# Centromere positions of each NAM line were projected to B73 by mapping both CENH3 ChIP-seq data and genomic input data to the B73 genome.
 ## 0. Read trimming and subsampling
-```
+```bash
 for file in /scratch/jl03308/NAM_pancentromere/rawdata/ChIP_new/*.fq.gz
 do
   sh /home/jl03308/git/NAM_pancentromere/NAM_centromere_toB73/SE_trimming.sh $file
@@ -14,7 +14,7 @@ done
 
 ## 1. Read alignment
  Both CENH3 ChIP-seq data and genomic input data to the B73 genome with bwa-mem (v0.7.17).
- ```
+ ```bash
  genome=/scratch/jl03308/NAM_Canu1.8_verified_version_1/pseudomolecules/B73.PLATINUM.pseudomolecules-v1.fasta
 for file in /scratch/jl03308/NAM_pancentromere/rawdata/ChIP_new/*.subsample.fq.gz
 do
@@ -23,8 +23,8 @@ do
 done
 ```
 ## 2. Enrichment calculation  
-ChIP enrichment was calculated by normalizing RPKM values from the ChIP data against the genomic input in 5 kbp windows with deeptools (v3.3). 
- ```
+ChIP enrichment was calculated by normalizing RPKM values from the ChIP data against the genomic input in 5 kbp windows with deeptools (v3.3).
+ ```bash
  genome=/scratch/jl03308/NAM_Canu1.8_verified_version_1/pseudomolecules/B73.PLATINUM.pseudomolecules-v1.fasta
 for file in /scratch/jl03308/NAM_pancentromere/analysis/peak_call/*/*.ChIP.q20.sorted.bam
 do
@@ -35,7 +35,7 @@ done
 ```
 ## 3. Island identification
 Enriched islands with a ratio above 2.5 were identified and merged with a distance interval of 1 Mbp using bedtools (v2.29).
-```
+```bash
 for file in /scratch/jl03308/NAM_pancentromere/analysis/peak_call/*/*.ChIP_Input.RPKM.bedgraph
 do
   prefix=$(basename $file |cut -f1 -d ".")
@@ -45,7 +45,7 @@ done
 ```
 
 Centromeres that were not mappable by CENH3 ChIP were defined as the midpoint of the largest CentC array in B73.
-```
+```bash
 lines=$(cat /scratch/jl03308/NAM_pancentromere/analysis/peak_call/NAM_B73.centromere.bed |cut -f1 |sort |uniq)
 for line in $lines
 do
@@ -53,7 +53,7 @@ do
   do
     #echo -e $line"\t"$chr
     loc=$(cat /scratch/jl03308/NAM_pancentromere/analysis/peak_call/NAM_B73.centromere.bed | \
-    awk -v var1=$line -v var2=$chr '{if($1==var1&&$2==var2){print$0}}') 
+    awk -v var1=$line -v var2=$chr '{if($1==var1&&$2==var2){print$0}}')
     if [[ ! "$loc" ]]
     then
     b73_loc_start=$(cat /scratch/jl03308/NAM_pancentromere/analysis/peak_call/NAM/B73.majorcentc.bed | grep "$chr" | \
