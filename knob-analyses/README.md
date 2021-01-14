@@ -23,4 +23,4 @@ adjusted to match B73.
 
 * `NAM_array_coords.tsv` is the output from `Rep_content_dat_prep.R`.
 * `NAM_array_coords_annotation_cyt_search_edit.csv` is the data from above with hand annotations checking for relationship with cytological knobs evident in FISH imagery.
-* All scripts are in `[scripts](scripts)` folders and data in the [assets](assets) folder.
+* All scripts are in [`scripts`](scripts) folders and data in the [`assets`](assets) folder.
