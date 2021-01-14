@@ -10,16 +10,16 @@
 
 ## Workflow
 
-![evidence](/gene-prediction/assets/evidence.png)
+![evidence](/gene-prediction/assets/evidence1.png)
 
 Fig 1: Evidence methods flowchart- Workflow1
 
 
-![evidence](/gene-prediction/assets/braker.png)
+![evidence](/gene-prediction/assets/braker1.png)
 
 Fig 2: _ab initio_ methods flowchart - Workflow2
 
 
-![evidence](/gene-prediction/assets/combined_workflow.png)
+![evidence](/gene-prediction/assets/combined_workflow1.png)
 
 Fig 3: Merge annotations from Workflow1 &  Workflow2 and downstream QC methods flowchart
