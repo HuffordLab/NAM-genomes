@@ -2,8 +2,7 @@
 
 ### Scripts
 
-1. [`Rep_content_dat_prep.R`](scripts/Rep_content_dat_prep.R): This script takes the Repeat_content_sum.csv output files for all lines
-and combines them into a data set with more consistent columns. The output
+1. [`Rep_content_dat_prep.R`](scripts/Rep_content_dat_prep.R): This script takes the [Repeat_content_sum.csv](assets/Repeat_content_sum.csv) output files for all lines and combines them into a data set with more consistent columns. The output
 dataset is called [`NAM_array_coords.tsv`](assets/NAM_array_coords.tsv).
 
 2. [`Synteny_Knobs.R`](scripts/Synteny_Knobs.R): This script identifies knob synteny by comparing knob positions based on orthologous
@@ -16,7 +15,7 @@ adjusted to match B73.
 
 3. [`NAM_plot_Supp.R_linux.sh`](scripts/NAM_plot_Supp.R_linux.sh) : This script modifies the gff files of repeats and TE's and subsetting to the elements that are within repeat arrays to reduce the required memory and time for further analysis. This is prep for NAM_plot_Supp.txt.
 
-4. [`NAM_plot_Supp.R`](scripts/NAM_plot_Supp.R) :This script generates the Supplement figure of the largest knobs with TE content. It takes the output from NAM_plot_Supp.R_linux and NAM_array_coords.tsv file as inputs.
+4. [`NAM_plot_Supp.R`](scripts/NAM_plot_Supp.R) :This script generates the Supplement figure of the largest knobs with TE content. It takes the output from `NAM_plot_Supp.R_linux.sh` and `NAM_array_coords.tsv` file as inputs.
 
 
 ### Data
