@@ -1,7 +1,7 @@
 # Centromere positions of each NAM line were projected to B73 by mapping both CENH3 ChIP-seq data and genomic input data to the B73 genome. 
 
 ## 1. Read alignment
- Both CENH3 ChIP-seq data and genomic input data to the B73 genome with bwa-mem (v0.7.17) (Vasimuddin et al. 2019).
+ Both CENH3 ChIP-seq data and genomic input data to the B73 genome with bwa-mem (v0.7.17).
  ```
  genome=/scratch/jl03308/NAM_Canu1.8_verified_version_1/pseudomolecules/B73.PLATINUM.pseudomolecules-v1.fasta
 for file in /scratch/jl03308/NAM_pancentromere/rawdata/ChIP_new/*.subsample.fq.gz
