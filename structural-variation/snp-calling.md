@@ -1,5 +1,7 @@
 # GATK SNP calling
 
+_**all scripts are located in [`snp-calling`](structural-variation/snp-calling) directory.**_
+
 1. Input files were downloaded from CyVerse using `getFiles.sh` script. The files that were large (ran without barcodes), were split to smaller chunks for quick processing using `split-fastq.sh` script.
 2. The genome file was downloaded from CyVerse (B73.v5) and processed using `gatk-prepare-reference.sh` to create all the necessary files for running GATK pipeline.
 3. The fastq files were mapped to B73.v5 and processed using `process-fastq.sh` script. Briefly, this script:
