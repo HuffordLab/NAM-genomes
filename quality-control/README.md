@@ -12,7 +12,7 @@ RawSequence obtained from `BaseSpace` were already inspected for the sequencing 
 
 3. _RNA-seq data_ downloaded from BaseSpace (which was already tested for quality, demultiplexed and trimmed of any adapter sequences) and were tested by first mapping against V4 B73 (to check the mapping percent), counts were generated against genic features provided by the V4 annotation, and count based clustering using DESeq2 was performed to test correct clustering of various tissues within the NAM genome. The RNAseq data was further tested to verify its source (accession and tissue) by calling variants using GATK recommended workflow.
 
-4. _Assembly QC_ Finished assembled sequences (contigs/scaffolds/pseudomolecule) were used as input sequences in FASTA format to the GenomeQC pipeline to calculates different quality metrics for assessing the contiguity and gene space completness of the NAM genome assemblies. For assessing gene space completeness, Embryophyta odb9 (lineage specific profile) and maize (AUGUSTUS gene prediction species profile) were selected as the input parameters for calculating % BUSCO completeness. 
+4. _Assembly QC_ Finished assembled sequences (contigs/scaffolds/pseudomolecule) were used as input sequences in FASTA format to the GenomeQC pipeline to calculates different quality metrics for assessing the contiguity and gene space completness of the NAM genome assemblies. For assessing gene space completeness, Embryophyta odb9 (lineage specific profile) and maize (AUGUSTUS gene prediction species profile) were selected as the input parameters for calculating % BUSCO completeness.
 
 
 
@@ -104,8 +104,8 @@ Steps:
 
 Each RNAseq library was mapped to B73.v4 and SNPs were called using GATK. The SNPs were then clustered to generate a phylogenetic tree, compared to the NAM founder phylogenetic tree (from HapMap2) to detect any sample/tissue/accession mislabeling or switching. The methods/scripts are listed below:
 
- 1. The bam file generated from the previous step was processed using GATK and Picard toolkit using the script [`process-rnaseq-bams.sh`](scripts/process-rnaseq-bams.sh). Breifly, this scripts adds read-group information, marks duplicate reads in the mapped bam file, and splits N cigar string in mapped reads.
- 2. Run GATK HaplotypeCaller on the processed bam files. To speed it up, the commands were generated using intervals, processing 3Mb regions at a time, simultaneously, running them on the cluster. The script used: [`gatkcmds-gen.sh`](scripts/gatkcmds-gen.sh). The jobs script wrapper [`makeSLURMp.py`](https://github.com/ISUgenomics/common_scripts/blob/master/makeSLURMp.py) was used.
+ 1. The bam file generated from the previous step was processed using GATK and Picard toolkit using the script [`process-rnaseq-bams.sh`](scripts/process-rnaseq-bams.sh). Briefly, this scripts adds read-group information, marks duplicate reads in the mapped bam file, and splits N cigar string in mapped reads.
+ 2. Run GATK `HaplotypeCaller` on the processed bam files. To speed it up, the commands were generated using intervals, processing 3Mb regions at a time, simultaneously, running them on the cluster. The script used: [`gatkcmds-gen.sh`](scripts/gatkcmds-gen.sh). The jobs script wrapper [`makeSLURMp.py`](https://github.com/ISUgenomics/common_scripts/blob/master/makeSLURMp.py) was used.
  3. The VCF files for each region were gathered and filtered to generate a single VCF file.
  4. SNPphylo was used to contruct phylogenetic tree and the tree was inspected to check if the tissue samples from each accession clustered correctly. Any irregularities were flagged and removed from the final analyses (samples that could be easily obtained were re-sequenced). Script [`snp-phylo-run.sh`](scripts/snp-phylo-run.sh).
 
