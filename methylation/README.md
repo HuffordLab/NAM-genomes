@@ -15,19 +15,19 @@
 
   Scripts:
 
-      - [submit_process_NAM_genomes.sh](scripts/submit_process_NAM_genomes.sh)
-      - [process_NAM_genomes.sh](scripts/process_NAM_genomes.sh)
-      - [findgaps.py](scripts/findgaps.py)
+  - [submit_process_NAM_genomes.sh](scripts/submit_process_NAM_genomes.sh)
+  - [process_NAM_genomes.sh](scripts/process_NAM_genomes.sh)
+  - [findgaps.py](scripts/findgaps.py)
 
   Additional files:
 
-      - [NAM_founder_genome_list.txt](NAM_founder_genome_list.txt)
+  - [NAM_founder_genome_list.txt](NAM_founder_genome_list.txt)
 
   Additional software:
 
-     - bioawk 1.0
-     - Biopython 1.68
-     - BEDTools 2.28.0
+  - bioawk 1.0
+  - Biopython 1.68
+  - BEDTools 2.28.0
 
 3. Process the NAM gene annotations
 
@@ -38,15 +38,15 @@
 
   Scripts:
 
-    - process_gene_annotations.sh (provided here on github)
+  - process_gene_annotations.sh (provided here on github)
 
   Additional files:
 
-    - NAM_founder_genome_list.txt (provided here on github)
+  - NAM_founder_genome_list.txt (provided here on github)
 
   Additional software:
 
-    - BEDTools 2.28.0
+  - BEDTools 2.28.0
 
 4. Create Bowtie2 index files for all the NAM founders
 
@@ -55,15 +55,15 @@
 
   Scripts:
 
-    - create_bowtie2_indices.NAM.v1.sh (provided here on github)
+  - create_bowtie2_indices.NAM.v1.sh (provided here on github)
 
   Additional files:
 
-    - NAM_founder_genome_list.txt (provided here on github)
+  - NAM_founder_genome_list.txt (provided here on github)
 
   Additional software:
 
-    - Bowtie2 2.3.5.1
+  - Bowtie2 2.3.5.1
 
 5. Create files of all cytosine coordinates in the NAM genomes
 
@@ -75,15 +75,16 @@
 
   Scripts:
 
-    - Extract_all_Cs_NAM_genomes.v4.sh (provided here on github)
+  - Extract_all_Cs_NAM_genomes.v4.sh (provided here on github)
 
   Additional files:
 
-    - NAM_founder_genome_list.txt
+  - NAM_founder_genome_list.txt
 
   Additional software:
-    - pyfaidx 0.5.5.1
-    - EMBOSS 6.6.0
+
+  - pyfaidx 0.5.5.1
+  - EMBOSS 6.6.0
 
 6. Processing the methylome CGmap files
 
@@ -100,18 +101,18 @@
 
   Scripts:
 
-    - convert_CGmap_to_allc_then_merge_then_convert_bed.v2.sh (provided here on github)
+  - convert_CGmap_to_allc_then_merge_then_convert_bed.v2.sh (provided here on github)
 
   Additional files:
 
-    - NAM_methylome_list_merge.v2.txt (provided here on github)
-    - CGmap files (generated from earlier steps in the methods)
+  - NAM_methylome_list_merge.v2.txt (provided here on github)
+  - CGmap files (generated from earlier steps in the methods)
 
   Additional software:
 
-    - methylpy 1.3.2
-    - BEDTools 2.28.0
-    - kenttools 1.04.00
+  - methylpy 1.3.2
+  - BEDTools 2.28.0
+  - kenttools 1.04.00
 
 7. Call the unmethylated regions (UMRs)
     * Each NAM founder, mapped to both B73 and to its cognate reference genome, are submitted as separate scripts
@@ -136,23 +137,23 @@
 
   Scripts:
 
-    - submit_UMR_script.v2.sh (provided here on github)
-    - UMR_algorithm_all_contexts_v1.3.NAM_founders.sh (provided here on github)
+  - submit_UMR_script.v2.sh (provided here on github)
+  - UMR_algorithm_all_contexts_v1.3.NAM_founders.sh (provided here on github)
 
   Additional files:
 
-    - NAM_methylome_list_merge.v2.txt (provided here on github)
-    - allc.bed files generated in step 6
-    - files of total cytosine coverage, generated in step 6
-    - 100 bp sliding window bed files generated in step 2
-    - bedtools genome files generated in step 2
-    - list of contigs lacking genes, generated in step 2
-    - bed files of genome N-gaps, generated in step 2
-    - bed files of gene annotations, generated in step 3
+  - NAM_methylome_list_merge.v2.txt (provided here on github)
+  - allc.bed files generated in step 6
+  - files of total cytosine coverage, generated in step 6
+  - 100 bp sliding window bed files generated in step 2
+  - bedtools genome files generated in step 2
+  - list of contigs lacking genes, generated in step 2
+  - bed files of genome N-gaps, generated in step 2
+  - bed files of gene annotations, generated in step 3
 
   Additional software:
 
-    - BEDTools 2.28.0
+  - BEDTools 2.28.0
 
 8. Clean up the UMR files
     * Remove the blacklisted regions from the previously called UMRs
@@ -161,17 +162,17 @@
 
   Scripts:
 
-    - remove_blacklist.change_filenames.convert_bed.NAM_UMRs.v1.sh (provided here on github)
+  - remove_blacklist.change_filenames.convert_bed.NAM_UMRs.v1.sh (provided here on github)
 
   Additional files:
 
-    - methylomes_table_cross_ref.txt
-    - UMR files generated in step 7
-    - Blacklist files
+  - methylomes_table_cross_ref.txt
+  - UMR files generated in step 7
+  - Blacklist files
 
   Additional software:
 
-    - BEDTools 2.28.0
+  - BEDTools 2.28.0
 
 
 9. Calling differentially methylated regions (DMRs) and conserved UMRs
@@ -184,17 +185,17 @@
 
   Scripts:
 
-    - extract_NAM_DMRs.v1.sh (provided here on github)
+  - extract_NAM_DMRs.v1.sh (provided here on github)
 
   Additional files:
 
-    - NAM_mapping_list.txt (provided here on github)
-    - 7-column UMR bed file generated in step 7
-    - meth_*.ref_B73.allc.bed.chg file generated in step 6
+  - NAM_mapping_list.txt (provided here on github)
+  - 7-column UMR bed file generated in step 7
+  - meth_*.ref_B73.allc.bed.chg file generated in step 6
 
   Additional software:
 
-    - BEDTools 2.29.2
+  - BEDTools 2.29.2
 
 
 10. The initial ATAC-seq read processing
@@ -202,15 +203,15 @@
 
   Scripts:
 
-    - ATAC_initial_read_process.NAM.v1.sh (provided here on github)
+  - ATAC_initial_read_process.NAM.v1.sh (provided here on github)
 
   Additional files:
 
-    - genome_mapping_combinations.txt (provided here on github)
+  - genome_mapping_combinations.txt (provided here on github)
 
   Additional software:
 
-    - fastp 0.20.0
+  - fastp 0.20.0
 
 11. Map the ATAC-seq reads with bowtie2
     * Align each ATAC-seq replicate to the B73 reference genome and also the cognate reference genome
@@ -218,15 +219,15 @@
 
   Scripts:
 
-    - ATAC_map_reads.NAM.v1.sh (provided here on github)
+  - ATAC_map_reads.NAM.v1.sh (provided here on github)
 
   Additional files:
 
-    - genome_mapping_combinations.txt (provided here on github)
+  - genome_mapping_combinations.txt (provided here on github)
 
   Additional software:
 
-    - Bowtie2 2.3.5.1
+  - Bowtie2 2.3.5.1
 
 12. Filter the aligned ATAC-seq reads
     * This script creates and submits a separate script for each NAM line, mapped to B73 reference and its cognate reference
@@ -237,17 +238,17 @@
 
   Scripts:
 
-    - ATAC_process_bams_v3.sh (provided here on github)
+  - ATAC_process_bams_v3.sh (provided here on github)
 
   Additional files:
 
-    - genome_mapping_combinations.txt (provided here on github)
+  - genome_mapping_combinations.txt (provided here on github)
 
   Additional software:
 
-    - deepTools 3.3.1
-    - SAMtools 1.10
-    - sambamba 0.7.1
+  - deepTools 3.3.1
+  - SAMtools 1.10
+  - sambamba 0.7.1
 
 13. Call accessible chromatin regions (ACRs) with MACS2 and quantify their overlap with UMRs
     * Call peaks on ATAC data with MACS2 using paired-end mode, q-value cutoff of 0.005, and effective genome size of 1.8e+9 bp
@@ -257,18 +258,18 @@
 
   Scripts:
 
-    - macs2_call_acrs.nam_lines.v5.sh (provided here on github)
+  - macs2_call_acrs.nam_lines.v5.sh (provided here on github)
 
   Additional files:
 
-    - genome_mapping_combinations.txt (provided here on github)
-    - UMR bed files generated in step 8
-    - ATAC-seq bam files generated in step 11
-    - list of contigs lacking genes, generated in step 2
-    - bed files of genome N-gaps, generated in step 2
-    - bed files of gene annotations, generated in step 3
+  - genome_mapping_combinations.txt (provided here on github)
+  - UMR bed files generated in step 8
+  - ATAC-seq bam files generated in step 11
+  - list of contigs lacking genes, generated in step 2
+  - bed files of genome N-gaps, generated in step 2
+  - bed files of gene annotations, generated in step 3
 
   Additional software:
 
-    - MACS2 2.2.7.1
-    - BEDTools 2.29.2
+  - MACS2 2.2.7.1
+  - BEDTools 2.29.2
