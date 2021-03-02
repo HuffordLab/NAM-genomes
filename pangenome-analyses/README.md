@@ -146,7 +146,7 @@ pan_gene_ID NAM gmap_ID= genome coordinate
 Refer to step two in gmap_pipeline section
 ```
 
-14. the intersected gff files was further filtered using script intersect_gene_model_name_changing.py
+14. the intersected gff files was further filtered using script cds_intersect_replace_coordinates
 ```
 This script changed coordinates back to NAM gene ID, if the mapping coverage covered at least 90% of the gene model
 
