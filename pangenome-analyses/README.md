@@ -133,7 +133,7 @@ gmap_build -D /home/hirschc1/qiuxx221/nam_pan_genome/gmap_db -d B73 Zm-B73-REFER
 gmap -D /home/hirschc1/qiuxx221/nam_pan_genome/gmap_db -d B73 -n 1 -f gff3_gene master_pan.fasta >  pan_to_B73_1_path.gff3
 ```
 
-12.  output the alignment and apply filter on gmap coverage and identity was done using script output_gmap_canonical_gene_position.py 
+12.  output the alignment and apply filter on gmap coverage and identity was done using script gmap_cutoff_90.py
 ```
 #output format: 
 pan_gene_ID NAM gmap_ID= genome coordinate 
