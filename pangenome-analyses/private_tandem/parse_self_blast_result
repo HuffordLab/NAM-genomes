@@ -1,5 +1,7 @@
 # split pan matrix by pan gene type into private pan gene matrix 
 
+# tandem duplicates were define as gene pair within 10 gene space to be called using NAM self blasting result 
+
 # making dict for possible tandem that is only present in one single genotype. 
 putative_self_tandem = []
 with open("NAM_all_self_tandem.txt") as tandem_pair:
