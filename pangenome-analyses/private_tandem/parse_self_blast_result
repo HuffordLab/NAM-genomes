@@ -11,6 +11,10 @@ with open("NAM_all_self_tandem.txt") as tandem_pair:
             tandem_pair = gene_pair[0] + "," + gene_pair[1] 
             putative_self_tandem.append(tandem_pair)
             
+with open('tandem_for_dict.txt', 'w') as f:
+    for item in final_list:
+        print_item = str(item).replace('[','').replace(']','')
+        f.write("%s\n" % print_item)            
 
 tandem_dict_for_sub ={}
 with open("tandem_for_dict.txt") as tandem_pair:
@@ -43,5 +47,5 @@ with open('tamden_add_private.txt', 'w') as f:
         
 # The file was further compressed using compressing_duplicate_ID.R script in the inital matrix section. 
 
-# final version of private genes are stored as 
+tamden_add_private.gmap_compression_final.csv
             
