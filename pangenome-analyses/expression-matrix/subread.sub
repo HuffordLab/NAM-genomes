@@ -1,0 +1,40 @@
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --ntasks=36
+#SBATCH --mem=350GB
+#SBATCH --time=2:00:00
+#SBATCH --account=triffid
+#SBATCH --qos=triffid
+#SBATCH --job-name=subread
+#SBATCH --output=nova-%x.%j.out
+#SBATCH --error=nova-%x.%j.err
+#SBATCH --mail-user=arnstrm@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+
+echo "All jobs in this array have:"
+echo "- SLURM array job id: ${SLURM_ARRAY_JOB_ID}"
+echo "- SLURM array task count: ${SLURM_ARRAY_TASK_COUNT}"
+echo "- SLURM array starting task: ${SLURM_ARRAY_TASK_MIN}"
+echo "- SLURM array ending task: ${SLURM_ARRAY_TASK_MAX}"
+echo "This job in the array has:"
+echo "- SLURM job id: ${SLURM_JOB_ID}"
+echo "- SLURM array task id: ${SLURM_ARRAY_TASK_ID}"
+INPUTFILE=input.fofn
+SCRIPTNAME=counts.sh
+chmod +x $SCRIPTNAME
+IFS=$'\n' read -d '' -r -a LINES < ${INPUTFILE}
+LINE=${LINES[$SLURM_ARRAY_TASK_ID]}
+echo -e "$(date +"%D  %r")\tthis command is ${LINE}"
+./${SCRIPTNAME} ${LINE}
+
+if [ $? -eq 0 ]
+then
+  echo -e "$(date +"%D  %r")\tSuccess: ${LINE}"
+  exit 0
+else
+  echo -e "$(date +"%D  %r")\tFailed\t${LINE}"
+  echo -e "$(date +"%D  %r")\tJobID\t${SLURM_JOB_ID}"
+  echo -e "$(date +"%D  %r")\tTaskID\t${SLURM_ARRAY_TASK_ID}"
+exit 1
+fi
