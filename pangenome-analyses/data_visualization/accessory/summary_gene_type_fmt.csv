@@ -1,0 +1,105 @@
+NAM,Gene_Type,Gene_Count
+B73,Core Gene       ,27910
+Tzi8,Core Gene       ,27910
+Ky21,Core Gene       ,27910
+M162W,Core Gene       ,27910
+Ms71,Core Gene       ,27910
+Oh7B,Core Gene       ,27910
+Oh43,Core Gene       ,27910
+M37W,Core Gene       ,27910
+Mo18W,Core Gene       ,27910
+NC350,Core Gene       ,27910
+HP301,Core Gene       ,27910
+Il14H,Core Gene       ,27910
+P39,Core Gene       ,27910
+CML52,Core Gene       ,27910
+CML69,Core Gene       ,27910
+Ki11,Core Gene       ,27910
+CML228,Core Gene       ,27910
+CML247,Core Gene       ,27910
+CML277,Core Gene       ,27910
+CML322,Core Gene       ,27910
+CML333,Core Gene       ,27910
+Ki3,Core Gene       ,27910
+CML103,Core Gene       ,27910
+Tx303,Core Gene       ,27910
+NC358,Core Gene       ,27910
+B97,Core Gene       ,27910
+B73,Dispensable Gene,15426
+Tzi8,Dispensable Gene,15116
+Ky21,Dispensable Gene,15607
+M162W,Dispensable Gene,15837
+Ms71,Dispensable Gene,15476
+Oh7B,Dispensable Gene,15191
+Oh43,Dispensable Gene,15355
+M37W,Dispensable Gene,15506
+Mo18W,Dispensable Gene,14918
+NC350,Dispensable Gene,15280
+HP301,Dispensable Gene,14947
+Il14H,Dispensable Gene,14758
+P39,Dispensable Gene,14881
+CML52,Dispensable Gene,14634
+CML69,Dispensable Gene,15016
+Ki11,Dispensable Gene,15110
+CML228,Dispensable Gene,15045
+CML247,Dispensable Gene,15038
+CML277,Dispensable Gene,14956
+CML322,Dispensable Gene,15014
+CML333,Dispensable Gene,15250
+Ki3,Dispensable Gene,15345
+CML103,Dispensable Gene,15007
+Tx303,Dispensable Gene,15071
+NC358,Dispensable Gene,15178
+B97,Dispensable Gene,15602
+B73,Near-Core Gene  ,4015
+Tzi8,Near-Core Gene  ,3904
+Ky21,Near-Core Gene  ,3979
+M162W,Near-Core Gene  ,3932
+Ms71,Near-Core Gene  ,4000
+Oh7B,Near-Core Gene  ,3546
+Oh43,Near-Core Gene  ,3959
+M37W,Near-Core Gene  ,3993
+Mo18W,Near-Core Gene  ,3849
+NC350,Near-Core Gene  ,4028
+HP301,Near-Core Gene  ,3987
+Il14H,Near-Core Gene  ,3948
+P39,Near-Core Gene  ,3858
+CML52,Near-Core Gene  ,3600
+CML69,Near-Core Gene  ,4000
+Ki11,Near-Core Gene  ,3966
+CML228,Near-Core Gene  ,3796
+CML247,Near-Core Gene  ,4002
+CML277,Near-Core Gene  ,3977
+CML322,Near-Core Gene  ,3803
+CML333,Near-Core Gene  ,4015
+Ki3,Near-Core Gene  ,4035
+CML103,Near-Core Gene  ,3980
+Tx303,Near-Core Gene  ,4009
+NC358,Near-Core Gene  ,4019
+B97,Near-Core Gene  ,4030
+B73,Private Gene    ,403
+Tzi8,Private Gene    ,917
+Ky21,Private Gene    ,542
+M162W,Private Gene    ,594
+Ms71,Private Gene    ,547
+Oh7B,Private Gene    ,1130
+Oh43,Private Gene    ,602
+M37W,Private Gene    ,827
+Mo18W,Private Gene    ,1216
+NC350,Private Gene    ,679
+HP301,Private Gene    ,694
+Il14H,Private Gene    ,787
+P39,Private Gene    ,850
+CML52,Private Gene    ,792
+CML69,Private Gene    ,883
+Ki11,Private Gene    ,760
+CML228,Private Gene    ,761
+CML247,Private Gene    ,890
+CML277,Private Gene    ,941
+CML322,Private Gene    ,772
+CML333,Private Gene    ,847
+Ki3,Private Gene    ,697
+CML103,Private Gene    ,785
+Tx303,Private Gene    ,777
+NC358,Private Gene    ,672
+B97,Private Gene    ,523

@@ -146,19 +146,21 @@ pan_gene_ID NAM gmap_ID= genome coordinate
 Refer to step two in gmap_pipeline section
 ```
 
-14. the intersected gff files was further filtered using script cds_intersect_replace_coordinates
+14. the intersected gff files was further filtered using script cds_intersect_replace_coordinates.py
 ```
 This script changed coordinates back to NAM gene ID, if the mapping coverage covered at least 90% of the gene model
 
 The final output format will be 
 Pan_gene_ID NAM gene coordiates(either gmap_ID=xxx or Zm00xxxx)
 ```
-15. convert output from step 14 using R script rejoin_matrix.R, but this is modified version that only allow to merge the pan gene ID. there is no compression for any possible duplicate gene IDs. They are removed manually when all the gene ID are identical
+15. convert output from step 14 using R script rejoin_matrix.R, but this is modified version that only allow to merge the pan gene ID. there is no compression for any possible duplicate gene IDs. They are removed manually when all the gene ID are identical. gmap coordinates duplicates were not removed. 
 ```
-This step generate the final matrix for the pan genome that includes NA genes been recovered using gmap approach. A list of manually removed pan genes can be find in data visualization under duplicated_lines_manually_removed.csv file
+This step generate the final matrix for the pan genome that includes NA genes been recovered using gmap approach.
 ```
 
 16. Note on subgenome information
 ```
 When one pan gene has more than 1 hits with different subgenome outcome, the majority subgenome genome is kept. For example, when pan gene A has 2 hits to M1, 1 hit to M2, M1 is considered as the subgenome where the pan gene is coming from. When M1, and M2 has the same hit, M1 is kept. Only 42 pan gene has this issue. The details of the conflicting subgenome information can be found at subgenome_conflict_select.csv
 ```
+
+17. For private genes, there are also possible putative tandem duplicates. For those genes, all by all blast was done from step 5, to be considered as putative tandem duplicates, two private genes have to be in 10 gene space apart.  
