@@ -1,0 +1,1165 @@
+---
+title: "Li2016_Candidate_Analysis"
+author: "Samantha Snodgrass"
+date: "10/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+```
+#Overlap Li candidates with GWAS SNPs
+
+Import and format data
+```{r}
+#read in the gene id information
+Li2016_candidates<-read_delim("../Li2016_suppdata8_filtered.txt",delim = "\t")
+#Old file from Maggie; this only has the gene ids
+v3tov5<-read_delim("../Li2016-v5ids.txt", delim = "\t", col_names = c("B73V3","V5"))
+#New file from Maggie; this has gene ids and V5 coordinates
+candidate_coordinates<-read_delim("../B73v3_B73v5_liftover_genemodel_CDS_xref.txt", delim = "\t", 
+                                  col_names = c("chr_LO","start_LO","stop_LO","B73V3",
+                                                "B73v3_repeat","strand",
+                                      "chr_B73v5","start_B73v5","stop_B73v5",
+                                      "V5","V5_repeat","strand_B73v5","unknown"))
+candidate_coordinates<-select(candidate_coordinates, -c("B73v3_repeat","V5_repeat","strand_B73v5","unknown"))
+colnames(Li2016_candidates)[1]<-"B73V3" #make it so they share the same variable name
+candidates<-inner_join(Li2016_candidates,candidate_coordinates)
+```
+Read in the GWAS by phenotype data
+```{r}
+phenotype_files<-list.files("../GWAS_SNPs/") #lists all the file names 
+for(i in 1:length(phenotype_files)){
+  path<-str_c("../GWAS_SNPs/",phenotype_files[i]) #creates the path to file
+  n<-str_replace_all(path, "\\.", "_") %>% str_split("_",simplify = TRUE) %>% .[1,6:7] %>% str_c(collapse = "_") #creates the name for each individual dataframe
+  assign(n, read_delim(path,delim = "\t", col_names = TRUE)) #assigns file to dataframe name, n
+}
+```
+Remove non-significant SNPs from GWAS result files
+```{r}
+GWAS_df<-ls(pattern = "^Chr") #creates a list of all the object names
+for(i in 1:length(GWAS_df)){ 
+  n<-str_c(GWAS_df[i],"_sigSNPs") #creates the new names for filtered df's
+  assign(n, filter(get(GWAS_df[i]), p <= 0.05)) #filters SNPs that have a significant p-value
+}
+remove(list = GWAS_df) #This is to cut down on size, speed up loading and shutting down
+```
+
+## Look for overlaps
+```{r}
+#check candidate_coordinates$chr_LO == Chr# of the GWAS dataframe name (capitilizations)
+#check if GWAS$bp is within candidate_coordinatest$start_LO and stop_LO or 5kb upstream
+GWAS_df<-ls(pattern = "^Chr")
+candidate_GWAS_overlap<-tibble(B73V3 = c(NA), #gene id
+                               chr = c(NA), #chromosome
+                               start = c(NA), #start 
+                               stop = c(NA), #stop
+                               strand = c(NA), #strand
+                               GWAS_df = c(NA), #which GWAS file the snp came from
+                               SNP_ID = c(NA), #SNP ID
+                               SNP_BP = c(NA), #SNP bp coordinates
+                               p = c(NA), #significance of the SNP GWAS hit
+                               overlap_region = c(NA) #whether it's within the gene or 5kb upstream of start site
+                               )
+for(i in 1:nrow(candidates)){ #for each candidate
+  #create list of GWAS files with correct chromosome
+  #str_c makes the name specific (not 10 when 1), value returns the name not index, ignore.case deals with captilization differences
+  G<-grep(str_c(candidates$chr_LO[i],"_"), GWAS_df, value = TRUE, ignore.case = TRUE)
+  for(j in 1:length(G)){ #for each GWAS file
+    df<-get(G[j]) #easier  to just assign it to a placeholder name
+    for(k in 1:nrow(df)){ #for each SNP
+      if(candidates$start_LO[i] <= df$bp[k] & df$bp[k] <= candidates$stop_LO[i]){  #if the SNP bp  is between the candidate start/stop site
+        candidate_GWAS_overlap<-add_row(candidate_GWAS_overlap, 
+                                        B73V3 = candidates$B73V3[i],
+                                        chr = candidates$chr_LO[i], #chromosome
+                                        start = candidates$start_LO[i], #start 
+                                        stop = candidates$stop_LO[i], #stop
+                                        strand = candidates$strand[i], #strand
+                                        GWAS_df = G[j], #which GWAS file the snp came from
+                                        SNP_ID = df$SNP[k], #SNP ID
+                                        SNP_BP = df$bp[k], #SNP bp coordinates
+                                        p = df$p[k], #significance of the SNP GWAS hit
+                                        overlap_region = "gene") 
+        #add a row to the candidate_GWAS_overlap df for gene
+      } else{
+        if((candidates$start_LO[i] - 5000 ) <= df$bp[k] & df$bp[k] < candidates$start_LO[i] & candidates$strand[i] == "+"){ #if the SNP bp is within 5000 kb of the start and the strand is positive
+        candidate_GWAS_overlap<-add_row(candidate_GWAS_overlap, 
+                                        B73V3 = candidates$B73V3[i],
+                                        chr = candidates$chr_LO[i], #chromosome
+                                        start = candidates$start_LO[i], #start 
+                                        stop = candidates$stop_LO[i], #stop
+                                        strand = candidates$strand[i], #strand
+                                        GWAS_df = G[j], #which GWAS file the snp came from
+                                        SNP_ID = df$SNP[k], #SNP ID
+                                        SNP_BP = df$bp[k], #SNP bp coordinates
+                                        p = df$p[k], #significance of the SNP GWAS hit
+                                        overlap_region = "promoter")
+        #add a row to the candidate_GWAS_overlap df for promoter of positive strand
+        } else {
+        if((candidates$stop_LO[i] + 5000 ) >= df$bp[k] & df$bp[k] > candidates$stop_LO[i] & candidates$strand[i] == "-"){ #if the SNP bp is within 5000 kb of the start and the strand is negative
+        candidate_GWAS_overlap<-add_row(candidate_GWAS_overlap, 
+                                        B73V3 = candidates$B73V3[i],
+                                        chr = candidates$chr_LO[i], #chromosome
+                                        start = candidates$start_LO[i], #start 
+                                        stop = candidates$stop_LO[i], #stop
+                                        strand = candidates$strand[i], #strand
+                                        GWAS_df = G[j], #which GWAS file the snp came from
+                                        SNP_ID = df$SNP[k], #SNP ID
+                                        SNP_BP = df$bp[k], #SNP bp coordinates
+                                        p = df$p[k], #significance of the SNP GWAS hit
+                                        overlap_region = "promoter")
+        #add a row to the candidate_GWAS_overlap df for promoter of the negative strand
+        }
+      }
+      }
+    }
+  }
+}
+
+```
+Check the overlap dataframe 
+```{r}
+candidate_GWAS_overlap<-na.omit(candidate_GWAS_overlap)
+candidate_GWAS_overlap %>% group_by(B73V3) %>% summarize(hit_per_gene = n()) %>%
+  ggplot(., aes(x=hit_per_gene)) + geom_histogram(binwidth = 10)
+#candidate_GWAS_overlap %>% group_by(B73V3) %>% summarize(count = n())
+candidate_GWAS_overlap %>% group_by(B73V3) %>% summarize(hit_per_gene = n()) %>%
+  ggplot(., aes(x=hit_per_gene)) + geom_dotplot(binwidth = 10)
+candidate_GWAS_overlap %>% group_by(B73V3) %>% summarize(hit_per_gene = n()) %>% select(hit_per_gene) %>% pull() %>% median()
+```
+GRMZM2G033962	445	
+GRMZM2G067985	572
+```{r}
+filter(candidate_GWAS_overlap, B73V3 == "GRMZM2G033962") %>% group_by(overlap_region, GWAS_df) %>% summarize(count = n())
+filter(candidate_GWAS_overlap, B73V3 == "GRMZM2G067985") %>% group_by(overlap_region, GWAS_df) %>% summarize(count = n())
+```
+```{r}
+candidate_GWAS_overlap %>% group_by(overlap_region, GWAS_df) %>% summarize(counts = n()) 
+candidate_GWAS_overlap %>% group_by(overlap_region, GWAS_df) %>% summarize(counts = n()) %>%
+  ggplot(., aes(x=reorder(GWAS_df, counts))) + geom_bar(aes(y=counts, fill=overlap_region), position="dodge", stat = "identity") + theme(axis.text.x = element_text(angle = 90))
+```
+
+```{r}
+filter(candidate_GWAS_overlap, B73V3 %in% candidates$B73V3) %>% select(B73V3) %>% unique() %>% nrow()
+candidates %>% select(B73V3) %>% unique() %>% nrow()
+filter(candidates, !B73V3 %in% candidate_GWAS_overlap$B73V3) %>% select(B73V3) %>% unique() %>% nrow()
+hit_per_gene<-candidate_GWAS_overlap %>% group_by(B73V3, Trait) %>% summarize(hit_per_gene = n())
+hit_per_gene %>%ungroup()%>%group_by(Trait) %>% mutate(med_hpg = median(hit_per_gene, na.rm = TRUE))
+```
+```{r}
+candidate_GWAS_overlap<-mutate(candidate_GWAS_overlap, Trait=str_split(candidate_GWAS_overlap$GWAS_df, "_", simplify = TRUE)%>%.[,2])
+candidate_GWAS_overlap %>% group_by(overlap_region, Trait) %>% summarize(counts = n()) %>%
+  ggplot(., aes(x=reorder(Trait, counts))) + geom_bar(aes(y=counts, fill=overlap_region), position="dodge", stat = "identity") + theme(axis.text.x = element_text(angle = 90))
+```
+
+##Permuation of overlapping SNPs and Candidates
+Concatenate the GWAS files by trait
+```{r}
+T2_sigSNPs<-tibble(Chr = NA, SNP = NA, bp = NA, A1 =  NA, A2 = NA, Freq = NA, b=NA, se=NA, p=NA)
+for(i in ls(pattern = "T2")){
+  T2_sigSNPs<-rbind(get(i),T2_sigSNPs)
+}
+T2_sigSNPs<-na.omit(T2_sigSNPs)
+select(T2_sigSNPs, Chr) %>% unique()
+
+T3_sigSNPs<-tibble(Chr = NA, SNP = NA, bp = NA, A1 =  NA, A2 = NA, Freq = NA, b=NA, se=NA, p=NA)
+for(i in ls(pattern = "T3_")){
+  T3_sigSNPs<-rbind(get(i),T3_sigSNPs)
+}
+T3_sigSNPs<-na.omit(T3_sigSNPs)
+
+T30_sigSNPs<-tibble(Chr = NA, SNP = NA, bp = NA, A1 =  NA, A2 = NA, Freq = NA, b=NA, se=NA, p=NA)
+for(i in ls(pattern = "T30_")){
+  T30_sigSNPs<-rbind(get(i),T30_sigSNPs)
+}
+T30_sigSNPs<-na.omit(T30_sigSNPs)
+```
+Will have to attempt this on condo
+```{r}
+#write the concatenated SNP files and coordinate files
+select(candidate_coordinates, c(chr_LO, start_LO, stop_LO, B73V3, strand)) %>% write_tsv(., "gene_coords.bed", col_names = FALSE)
+select(T2_sigSNPs, c(Chr, bp, SNP)) %>% write_tsv(., "T2_sigSNPs.txt", col_names = FALSE)
+select(T3_sigSNPs, c(Chr, bp, SNP)) %>% write_tsv(., "T3_sigSNPs.txt", col_names = FALSE)
+select(T30_sigSNPs, c(Chr, bp, SNP)) %>% write_tsv(., "T30_sigSNPs.txt", col_names = FALSE)
+```
+
+```{unix}
+#prepare files for bedtools intersect
+## add stop column to SNP files
+## change start of gene coordinates to 5KB upstream
+
+awk -v OFS='\t' '{print $1, $2, $2, $3}' T2_sigSNPs.txt > T2_sigSNPs.bed
+awk -v OFS='\t' '{print $1, $2, $2, $3}' T3_sigSNPs.txt > T3_sigSNPs.bed
+awk -v OFS='\t' '{print $1, $2, $2, $3}' T30_sigSNPs.txt > T30_sigSNPs.bed
+
+awk -v OFS='\t' '$5 ~ /\+/ {print $1, $2-5000, $3, $4, $5}' gene_coords.bed >> gene5KB_coords.bed
+awk -v OFS='\t' '$5 ~ /\-/ {print $1, $2, $3+5000, $4, $5}' gene_coords.bed >> gene5KB_coords.bed
+```
+Writing 1000 random sample files for Arun to run through unix
+```{r}
+#test_sample<-sample(candidate_coordinates$B73V3, nrow(candidates)) 
+#filter(candidate_coordinates, B73V3 %in% test_sample) %>% select(c(chr_LO,start_LO,stop_LO, B73V3)) %>% write_csv(., "test_df.csv", col_names = FALSE)
+
+gene5KB_coords <- read_tsv("gene5KB_coords.bed", col_names = c("Chr","Start","Stop","GeneID","strand"), col_types = "cnncc")
+#make empty directories to write to
+counter = 0
+while(counter < 1000){
+  n<-str_c("Permutation_Files/Samples_1/","coordinates_sample_",counter)
+  test_sample<-sample(gene5KB_coords$GeneID, nrow(candidates)) 
+  filter(gene5KB_coords, GeneID %in% test_sample) %>% 
+    select(c(Chr,Start,Stop, GeneID)) %>% 
+    write_csv(., n, col_names = FALSE)
+  counter <- counter + 1
+}
+counter = 0
+while(counter < 1000){
+  n<-str_c("Permutation_Files/Samples_2/","coordinates_sample_",counter)
+  test_sample<-sample(gene5KB_coords$GeneID, nrow(candidates)) 
+  filter(gene5KB_coords, GeneID %in% test_sample) %>% 
+    select(c(Chr,Start,Stop, GeneID)) %>% 
+    write_csv(., n, col_names = FALSE)
+  counter <- counter + 1
+}
+counter = 0
+while(counter < 1000){
+  n<-str_c("Permutation_Files/Samples_3/","coordinates_sample_",counter)
+  test_sample<-sample(gene5KB_coords$GeneID, nrow(candidates)) 
+  filter(gene5KB_coords, GeneID %in% test_sample) %>% 
+    select(c(Chr,Start,Stop, GeneID)) %>% 
+    write_csv(., n, col_names = FALSE)
+  counter <- counter + 1
+}
+
+```
+
+##Intersection files from Arun's Unix script
+```{r}
+perm1_results<-read_tsv("permutation_stats.txt")
+#perm2_results<-read_tsv("Samples_2_bed-stats.txt")
+#perm3_results<-read_tsv("Samples_3_bed-stats.txt")
+```
+```{r}
+select(perm1_results, contains("T2")) %>%
+  ggplot(., aes(x = T2_genewhit)) + geom_histogram(binwidth = 1) +
+  geom_vline(xintercept = 88, color = "red") #88 Li candidates overlap with at least 1 sigSNP
+
+select(perm1_results, contains("T2")) %>% mutate(prop_hit = T2_genewhit/T2_Total) %>%
+  ggplot(., aes(x = prop_hit)) + geom_histogram(binwidth = 0.05) +
+  geom_vline(xintercept = 88/134, color = "red") #88 out of 134 total Li candidates overlap with at least 1 sigSNP
+
+select(perm1_results, contains("T2")) %>%
+  ggplot(., aes(x = T2_medhpg)) + geom_histogram(binwidth = 1) +
+  geom_vline(xintercept = 35, color = "red") #median hits per gene for T2 and T30 is 13, 9 for T3
+```
+calculating the p-values
+```{r}
+perm1_results %>% filter(T2_genewhit >= 88) %>% nrow()/1000 #p-value for number of genes with at least 1 hit
+perm1_results%>% mutate(prop_hit = T2_genewhit/T2_Total) %>% filter(prop_hit >= 88/134)%>% nrow()/1000 #p-value for proportion of genes with at least 1 sig SNP
+perm1_results %>% filter(T2_medhpg >= 35) %>% nrow()/1000 #pvalue for median sigSNPs per gene
+```
+```{r}
+perm1_results %>% filter(T3_genewhit >= 97) %>% nrow()/1000 #p-value for number of genes with at least 1 hit
+perm1_results%>% mutate(prop_hit = T3_genewhit/T3_Total) %>% filter(prop_hit >= 97/134)%>% nrow()/1000 #p-value for proportion of genes with at least 1 sig SNP
+perm1_results %>% filter(T3_medhpg >= 4) %>% nrow()/1000 #pvalue for median sigSNPs per gene
+print("That was T3")
+perm1_results %>% filter(T30_genewhit >= 94) %>% nrow()/1000 #p-value for number of genes with at least 1 hit
+perm1_results%>% mutate(prop_hit = T30_genewhit/T30_Total) %>% filter(prop_hit >= 94/134)%>% nrow()/1000 #p-value for proportion of genes with at least 1 sig SNP
+perm1_results %>% filter(T30_medhpg >= 5) %>% nrow()/1000 #pvalue for median sigSNPs per gene
+print("That was T30")
+```
+
+Write a function to do this for the 3 different permutations and traits
+```{r}
+permutation_results<-function(results,t,med_cutoff){
+  a<-filter(results, TRAIT == t) %>%
+    ggplot(., aes(x = HITS)) + geom_histogram(binwidth = 1) +
+    geom_vline(xintercept = 119) #119 Li candidates overlap with at least 1 sigSNP
+
+  b<-filter(results, TRAIT == t) %>% mutate(prop_hit = HITS/TOTAL) %>%
+    ggplot(., aes(x = prop_hit)) + geom_histogram(binwidth = 0.05) +
+    geom_vline(xintercept = 119/134) #119 out of 134 total Li candidates overlap with at least 1 sigSNP
+
+  c<-filter(results, TRAIT == t) %>%
+    ggplot(., aes(x = MEDIAN)) + geom_histogram(binwidth = 1) +
+    geom_vline(xintercept = med_cutoff) #median hits per gene for T2 and T30 is 13, 9 for T3
+  
+  ggsave(str_c("Plt_Hit_",t,deparse(substitute(results))), a, device = "png") #get ggplot saved
+  ggsave(str_c("Plt_propHit_",t,deparse(substitute(results))), b,device = "png")
+  ggsave(str_c("Plt_medhpg_",t,deparse(substitute(results))), c,device = "png")
+  
+  pa<-filter(results, TRAIT == t & HITS >= 119) %>% nrow()/1000 #p-value for number of genes with at least 1 hit
+  pb<-filter(results, TRAIT == t) %>% mutate(prop_hit = HITS/TOTAL) %>% filter(prop_hit >= 119/134)%>% nrow()/1000 #p-value for proportion of genes with at least 1 sig SNP
+  pc<-filter(results, TRAIT == t & MEDIAN >= med_cutoff) %>% nrow()/1000 #pvalue for median sigSNPs per gene
+  ptable<-tibble(test = c("Genes w at least 1 hit","Proportion of genes w at least 1 hit","median hits per gene"),
+                 p_value = c(pa,pb,pc))
+  return(ptable)
+}
+permutation_results(perm1_results,"T2",13) #check to make sure it works as expected
+```
+```{r}
+permutation_results(perm1_results,"T3",9)
+permutation_results(perm1_results,"T30",13)
+```
+```{r}
+permutation_results(perm2_results,"T2",13)
+permutation_results(perm2_results,"T3",9)
+permutation_results(perm2_results,"T30",13)
+```
+
+```{r}
+permutation_results(perm3_results,"T2",13)
+permutation_results(perm3_results,"T3",9)
+permutation_results(perm3_results,"T30",13)
+```
+
+#Clean up environment between steps
+```{r}
+remove(df, list = ls(pattern = "^T"))
+remove(list = ls(pattern = "^test"))
+```
+
+#Coefficent of Variation for gene expression
+See the ReadMe file for how the mean, std deviation could be calculated using UNIX
+Bringing in the pan-gene ID TPMs (19K genes that are annotated in every genome)
+```{r}
+library(readxl)
+#pangene_TPM<-read_xlsx("../NAM_expression-UMR_corelation_20201029_v1.0.xlsx")
+pangene_TPM<-read_csv("pangene-expression-matrix-tpm-normalized.txt")
+pangene_TPM<-pangene_TPM %>% select(c(contains("TPM"),"Geneid"))
+pangene<-read_csv("pan-gene-counts-expression-merged-transposed.txt.gz")
+```
+```{r}
+#create a df that has the panIDs by the various genome ids
+geneIDkey<-pangene %>% select(contains("ID"))
+#figure out what the Li candidate pan-gene ids are:
+#candidates$V5<-candidates$V5 %>% str_c("_T001")
+#candidates$V5<-candidates$V5 %>% str_remove("_T001")
+#candidate_pangeneskey<-filter(geneIDkey, B73_AltID1 %in% candidates$V5) %>% select(c(PanGeneID, B73_AltID1, B73_AltID2)) 
+#Above didn't work because the IDs had to be exact matches. Trying something that would work for partial matches (i.e. didn't have the _T001 thing)
+candidate_pangeneskey<-tibble(PanGeneID = NA, B73_AltID1 = NA, B73_AltID2 = NA, candidatesV5 = NA)
+for(i in 1:nrow(candidates)){
+  if(candidates$V5[i] != "."){ #there are 3 genes with no V5 gene ID
+   if(grepl(candidates$V5[i], geneIDkey$B73_AltID1) %>% unique() %>% length() == 2){ #if there's a true in grepl of V5 in the Alt1 column
+    ph<-grep(candidates$V5[i], geneIDkey$B73_AltID1) #find the row number
+    candidate_pangeneskey<-add_row(candidate_pangeneskey, 
+                                   PanGeneID = geneIDkey$PanGeneID[ph],
+                                   B73_AltID1 = geneIDkey$B73_AltID1[ph],
+                                   B73_AltID2 = geneIDkey$B73_AltID2[ph],
+                                   candidatesV5 = candidates$V5[i]) #add row of ids to df
+  } else{
+    if(grepl(candidates$V5[i], geneIDkey$B73_AltID2) %>% unique() %>% length() == 2){ #check the Alt2 column
+    ph<-grep(candidates$V5[i], geneIDkey$B73_AltID2)
+    candidate_pangeneskey<-add_row(candidate_pangeneskey, 
+                                   PanGeneID = geneIDkey$PanGeneID[ph],
+                                   B73_AltID1 = geneIDkey$B73_AltID1[ph],
+                                   B73_AltID2 = geneIDkey$B73_AltID2[ph],
+                                   candidatesV5 = candidates$V5[i]) #add IDs to df
+    } else{ #Otherwise there's no match to an ID then print the ID to df with NAs in other columns
+    candidate_pangeneskey<-add_row(candidate_pangeneskey, 
+                                   PanGeneID = NA,
+                                   B73_AltID1 = NA,
+                                   B73_AltID2 = NA,
+                                   candidatesV5 = candidates$V5[i])
+    }
+  } 
+  }
+}
+candidate_pangeneskey<-filter(candidate_pangeneskey, !is.na(candidatesV5)) #removes initial row
+filter(candidate_pangeneskey, is.na(PanGeneID)) %>% nrow()
+```
+
+Find the mean and standard deviation row wise to then calculate the coefficient of variation
+```{r}
+test %>% rowwise() %>% mutate(mymean = mean(c(col1,col2,col3,col4,col5)),
+                              mysd = sd(c(col1,col2,col3,col4,col5)))
+```
+```{r}
+pangene_TPM<- pangene_TPM %>% 
+  rowwise() %>% #makes R read commands rowwise instead of column wise
+  mutate(TPMmean = mean(c(B73_TPM,B97_TPM,CML103_TPM,CML228_TPM,CML247_TPM,CML277_TPM,CML322_TPM,
+                          CML333_TPM,CML52_TPM,CML69_TPM,HP301_TPM,IL14H_TPM,Ki11_TPM,Ki3_TPM,
+                          Ky21_TPM,M162W_TPM,M37W_TPM,Mo18W_TPM,MS71_TPM,NC350_TPM,NC358_TPM,
+                          Oh43_TPM,Oh7b_TPM,P39_TPM,Tx303_TPM,Tzi8_TPM), na.rm = TRUE), #calc mean
+         TPMsd = sd(c(B73_TPM,B97_TPM,CML103_TPM,CML228_TPM,CML247_TPM,CML277_TPM,CML322_TPM,
+                          CML333_TPM,CML52_TPM,CML69_TPM,HP301_TPM,IL14H_TPM,Ki11_TPM,Ki3_TPM,
+                          Ky21_TPM,M162W_TPM,M37W_TPM,Mo18W_TPM,MS71_TPM,NC350_TPM,NC358_TPM,
+                          Oh43_TPM,Oh7b_TPM,P39_TPM,Tx303_TPM,Tzi8_TPM), na.rm = TRUE) #calc SD
+         )
+pangene_TPM<- pangene_TPM %>% mutate(TPMcov = TPMsd/TPMmean) #calculate coefficient of variation
+```
+Plot the distribution of all the genes I have for their coefficient of variation
+See how variable it is for all genes
+```{r}
+ggplot(pangene_TPM, aes(x = TPMcov)) + geom_histogram(binwidth = 0.1)
+ggsave("Plots/allPangenes_TPMcov", device = "png")
+```
+```{r}
+pangene_TPM %>% select(TPMcov) %>% summary() #%>% .[3] %>% str()
+```
+How many Li candidates have V5 gene id
+```{r}
+nrow(candidates) - (filter(candidates, V5 == ".") %>% nrow())
+```
+
+So the permutation needs to pull a sample of 131
+```{r}
+Permutation<- function(input, number){ #input = input vector,number = size of the draw
+  results<-vector()
+  counter=0 #Sets the counter at 0
+  while(counter < 1000){ #starts the while loop which let's it iterate 1000 times
+      run<-sample(input, number)  #Takes a random sample from input df the size of number
+      COVmed<-median(run, na.rm = TRUE) #calculate median coeffiecient of variation for run
+      results<-c(results,COVmed)
+      counter=(counter+1) #moves the counter forward by 1
+    }
+  nm<-tibble(results)
+  return(nm)
+}
+simMedian_TPMcov<-Permutation(pangene_TPM$TPMcov, 131)
+```
+Median CoV of the Li candidates
+```{r}
+candidate_TPM<-filter(pangene_TPM, Geneid %in% candidate_pangeneskey$PanGeneID)
+median(candidate_TPM$TPMcov, na.rm = TRUE)
+```
+P-values
+```{r}
+filter(simMedian_TPMcov, results >= 1.061533) %>% nrow()/1000
+```
+```{r}
+ggplot(simMedian_TPMcov, aes(x = results)) + geom_histogram(binwidth = 0.1)+geom_vline(xintercept = 1.061533, color = "red")
+ggplot(simMedian_TPMcov, aes(x = results)) + geom_histogram(binwidth = 0.05) +geom_vline(xintercept = 1.061533, color = "red")
+ggsave("Plots/median_TPMCoV_histogram",device = "png")
+```
+
+Distribution of the Li candidates
+```{r}
+ggplot(candidate_TPM, aes(x=TPMcov))+geom_histogram(binwidth = 0.1)
+ggsave("Plots/Licandidates_TPMcov_histogram", device = "png")
+```
+
+#T-Test between tropical and temperate lines for Li candidate expression
+```{r}
+trop<-c("CML52","CML69","CML103","CML228","CML277","CML247","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8")
+temp<-c("B73","B97","Ky21","M162W","MS71","Oh7b","Oh43","HP301","IL14H","P39")
+CG<-select(candidate_TPM, c(contains(temp),Geneid)) #sets temperate lines as group 1
+TG<-select(candidate_TPM, c(contains(trop),Geneid)) #sets tropical lines as group 2
+
+CG_transposed<-CG %>% select(-Geneid) %>% t() #transpose dataframe
+colnames(CG_transposed) <-CG$Geneid #convert column names to geneids
+#colnames(CG_transposed)[1] == CG_transposed[11,1] #Check to make sure geneids match column names
+#for(i in 1:ncol(CG_transposed)){ print(colnames(CG_transposed)[i] == CG_transposed[11,i]) }
+#CG_transposed<-CG_transposed[-11,] #removes row of geneIDs
+CG_transposed<-as_tibble(CG_transposed) #make it a tibble
+
+TG_transposed<-TG %>% select(-Geneid) %>% t()
+colnames(TG_transposed) <- TG$Geneid
+TG_transposed<-as_tibble(TG_transposed)
+
+var.test(CG_transposed$Pan_gene_284,TG_transposed$Pan_gene_284)$p.value
+agep<-t.test(CG_transposed$Pan_gene_284,TG_transposed$Pan_gene_284, var.equal = TRUE)
+agep$estimate
+agep$p.value
+```
+
+```{r}
+#Making a loop for t-tests
+pangeneid<-candidate_TPM %>% select(Geneid) %>% pull()
+est.temperate<-c() #estimated mean for the temperate TPM
+est.tropical<-c() #estimated mean for the tropical TPM
+p<-c() #T-test p-value
+ID<-c() #gene id
+for(j in 1:length(pangeneid)){
+  CG_TPM<-select(CG_transposed, pangeneid[j]) #select the same column for geneid
+  TG_TPM<-select(TG_transposed, pangeneid[j]) 
+  if((colSums(CG_TPM,na.rm = TRUE)+colSums(TG_TPM,na.rm = TRUE)) != 0){ 
+    if(var.test(as_vector(CG_TPM[,1]),as_vector(TG_TPM[,1]))$p.value <= 0.05){ 
+      agep<-t.test(as_vector(CG_TPM[,1]),as_vector(TG_TPM[,1]), var.equal = FALSE)
+      est.temperate<-c(est.temperate, agep$estimate[1])
+      est.tropical<-c(est.tropical, agep$estimate[2])
+      p<-c(p,agep$p.value)
+      ID<-c(ID, pangeneid[j])
+    } 
+    else{
+      agep<-t.test(as_vector(CG_TPM[,1]),as_vector(TG_TPM[,1]), var.equal = TRUE)
+      est.temperate<-c(est.temperate, agep$estimate[1])
+      est.tropical<-c(est.tropical, agep$estimate[2])
+      p<-c(p,agep$p.value)
+      ID<-c(ID, pangeneid[j])
+    }
+  }
+  else{
+    est.temperate<-c(est.temperate, NA)
+    est.tropical<-c(est.tropical, NA)
+    p<-c(p,NA)
+    ID<-c(ID, pangeneid[j])
+  }
+}
+Results_TPM<-tibble(Geneid = ID, est.temperate = est.temperate, est.tropical = est.tropical, p_value = p)
+```
+Multiple testing correction
+```{r}
+Bon_cutoff<-0.05/nrow(Results_TPM) #Bonferroni cut off
+filter(Results_TPM, p_value <= Bon_cutoff)
+
+#Benjamini-Hochberg
+Results_TPM<-arrange(Results_TPM, p_value) #arrange p-values smallest to largest
+#Find the largest integer k so that p(k) <= k*alpha/m
+BH_05<-c()
+for(k in 1:nrow(Results_TPM)){
+  placeholder<-(k*0.05)/nrow(Results_TPM)
+  BH_05<-c(BH_05,placeholder)
+}
+Results_TPM<-add_column(Results_TPM,BH_05)
+filter(Results_TPM, p_value <= Results_TPM$BH_05) 
+
+#Try log2 difference
+#Info came from http://rstudio-pubs-static.s3.amazonaws.com/13988_bb11d85b79b2436280de434988558140.html
+Results_TPM<-mutate(Results_TPM, fold_change= est.tropical/est.temperate,
+       log2fc = log2(fold_change))
+
+```
+Pan_gene_284 is very close to significance
+```{r}
+filter(candidate_pangeneskey, PanGeneID == 'Pan_gene_284')
+filter(candidates, V5 == "Zm00001eb005380_T001")
+```
+
+```{r}
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_284, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_284, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_284, x="Temperate"), width = 0.1, height = 0) +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_284, x="Tropical"), width = 0.1, height = 0)+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for dof21")
+```
+What are the outliers for the above graph
+```{r}
+#rownames(CG_transposed) <- select(CG, -Geneid) %>% colnames()
+#CG_transposed %>% select(Pan_gene_284)
+#colnames(CG)
+
+#TG_transposed$Pan_gene_284
+#colnames(TG)
+TG %>% filter(Geneid == "Pan_gene_284")
+#low ones for tropicals are CML52 (12.6), CML247(0), NC350 (0), NC358 (0)
+CG %>% filter(Geneid == "Pan_gene_284")
+#High ones for temperates are B73 (50), IL14H (34), and P39 (59)
+```
+
+####Indels around dof21
+```{r}
+dof21_haplotypes<-tibble(Genome = c("P39","IL14H","Oh43","MS71","B97","HP301","NC358","M37W","Ky21",
+                                    "NC350","CML103","Tx303","CML322","Oh7b","CML333","Ki3","M162W",
+                                    "Mo18W","CML69","Ki11","Tzi8","CML277","CML228","CML247","CML52"),
+                         del1200 = c(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0),
+                         ins1201 = c(0,0,0,1,0,1,1,0,1,1,1,1,0,1,0,1,1,1,0,1,0,1,1,1,0),
+                         ins1202 = c(0,1,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1))
+```
+
+```{r}
+#add TPM column 
+dof21_TPM<-filter(candidate_TPM, Geneid == "Pan_gene_284")
+dof21_TPM_t<-t(dof21_TPM)
+rownames(dof21_TPM_t)
+cbind(dof21_TPM_t,rownames(dof21_TPM_t))
+dof21_TPM<-c(59.08381,34.26947,12.35131,0,11.77674,0,0,72.62742,0,0,48.07233,16.09692,59.68966,0,53.4258,72.21688,0,13.03617,98.85666,68.22177,80.22584,81.71968,61.31292,0,12.66594)
+dof21_haplotypes<-add_column(dof21_haplotypes, TPM = dof21_TPM )
+
+#add a combined haplotype column
+select(dof21_haplotypes, c(del1200, ins1201,ins1202)) %>% unique()
+dof21_haplotypes<-mutate(dof21_haplotypes, haplotype = case_when(del1200 ==0 & ins1201 == 0 & ins1202 == 0 ~ "none",
+                                               del1200 ==0 & ins1201 == 0 & ins1202 == 1 ~ "ins1202_only",
+                                               del1200 ==0 & ins1201 == 1 & ins1202 == 0 ~ "ins1201_only",
+                                               del1200 ==1 & ins1201 == 1 & ins1202 == 0 ~ "delANDins1201",
+                                               del1200 ==0 & ins1201 == 1 & ins1202 == 1 ~ "both_ins"))
+```
+```{r}
+#Graph the tpms by haplotype
+ggplot(dof21_haplotypes, aes(x=haplotype, y=TPM)) + geom_boxplot() +geom_jitter(height = 0, width = 0.1, color = "red", shape = 2)
+#ggsave("Plots/Dof21_TPMbyHaplotype",device = "png")
+```
+```{r}
+dof21_TPM_aov<-aov(data = dof21_haplotypes, TPM ~ haplotype)
+summary(dof21_TPM_aov)
+TukeyHSD(dof21_TPM_aov)
+```
+
+```{r}
+filter(dof21_haplotypes, haplotype == "ins1201_only" & TPM > 25) #CML103, CML277
+filter(dof21_haplotypes, haplotype == "ins1201_only" & TPM < 25) #MS71, HP301, NC358, Ky21, Nc350, Tx303, Oh7b, M162W, Mo18W, CML247 (all zeros except Tx303, Mo18W)
+filter(dof21_haplotypes, haplotype == "ins1202_only") #2 high: CML333 (53), IL14H (34); others = Oh43, B97, CML52
+```
+
+### insignifcant differences between tropical/temperate TPM despite high log fold change
+```{r}
+filter(Results_TPM, log2fc > 1.9)
+filter(Results_TPM, (log2fc > 2 | log2fc < -2) & is.finite(log2fc)) %>% arrange(-log2fc)
+```
+Pan_gene_6329, p_value =	0.03584915, BHcutoff	= 0.001010101,	log2fc = 2.940373 #zcn10
+Pan_gene_7560, p_value = 0.16871728, BHcutoff =	0.008080808, log2fc =	12.077252 #GRMZM2G320013 #nch2 - NMCP/CRWN-Homologous2
+Pan_gene_18226, p_value =	0.16641635, BHcutoff =	0.007070707, log2fc = 10.231574 #GRMZM2G054380 #sdg118 -set domain gene118
+Pan_gene_1864, p_value =	0.18574127, BHcutoff =	0.010101010, log2fc = 8.385665 #GRMZM2G159996 #col16 - C2C2-CO-like-transcription factor 16
+Pan_gene_20880, 0.0773886249,0.3233279,0.08949039,0.002525253,4.177977,2.062805 #zmCCT10
+Pan_gene_54731, 1.315092e+01,1.900227124,0.06884957,0.001515152,1.444939e-01,-2.790920 #bhlh141
+
+```{r}
+test1<-filter(candidate_pangeneskey, PanGeneID %in% c("Pan_gene_6329", "Pan_gene_7560","Pan_gene_18226", "Pan_gene_1864","Pan_gene_20880","Pan_gene_54731"))%>% select(c(PanGeneID, candidatesV5))
+test1
+filter(candidates, V5 %in% test1$candidatesV5 )
+```
+```{r}
+#nch2
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_7560, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_7560, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_7560, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_7560, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for nch2")
+
+#zcn10
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_6329, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_6329, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_6329, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_6329, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for zcn10")
+#ggsave("Plots/ZCN10_TPMbyTropTemp",device = "png")
+
+#sdg118
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_18226, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_18226, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_18226, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_18226, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for sdg118")
+
+#col16
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_1864, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_1864, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_1864, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_1864, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for col16")
+
+```
+Looking to see if there are any other named candidates that have a log2fc greater than 2 or less than -2
+```{r}
+fc_candidates<-filter(Results_TPM, (log2fc > 2 | log2fc < -2) & is.finite(log2fc)) 
+test2<-filter(candidate_pangeneskey, PanGeneID %in% fc_candidates$Geneid)%>% select(c(PanGeneID, candidatesV5))
+colnames(test2)[2]<-"V5"
+filter(candidates, V5 %in% test2$V5) %>% select(c(V5, ZmGene))
+inner_join(test2, candidates, by="V5") %>% select(c(PanGeneID, V5, ZmGene, B73V3))
+```
+```{r}
+#sbp3
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_8429, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_8429, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_8429, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_8429, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for sbp3")
+
+#sdg105
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_17591, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_17591, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_17591, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_17591, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for sdg105")
+
+#ZmPRR73
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_19848, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_19848, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_19848, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_19848, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for ZmPRR73")
+
+#fie1
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_8617, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_8617, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_8617, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_8617, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for fie1")
+ggsave("Plots/fie1_TPMbyTropTemp",device = "png")
+
+#ZmCCT10
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_20880, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_20880, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_20880, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_20880, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for ZmCCT10")
+ggsave("Plots/ZmCCT10_TPMbyTropTemp",device = "png")
+
+#bhlh141
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_54731, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_54731, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_54731, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_54731, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for bhlh141")
+ggsave("Plots/bhlh141_TPMbyTropTemp",device = "png")
+
+### Unnamed pan-genes
+#Pan_gene_9210
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_9210, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_9210, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_9210, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_9210, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for Pan-gene 9210")
+#Pan_gene_1263
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_1263, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_1263, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_1263, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_1263, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for Pan-gene 1263")
+#Pan_gene_5841
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_5841, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_5841, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_5841, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_5841, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for Pan-gene 5841")
+
+```
+###ZmCCT10 indels
+```{r}
+ZmCCT10_haplotypes<-tibble(Genome = c("P39","IL14H","Oh43","MS71","B97","HP301","NC358","M37W","Ky21",
+                                    "NC350","CML103","Tx303","CML322","Oh7b","CML333","Ki3","M162W",
+                                    "Mo18W","CML69","Ki11","Tzi8","CML277","CML228","CML247","CML52"),
+                         del95806 = c(1,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0),
+                         del95807 = c(1,0,0,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
+
+#add TPM column 
+ZmCCT10_TPM<-filter(candidate_TPM, Geneid == "Pan_gene_20880")
+#ZmCCT10_TPM_t<-t(ZmCCT10_TPM)
+#cbind(ZmCCT10_TPM_t,rownames(ZmCCT10_TPM_t))
+add_TPM<-function(haplotype_df, PGID){
+  TPM_df<-filter(candidate_TPM, Geneid == PGID)
+  haplotype_df<-mutate(haplotype_df, TPM = NA)
+  for(i in 1:nrow(haplotype_df)){
+    ind<-grep(haplotype_df$Genome[i], colnames(TPM_df))
+    haplotype_df$TPM[i] <- TPM_df[1,ind] %>% pull()
+  }
+  return(haplotype_df)
+}
+ZmCCT10_haplotypes<-add_TPM(ZmCCT10_haplotypes, "Pan_gene_20880")
+#add a combined haplotype column
+select(ZmCCT10_haplotypes, c(del95806, del95807)) %>% unique()
+```
+
+```{r}
+ZmCCT10_haplotypes<-mutate(ZmCCT10_haplotypes, haplotype = case_when(del95806 ==0 & del95807 == 0 ~ "none",
+                                               del95806 ==1 & del95807 == 1 ~ "both",
+                                               del95806 ==1 & del95807 == 0~ "del95806_only",
+                                               del95806 ==0 & del95807 == 1 ~ "del95807_only"))
+#Graph the tpms by haplotype
+ggplot(ZmCCT10_haplotypes, aes(x=haplotype, y=TPM)) + geom_boxplot() +geom_jitter(height = 0, width = 0.1, color = "red", shape = 2)
+#ggsave("Plots/ZmCCT10_TPMbyHaplotype",device = "png")
+```
+```{r}
+ZmCCT10_TPM_aov<-aov(data = ZmCCT10_haplotypes, TPM ~ haplotype)
+summary(ZmCCT10_TPM_aov)
+TukeyHSD(ZmCCT10_TPM_aov)
+```
+###fie1 indels
+```{r}
+fie1_haplotypes<-tibble(Genome = c("P39","IL14H","Oh43","MS71","B97","HP301","NC358","M37W","Ky21",
+                                    "NC350","CML103","Tx303","CML322","Oh7b","CML333","Ki3","M162W",
+                                    "Mo18W","CML69","Ki11","Tzi8","CML277","CML228","CML247","CML52"),
+                         ins41290 = c(0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0),
+                         del41291 = c(1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0))
+
+fie1_haplotypes<-add_TPM(fie1_haplotypes, "Pan_gene_8617")
+select(fie1_haplotypes, c(ins41290, del41291)) %>% unique()
+```
+
+```{r}
+fie1_haplotypes<-mutate(fie1_haplotypes, haplotype = case_when(ins41290 ==0 & del41291 == 0 ~ "none",
+                                               ins41290 ==1 & del41291 == 1 ~ "both",
+                                               ins41290 ==1 & del41291 == 0~ "ins41290_only",
+                                               ins41290 ==0 & del41291 == 1 ~ "del41291_only"))
+#Graph the tpms by haplotype
+ggplot(fie1_haplotypes, aes(x=haplotype, y=TPM)) + geom_boxplot() +geom_jitter(height = 0, width = 0.1, color = "red", shape = 2)
+#ggsave("Plots/ZmCCT10_TPMbyHaplotype",device = "png")
+
+fie1_TPM_aov<-aov(data = fie1_haplotypes, TPM ~ haplotype)
+summary(fie1_TPM_aov)
+TukeyHSD(fie1_TPM_aov)
+```
+
+###zcn10 indels
+```{r}
+zcn10_haplotypes<-tibble(Genome = c("P39","IL14H","Oh43","MS71","B97","HP301","NC358","M37W","Ky21",
+                                    "NC350","CML103","Tx303","CML322","Oh7b","CML333","Ki3","M162W",
+                                    "Mo18W","CML69","Ki11","Tzi8","CML277","CML228","CML247","CML52"),
+                         ins29639 = c(0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0))
+
+zcn10_haplotypes<-add_TPM(zcn10_haplotypes, "Pan_gene_6329")
+select(zcn10_haplotypes, ins29639) %>% unique()
+```
+
+```{r}
+zcn10_haplotypes<-mutate(zcn10_haplotypes, haplotype = case_when(ins29639 ==0 ~ "none",
+                                               ins29639 == 1 ~ "ins29639"))
+#Graph the tpms by haplotype
+ggplot(zcn10_haplotypes, aes(x=haplotype, y=TPM)) + geom_boxplot() +geom_jitter(height = 0, width = 0.1, color = "red", shape = 2)
+#ggsave("Plots/ZmCCT10_TPMbyHaplotype",device = "png")
+
+zcn10_TPM_aov<-aov(data = zcn10_haplotypes, TPM ~ haplotype)
+summary(zcn10_TPM_aov)
+TukeyHSD(zcn10_TPM_aov)
+```
+
+###bhlh141 indels
+```{r}
+bhlh141_haplotypes<-tibble(Genome = c("P39","IL14H","Oh43","MS71","B97","HP301","NC358","M37W","Ky21",
+                                    "NC350","CML103","Tx303","CML322","Oh7b","CML333","Ki3","M162W",
+                                    "Mo18W","CML69","Ki11","Tzi8","CML277","CML228","CML247","CML52"),
+                         ins40454 = c(0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0))
+
+bhlh141_haplotypes<-add_TPM(bhlh141_haplotypes, "Pan_gene_54731")
+select(bhlh141_haplotypes, ins40454) %>% unique()
+```
+
+```{r}
+bhlh141_haplotypes<-mutate(bhlh141_haplotypes, haplotype = case_when(ins40454 ==0 ~ "none",
+                                               ins40454 == 1 ~ "ins40454"))
+#Graph the tpms by haplotype
+ggplot(bhlh141_haplotypes, aes(x=haplotype, y=TPM)) + geom_boxplot() +geom_jitter(height = 0, width = 0.1, color = "red", shape = 2)
+#ggsave("Plots/ZmCCT10_TPMbyHaplotype",device = "png")
+
+bhlh141_TPM_aov<-aov(data = bhlh141_haplotypes, TPM ~ haplotype)
+summary(bhlh141_TPM_aov)
+TukeyHSD(bhlh141_TPM_aov)
+```
+
+##Getting the NAM ids for dof21, ZCN10, ZMCCT10
+```{r}
+#Dof21 Pan_gene_284
+#ZCN10 Pan_gene_6329
+#ZMCCT10 Pan_gene_20880
+
+grep("Pan_gene_284", geneIDkey, value = TRUE)
+interestgeneids<-filter(geneIDkey, PanGeneID %in% c("Pan_gene_284","Pan_gene_6329","Pan_gene_20880")) %>% select(c(contains("AltID1"), PanGeneID))
+colnames(interestgeneids)<-colnames(interestgeneids) %>% str_remove("_AltID1")
+#library(reshape2)
+namIDs_GOI<-melt(interestgeneids, id.vars = "PanGeneID", variable.name = "Genome", value.name = "NAM_ID")
+namIDs_GOI<-mutate(namIDs_GOI, common_name = case_when(PanGeneID == "Pan_gene_284" ~ "Dof21",
+                                                       PanGeneID == "Pan_gene_6329" ~ "ZCN10",
+                                                       PanGeneID == "Pan_gene_20880" ~ "ZMCCT10"))
+colnames(namIDs_GOI)[1]<-"PanGeneID"
+
+test1<-filter(candidate_TPM, Geneid %in% namIDs_GOI$PanGeneID) %>% melt(., id.vars = "Geneid",variable.name = "Genome", value.name = "TPM")
+test1$Genome <- str_remove(test1$Genome, "_TPM")
+colnames(test1)[1]<- "PanGeneID"
+namIDTPM_GOI<-inner_join(namIDs_GOI, test1, by = c("PanGeneID","Genome"))
+filter(namIDTPM_GOI, common_name == "ZMCCT10") %>% write_tsv(., "ZmCCT10_namIDsTPM.tsv")
+filter(namIDTPM_GOI, common_name == "ZCN10") %>% write_tsv(., "ZCN10_namIDsTPM.tsv")
+filter(namIDTPM_GOI, common_name == "Dof21") %>% write_tsv(., "Dof21_namIDsTPM.tsv")
+```
+
+### Dong et al 2012 Candidates, Analyzed like Li et al 2016  candidates
+```{r}
+Dong2012_V3<-read_delim(file = "../../Dong2012_V3IDs.txt",delim = "\t")
+colnames(Dong2012_V3)[1]<-"B73V3"
+Dong2012_candidates<-inner_join(Dong2012_V3,candidate_coordinates, by = "B73V3")
+```
+Running the GWAS overlap using Arun's intersect script on condo. 
+
+CoV
+```{r}
+Dong_pangeneskey<-tibble(PanGeneID = NA, B73_AltID1 = NA, B73_AltID2 = NA, candidatesV5 = NA)
+for(i in 1:nrow(Dong2012_candidates)){
+  if(Dong2012_candidates$V5[i] != "."){ #there are 3 genes with no V5 gene ID
+   if(grepl(Dong2012_candidates$V5[i], geneIDkey$B73_AltID1) %>% unique() %>% length() == 2){ #if there's a true in grepl of V5 in the Alt1 column
+    ph<-grep(Dong2012_candidates$V5[i], geneIDkey$B73_AltID1) #find the row number
+    Dong_pangeneskey<-add_row(Dong_pangeneskey, 
+                                   PanGeneID = geneIDkey$PanGeneID[ph],
+                                   B73_AltID1 = geneIDkey$B73_AltID1[ph],
+                                   B73_AltID2 = geneIDkey$B73_AltID2[ph],
+                                   candidatesV5 = Dong2012_candidates$V5[i]) #add row of ids to df
+  } else{
+    if(grepl(Dong2012_candidates$V5[i], geneIDkey$B73_AltID2) %>% unique() %>% length() == 2){ #check the Alt2 column
+    ph<-grep(Dong2012_candidates$V5[i], geneIDkey$B73_AltID2)
+    Dong_pangeneskey<-add_row(Dong_pangeneskey, 
+                                   PanGeneID = geneIDkey$PanGeneID[ph],
+                                   B73_AltID1 = geneIDkey$B73_AltID1[ph],
+                                   B73_AltID2 = geneIDkey$B73_AltID2[ph],
+                                   candidatesV5 = Dong2012_candidates$V5[i]) #add IDs to df
+    } else{ #Otherwise there's no match to an ID then print the ID to df with NAs in other columns
+    Dong_pangeneskey<-add_row(Dong_pangeneskey, 
+                                   PanGeneID = NA,
+                                   B73_AltID1 = NA,
+                                   B73_AltID2 = NA,
+                                   candidatesV5 = Dong2012_candidates$V5[i])
+    }
+  } 
+  }
+}
+Dong_pangeneskey<-filter(Dong_pangeneskey, !is.na(candidatesV5)) #removes initial row
+filter(Dong_pangeneskey, !is.na(PanGeneID)) %>% nrow()
+```
+Running simulation to get median CoV distribution
+```{r}
+simMedian_TPMcov_Dong<-Permutation(pangene_TPM$TPMcov, 32)
+```
+Median CoV of the Dong candidates
+```{r}
+Dong_TPM<-filter(pangene_TPM, Geneid %in% Dong_pangeneskey$PanGeneID)
+median(Dong_TPM$TPMcov, na.rm = TRUE)
+```
+P-values
+```{r}
+filter(simMedian_TPMcov_Dong, results >= 1.257836) %>% nrow()/1000
+```
+```{r}
+ggplot(simMedian_TPMcov, aes(x = results)) + geom_histogram(binwidth = 0.1)+geom_vline(xintercept = 1.257836, color = "red")
+ggplot(simMedian_TPMcov, aes(x = results)) + geom_histogram(binwidth = 0.05) +geom_vline(xintercept = 1.257836, color = "red")
+ggsave("Plots/median_TPMCoV_Dong_histogram",device = "png")
+```
+
+Distribution of the Li candidates
+```{r}
+ggplot(Dong_TPM, aes(x=TPMcov))+geom_histogram(binwidth = 0.1)
+ggsave("Plots/Dongcandidates_TPMcov_histogram", device = "png")
+```
+#T-Test between tropical and temperate lines for Dong candidate expression
+```{r}
+#trop<-c("CML52","CML69","CML103","CML228","CML277","CML247","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8")
+#temp<-c("B73","B97","Ky21","M162W","MS71","Oh7b","Oh43","HP301","IL14H","P39")
+CG<-select(Dong_TPM, c(contains(temp),Geneid)) #sets temperate lines as group 1
+TG<-select(Dong_TPM, c(contains(trop),Geneid)) #sets tropical lines as group 2
+
+CG_transposed<-CG %>% select(-Geneid) %>% t() #transpose dataframe
+colnames(CG_transposed) <-CG$Geneid #convert column names to geneids
+#colnames(CG_transposed)[1] == CG_transposed[11,1] #Check to make sure geneids match column names
+#for(i in 1:ncol(CG_transposed)){ print(colnames(CG_transposed)[i] == CG_transposed[11,i]) }
+#CG_transposed<-CG_transposed[-11,] #removes row of geneIDs
+CG_transposed<-as_tibble(CG_transposed) #make it a tibble
+
+TG_transposed<-TG %>% select(-Geneid) %>% t()
+colnames(TG_transposed) <- TG$Geneid
+TG_transposed<-as_tibble(TG_transposed)
+
+var.test(CG_transposed$Pan_gene_818,TG_transposed$Pan_gene_818)$p.value
+agep<-t.test(CG_transposed$Pan_gene_818,TG_transposed$Pan_gene_818, var.equal = TRUE)
+agep$estimate
+agep$p.value
+```
+
+```{r}
+#Making a loop for t-tests
+pangeneid<-Dong_TPM %>% select(Geneid) %>% pull()
+est.temperate<-c() #estimated mean for the temperate TPM
+est.tropical<-c() #estimated mean for the tropical TPM
+p<-c() #T-test p-value
+ID<-c() #gene id
+for(j in 1:length(pangeneid)){
+  CG_TPM<-select(CG_transposed, pangeneid[j]) #select the same column for geneid
+  TG_TPM<-select(TG_transposed, pangeneid[j]) 
+  if((colSums(CG_TPM,na.rm = TRUE)+colSums(TG_TPM,na.rm = TRUE)) != 0){ 
+    if(var.test(as_vector(CG_TPM[,1]),as_vector(TG_TPM[,1]))$p.value <= 0.05){ 
+      agep<-t.test(as_vector(CG_TPM[,1]),as_vector(TG_TPM[,1]), var.equal = FALSE)
+      est.temperate<-c(est.temperate, agep$estimate[1])
+      est.tropical<-c(est.tropical, agep$estimate[2])
+      p<-c(p,agep$p.value)
+      ID<-c(ID, pangeneid[j])
+    } 
+    else{
+      agep<-t.test(as_vector(CG_TPM[,1]),as_vector(TG_TPM[,1]), var.equal = TRUE)
+      est.temperate<-c(est.temperate, agep$estimate[1])
+      est.tropical<-c(est.tropical, agep$estimate[2])
+      p<-c(p,agep$p.value)
+      ID<-c(ID, pangeneid[j])
+    }
+  }
+  else{
+    est.temperate<-c(est.temperate, NA)
+    est.tropical<-c(est.tropical, NA)
+    p<-c(p,NA)
+    ID<-c(ID, pangeneid[j])
+  }
+}
+Results_Dong_TPM<-tibble(Geneid = ID, est.temperate = est.temperate, est.tropical = est.tropical, p_value = p)
+```
+Multiple testing correction
+```{r}
+Bon_cutoff<-0.05/nrow(Results_Dong_TPM) #Bonferroni cut off
+filter(Results_Dong_TPM, p_value <= Bon_cutoff)
+
+#Benjamini-Hochberg
+Results_Dong_TPM<-arrange(Results_Dong_TPM, p_value) #arrange p-values smallest to largest
+#Find the largest integer k so that p(k) <= k*alpha/m
+BH_05<-c()
+for(k in 1:nrow(Results_Dong_TPM)){
+  placeholder<-(k*0.05)/nrow(Results_Dong_TPM)
+  BH_05<-c(BH_05,placeholder)
+}
+Results_Dong_TPM<-add_column(Results_Dong_TPM,BH_05)
+filter(Results_Dong_TPM, p_value <= Results_Dong_TPM$BH_05) 
+
+#Try log2 difference
+#Info came from http://rstudio-pubs-static.s3.amazonaws.com/13988_bb11d85b79b2436280de434988558140.html
+Results_Dong_TPM<-mutate(Results_Dong_TPM, fold_change= est.tropical/est.temperate,
+       log2fc = log2(fold_change))
+
+```
+
+```{r}
+filter(Dong_pangeneskey, PanGeneID == "Pan_gene_17644") #ZCN8
+filter(Dong2012_candidates, V5 == "Zm00001eb353250")
+filter(candidate_coordinates, V5 == "Zm00001eb353250")
+filter(Dong2012_candidates, B73V3 == "GRMZM2G160730") #Glossy 15
+filter(Dong_pangeneskey, candidatesV5 == "Zm00001eb387280" )
+filter(Results_Dong_TPM, Geneid == "Pan_gene_19318")
+filter(CG, Geneid == "Pan_gene_19318")
+```
+```{r}
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_19318, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_19318, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_19318, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_19318, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for GL15")
+
+ggplot() +
+  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_17644, x="Temperate")) +
+  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_17644, x="Tropical")) +
+  geom_jitter(data = CG_transposed, aes(y=Pan_gene_17644, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+  geom_jitter(data = TG_transposed, aes(y=Pan_gene_17644, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for ZCN8")
+
+```
+```{r}
+filter(Results_Dong_TPM, log2fc >= 2 | log2fc <= -2)
+```
+```{r}
+#None look like convincing candidates to investigate. 
+#ggplot() +
+#  geom_boxplot(data = CG_transposed, aes(y=Pan_gene_16831, x="Temperate")) +
+#  geom_boxplot(data = TG_transposed, aes(y=Pan_gene_16831, x="Tropical")) +
+#  geom_jitter(data = CG_transposed, aes(y=Pan_gene_16831, x="Temperate"), width = 0.1, height = 0,shape = 2, color = "red") +
+#  geom_jitter(data = TG_transposed, aes(y=Pan_gene_16831, x="Tropical"), width = 0.1, height = 0,shape = 2, color = "red")+
+#  ylab("TPM")+xlab("Group")+ggtitle("TPM by Group for Pan_gene_16831")
+```
+ZCN8 did not pop up in the original analysis focused on INDELs because it did not have any indels in it's candidate window.
+But it is a negative strand gene, so that's part of the problem
+###bhlh141 indels
+```{r}
+zcn8_haplotypes<-tibble(Genome = c("P39","IL14H","Oh43","MS71","B97","HP301","NC358","M37W","Ky21",
+                                    "NC350","CML103","Tx303","CML322","Oh7b","CML333","Ki3","M162W",
+                                    "Mo18W","CML69","Ki11","Tzi8","CML277","CML228","CML247","CML52"),
+                         del81987 = c(0,0,0,0,0,1,1,0,0,1,1,0,1,0,1,1,0,1,1,1,1,1,1,1,1),
+                         del81988 = c(1,1,0,1,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0))
+add_TPM<-function(haplotype_df, PGID){
+  TPM_df<-filter(Dong_TPM, Geneid == PGID)
+  haplotype_df<-mutate(haplotype_df, TPM = NA)
+  for(i in 1:nrow(haplotype_df)){
+    ind<-grep(haplotype_df$Genome[i], colnames(TPM_df))
+    haplotype_df$TPM[i] <- TPM_df[1,ind] %>% pull()
+  }
+  return(haplotype_df)
+}
+zcn8_haplotypes<-add_TPM(zcn8_haplotypes, "Pan_gene_17644")
+select(zcn8_haplotypes, contains("del")) %>% unique()
+```
+
+```{r}
+zcn8_haplotypes<-mutate(zcn8_haplotypes, haplotype = case_when(del81987 ==0 & del81988 == 0 ~ "none",
+                                               del81987 ==1 & del81988 == 0  ~ "smDEL_only",
+                                               del81987 ==0 & del81988 == 1 ~ "lgDEL_only" ))
+#Graph the tpms by haplotype
+ggplot(zcn8_haplotypes, aes(x=haplotype, y=TPM)) + geom_boxplot() +geom_jitter(height = 0, width = 0.1, color = "red", shape = 2)
+#ggsave("Plots/ZmCCT10_TPMbyHaplotype",device = "png")
+
+zcn8_TPM_aov<-aov(data = zcn8_haplotypes, TPM ~ haplotype)
+summary(zcn8_TPM_aov)
+TukeyHSD(zcn8_TPM_aov)
+```
+```{r}
+#ZCN8 Pan_gene_17644
+
+#grep("Pan_gene_17644", geneIDkey)
+interestgeneids<-filter(geneIDkey, PanGeneID %in% c("Pan_gene_17644")) %>% select(c(contains("AltID1"), PanGeneID))
+colnames(interestgeneids)<-colnames(interestgeneids) %>% str_remove("_AltID1")
+library(reshape2)
+namIDs_GOI<-melt(interestgeneids, id.vars = "PanGeneID", variable.name = "Genome", value.name = "NAM_ID")
+namIDs_GOI<-mutate(namIDs_GOI, common_name = case_when(PanGeneID == "Pan_gene_17644" ~ "zcn8"))
+colnames(namIDs_GOI)[1]<-"PanGeneID"
+
+test1<-filter(Dong_TPM, Geneid %in% namIDs_GOI$PanGeneID) %>% melt(., id.vars = "Geneid",variable.name = "Genome", value.name = "TPM")
+test1$Genome <- str_remove(test1$Genome, "_TPM")
+colnames(test1)[1]<- "PanGeneID"
+namIDTPM_GOI<-inner_join(namIDs_GOI, test1, by = c("PanGeneID","Genome"))
+filter(namIDTPM_GOI, common_name == "zcn8") %>% write_tsv(., "zcn8_namIDsTPM.tsv")
+```
+#Supplemental Quality Figures
+```{r}
+nam_colors<-c("M37W"="gray47", "Mo18W"="gray47", "Tx303"="gray47", "B97"="royalblue", "Ky21"="royalblue", "M162W"="royalblue", "MS71"="royalblue", "Oh7b"="royalblue", "Oh43"="royalblue", "HP301"="orchid", "IL14H"="orangered", "P39"="orangered", "CML52"="limegreen", "CML69"="limegreen", "CML103"="limegreen", "CML228"="limegreen", "CML247"="limegreen", "CML277"="limegreen", "CML322"="limegreen", "CML333"="limegreen", "Ki3"="limegreen", "Ki11"="limegreen", "NC350"="limegreen", "NC358"="limegreen", "Tzi8"="limegreen", "B73"="goldenrod1", "B73Ab10"="goldenrod1")
+
+#ZmCCT10
+zmcct10_labels<-c("del only", "ins only", "none")
+z<-ggplot(ZmCCT10_haplotypes, aes(x=haplotype, y=TPM)) + 
+  geom_boxplot() +
+  geom_jitter(height = 0, width = 0.1, aes(color = Genome), alpha = 0.95)+
+  geom_text(data = filter(ZmCCT10_haplotypes, TPM > 1), aes(label = Genome), check_overlap = TRUE, nudge_y = 0.05)+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  xlab("Haplotype")+ggtitle("ZmCCT10 Expression by Indel Haplotype")+
+  theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))
+z+scale_x_discrete(labels=zmcct10_labels)
+ggsave("Plots/Supplemental_ZmCCT10TPMbyHaplotype.png",device = "png", dpi = 500, height = 7, width = 7)
+
+#Dof21
+dof21_labels=c("Both ins","deletion and ins 1","ins 1","ins 2", "none")
+d<-ggplot(dof21_haplotypes, aes(x=haplotype, y=TPM)) + 
+  geom_boxplot() +
+  geom_jitter(height = 0, width = 0.1, aes(color = Genome), alpha = 0.95)+
+  geom_text(data = filter(dof21_haplotypes, TPM > 48), aes(label = Genome), check_overlap = TRUE, nudge_x = 0.25, nudge_y = 4)+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  xlab("Haplotype")+ggtitle("Dof21 Expression by Indel Haplotype")+
+  theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))
+d+scale_x_discrete(labels=dof21_labels)
+ggsave("Plots/Supplemental_Dof21TPMbyHaplotype.png",device = "png", dpi = 500, height = 7, width = 7)
+
+###GL15
+#to get this figure, you have to run expression_analysis.R and have that data in the environment, which will only work if you have FT_Indel_Analysis.Rmd run.
+
+p<-mutate(t, indel_name = case_when(Indel_haplotype == "both" ~ "both", Indel_haplotype == "none" ~ "none", Indel_haplotype == "899" ~ "long ins", Indel_haplotype == "900" ~ "short ins")) %>% filter(Tissue %in% c("V11_middle","V11_tip")) %>% 
+  ggplot(aes(x=indel_name))+
+  geom_boxplot(aes(y=TPM), alpha=0.75)+
+  geom_jitter(aes(y=TPM, color=Genome),width = 0.2, alpha=0.95)+
+  #geom_text(data = filter(t, Indel_haplotype == "900" & Tissue %in% c("V11_middle","V11_tip")), aes(y=TPM,label=Genome),size=3,nudge_x = 0.2, check_overlap = TRUE)+
+  facet_wrap(~Tissue, scales = "free")+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  ggtitle("GL15 Expression by Indel Haplotype and Tissue")+theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))+
+   xlab("Haplotype")
+p+geom_text(data = mutate(t, indel_name = case_when(Indel_haplotype == "both" ~ "both", Indel_haplotype == "none" ~ "none", Indel_haplotype == "899" ~ "long ins", Indel_haplotype == "900" ~ "short ins")) %>% filter( Indel_haplotype == "900" & Tissue %in% c("V11_middle","V11_tip") & TPM > 6), aes(y=TPM,label=Genome),size=3,nudge_x = 0.2, nudge_y = 0.5, check_overlap = TRUE)
+ggsave("Plots/Supplemental_GL15TPMbyHaplotype.png",device = "png", dpi = 500, height = 7, width = 7)
+
+###ZCN10
+candidate_TPM %>% filter(Geneid == "Pan_gene_6329") %>% select(contains(trop)) %>% t()
+candidate_TPM %>% filter(Geneid == "Pan_gene_6329") %>% select(contains(temp)) %>% t()
+ZCN10_tpm <- tibble(Genome = c("CML52","CML69","CML103","CML288","CML277","CML247","CML322","CML333","Ki3","Ki11","NC350","NC358","Tzi8","B73","B97","Ky21","M162W","MS71","Oh7b","Oh43","HP301","IL14H","P39"),
+                    TPM = c(0,9.364546,4.995704,30.246162,4.668640,11.831873,3.079423,0,1.707185,0,39.376072,0,21.593580,5.046262,0,0,0,0,2.151063,0,1.004281,4.511501,0),
+                    Pop_Group = c("Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Tropical","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate","Temperate"))
+ggplot(data = ZCN10_tpm, aes(x=Pop_Group, y=TPM)) +
+  geom_boxplot() +
+  geom_jitter(width = 0.1, height = 0, aes(color=Genome)) +
+  geom_text(data = filter(ZCN10_tpm, TPM > 20), aes(label = Genome), check_overlap = TRUE, nudge_x = 0.05, nudge_y = 2)+
+  scale_colour_manual(values=nam_colors)+scale_fill_manual(values=nam_colors)+
+  ylab("TPM")+xlab("Group")+ggtitle("ZCN10 Expression by Temperate vs Tropical Population")+
+  theme_light()+theme(legend.position = "none", title = element_text(size = 14), axis.title = element_text(size = 12), axis.text = element_text(size = 12))
+ggsave("Plots/Supplemental_ZCN10byGroup.png",device = "png", dpi = 500,height = 7, width = 7)
+
+```

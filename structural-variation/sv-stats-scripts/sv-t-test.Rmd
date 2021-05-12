@@ -1,0 +1,15 @@
+---
+title: "sv-t-test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+```
+
+```{r}
+dat<- read_xlsx("/Users/elena/Desktop/sv-analysis-nam/files//t-test.xlsx")
+
+t.test(dat$tropical,dat$temperate)
+```

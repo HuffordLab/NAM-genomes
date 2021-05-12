@@ -294,3 +294,147 @@ bash scripts/filterblastn.sh out_sig_DELs_TELibrary_withlengths
 awk -v OFS='\t' '{print $1,$2,$6/$10, $6/$11}' out_filtered_out_sig_DELs_TELibrary_withlengths | sort -k 2,2> besthits_percov_sigDELs_TEs.txt
 #manually add in a header
 ```
+# GL15 as an Identified Candidate
+## Getting the NAM Coordinates for GL15
+GL15 V3 ID is actually: `GRMZM2G160730` and V5 ID is `Zm00001eb387280`
+pan-gene id is `Pan_gene_19318`
+```
+grep GRMZM2G160730 Li2016_candidates/B73v3_B73v5_liftover_genemodel_CDS_xref_shortened.txt
+#in R from the Li2016_Candidate_Analysis.R
+> grep("Zm00001eb387280", geneIDkey$B73_AltID2)
+[1] 92361
+geneIDkey[92361,] %>% t() 
+geneIDkey[92361,] %>% write_csv("../../gl15_nam_IDs.csv") 
+tail -n 1 gl15_nam_IDs.csv | tr ',' '\n' | sort | uniq >> grep_ID.txt
+```
+On Nova to get the actual coordinates for each NAM
+```
+cd /work/LAS/mhufford-lab/arnstrm/newNAM/analyses/t-pangene-matrix/counts-matrix/counts-padded
+for i in *.txt ; do awk -v OFS='\t' '$1 ~/Pan_gene_19318/ {print $0}' $i ; done 
+#The above is saved in GL15NAMcoordinates.txt
+
+awk -v OFS='\t' '{print $5,$6,$7,$3"_"$1"_"$2,$8}' GL15NAMcoordinates.txt > GL15NAMcoordinates.bed
+```
+Use nova coordinates to get the fasta for GL15 by each NAM
+Need to make each genome's coordinates a different file
+```
+while read -r line ; do 
+	n=$(echo $line | cut -f 4 | cut -f 3 -d _)
+	echo $line > ${n}_GL15.bed 
+done < GL15NAMcoordinates.bed
+for i in *GL15.bed ; do sed -i "s/ /\t/g" $i ; done
+module load bedtools2
+for i in GL15_additional_work/*GL15.bed ; do 
+	n=$(echo ${i#GL15_additional_work/} | cut -f 1 -d _ )
+	bedtools getfasta -name -fi ref_genomes/${n}.pseudomolecules*.fasta -bed $i > GL15_additional_work/${n}_GL15.fasta 
+done
+cat *GL15.fasta > GL15_NAMseq.fasta 
+```
+Run muscle alignment on all the GL15 fastas
+```
+#muscle/3.8.1551 is the module used
+module load muscle
+muscle -in GL15_NAMseq.fasta -fastaout GL15_alignment.fasta -htmlout GL15_alignment.html -log GL15_NAMseq_aln.log
+```
+* Look for the insertion sequence *
+Find the coordinates for the insertion sequence on P39, blast against TE library
+Looking at the B73 coordinates for the insertions and gene,
+I estimate the insertions of interest are between 3000 and 500 bp upstream of the gene coordinates
+```
+for i in *_GL15.bed ; do
+awk -v OFS='\t' '{print $1, $2-3000, $2-500, $4, $5}' $i > ${i%.bed}_promoter.bed 
+done
+for i in GL15_additional_work/*GL15_promoter.bed ; do 
+	n=$(echo ${i#GL15_additional_work/} | cut -f 1 -d _ )
+	bedtools getfasta -name -fi ref_genomes/${n}.pseudomolecules*.fasta -bed $i > GL15_additional_work/${n}_GL15_promoter.fasta 
+done
+cat *GL15_promoter.fasta > GL15_promoter_NAMseq.fasta 
+muscle -in GL15_promoter_NAMseq.fasta -fastaout GL15_promoter_alignment.fasta -htmlout GL15_promoter_alignment.html -log GL15_promoter_NAMseq_aln.log
+```
+*Maggie is using COGE to find the exact coordinates of the insertion* 
+```
+#On CML228's coordinate system: chr9 105190700-105191100
+bedtools getfasta -name -fi ref_genomes/CML228.pseudomolecules*.fasta -bed GL15ins_coords_CML228.bed > CML228_GL15ins.fasta
+module load blast-plus/2.7.1-py2-vvbzyor
+blastn -subject CML228_GL15ins.fasta -query NAM.EDTA1.8.0.MTEC02052020.TElib.clean.fa -out out_CML228GL15ins_withlengths -outfmt "6 qseqid sseqid pident qstart qend length sstart send qcovs qlen slen"
+blastn -subject CML228_GL15ins.fasta -query ref_genomes/B73.PLATINUM.pseudomolecules-v1.fasta -out out_CML228GL15ins_B73assembly.txt -outfmt "6 qseqid sseqid pident qstart qend length sstart send qcovs qlen slen"
+```
+
+# Li et al 2016 Candidate Analysis
+## 1. Get data set up
+- convert Li Candidate names to V5, filter to only those found in US-NAM (+any combination)
+`Li2016_suppdata8_filtered.txt` and `B73v3_B73v5_liftover_genemodel_CDS_xref_shortened.txt`
+```
+grep -f Li2016-v3ids.txt B73v3_B73v5_liftover_genemodel_CDS_xref_shortened.txt >Li2016-v5ids.txt
+```
+- Get GWAS results
+`https://iastate.box.com/s/kbmdpkydae0lvq789wmwph39l0hybi47`
+```
+T2	Days_To_Silk
+T3	ASI
+T30	Days_To_Anthesis
+```
+
+## 2. GWAS, candidate overlap and permutation
+Look for the overlap of Li candidates and GWAS hits from NAM GWAS. 
+Use the same window as before, gene + 5kb promoter region
+Permutation test: do we see more GWAS hit overlap with these candidates compared to whole genome
+
+Got the coordinates from grepping the V3 ID's of candidate lists against the `gene5KB_coords.bed` file
+Use `intersect.sh` on condo plus significant SNP bed files from the R markdown
+Also need `input.fofn` which is a File Of File Names to run as an array job submission
+```
+grep "^coordinates_" *.out | datamash -s crosstab 1,2 sum 5  > col5 #median SNP hits per gene
+grep "^coordinates_" *.out | datamash -s crosstab 1,2 sum 4 > col4 #number of genes with at least 1 SNP hit
+grep "^coordinates_" *.out | datamash -s crosstab 1,2 sum 3  > col3 #total genes sampled
+awk 'BEGIN{OFS=FS="\t"} FNR==NR{a[$1]=$2 FS $3 FS $4;next}{ print $0, a[$1]}' col4 col3 > temp1 #join cross tabbed files
+awk 'BEGIN{OFS=FS="\t"} FNR==NR{a[$1]=$2 FS $3 FS $4;next}{ print $0, a[$1]}' col5 temp1 > permutation_stats.txt #final join
+```
+
+## 3. Coefficient of Variation of candidate genes, permutation test
+- Calculate the coefficient of variation for each gene's expression across all lines
+- How variable is expression of genes across all lines? 
+- Do we see greater variation in expression of Li candidate genes vs random sample of genes?
+
+Coefficient of Variation is calculated as the std. dev. / mean 
+`https://www.statisticshowto.com/probability-and-statistics/how-to-find-a-coefficient-of-variation/`
+We need the mean and standard deviation of a gene's expression across tissue and genomes. 
+Current TPM files have the following headers
+```
+ head -n 1 B97_joined_cnts_wLengths_tpm.txt 
+Length	samples	cnts_B97_R1_anther_MN03081.txt	cnts_B97_R1_anther_MN03082.txt	cnts_B97_V11_base_MN03031.txt	cnts_B97_V11_base_MN03032.txt	cnts_B97_V11_middle_MN03041.txt	cnts_B97_V11_middle_MN03042.txt	cnts_B97_V11_tip_MN03051.txt	cnts_B97_V11_tip_MN03052.txt	cnts_B97_V11_tip_MN03053.txt	cnts_B97_V18_ear_MN03071.txt	cnts_B97_V18_ear_MN03072.txcnts_B97_V18_tassel_MN03061.txt	cnts_B97_V18_tassel_MN03062.txt
+```
+So for a given row (gene):
+grab the TPM values across the columns (tissues and reps for a single genome) for each tpm file (all genomes)
+find the mean and standard deviation of those values
+and report gene + mean + standard deviation (could use awk)
+
+```
+awk '{ A=0 ; V=0; for(N=1; N<=NF ; N++) A+=$N ; A/=NF ; 
+	for (N=1; N<=NF; N++) V+=(($N-A)*($N-A))/(NF-1); print sqrt(V), A/=NF }' file
+```
+Test file
+```
+ col1  col2  col3  col4  col5
+    1     2     3     4     5
+    2     4     6     8    10
+    3     6     9    12    15
+```
+
+### Is there a relationship between the significance of the overlap SNPs and amount of variation?
+Then if there is a strong trend, that would be good follow up to structural variants. 
+
+## 4. Differential Expression between tropical and temperate lines
+- Group lines by tropical and temperate lines (remove mixed lines)
+- Is there a significant difference in expression between these line groups for candidate genes?
+- If there is, are we more likely to find SVs around these candidates than genes in general? (Permutation test)
+
+### Looking for SVs nearby Dof21 which was the only thing that popped in #4
+Using the full genome tracks created up in the Arun's method section, `SV_v8`, IGV
+`GRMZM2G162749` == `Dof21` == `Zm00001eb005380_T001`
+ From the 5KB+gene window bed file `gene5KB_coords.bed`
+ ```
+ 1	14950395	14957579	GRMZM2G162749
+ ```
+Looked at log2 fold change to find other candidates: ZCN10, ZCN8, ZMCCT10
+

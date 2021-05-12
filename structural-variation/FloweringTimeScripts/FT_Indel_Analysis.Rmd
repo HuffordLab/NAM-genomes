@@ -1,0 +1,213 @@
+---
+title: "FT_Indel_Analysis"
+author: "Samantha Snodgrass"
+date: "1/31/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Packages needed
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+```
+#Getting the data and cleaning it
+Get the data
+```{r}
+#data<-read_xlsx("Indel_haplotype_data.xlsx")
+#data<-data %>% group_by(Gene_ID)
+#remove B73_Ab10
+#data <- filter(data, Genome != "B73_AB10")
+data<-read_csv("Aruns_Method/Indel_Haplotypes.csv")
+data<-na.omit(data)
+```
+Filter large dataset into different Gene_ID and region type datasets
+```{r}
+genes<-unique(data$Region)
+print(genes)
+test<-filter(data, Region == genes[1]) %>% filter(Region_Type == "Gene")
+test_out<-pivot_longer(test, -c(Region,Region_Type,SV), names_to = "Genome" )
+FT<-tibble(Genome=c("P39","IL14H","Oh43","MS71","B73","B97","HP301","NC358","M37W","Ky21","NC350","CML103","Tx303","CML322","Oh7B","CML333","Ki3","M162W","Mo18W","CML69","Ki11","Tzi8","CML277","CML228","CML247","CML52"),
+           Flower_Time=c(65.15,69.57,70.73,71.63,73.96,74.51,74.93,77.58,79.51,80.92,82.09,82.64,82.64,82.97,83.02,84.7,85.2,85.56,86.96,88.29,88.38,88.72,91.1,92.48,93.46,93.87))
+inner_join(test_out,FT, by="Genome")
+inner_join(test_out,FT, by="Genome") %>% pivot_wider(names_from = SV, values_from = value)
+pivot_longer(test, -c(Region,Region_Type,SV), names_to = "Genome") %>% inner_join(FT, by="Genome")%>% pivot_wider(names_from = SV, values_from = value)
+```
+The if statement keeps things without any indels from being created as tibbles
+```{r}
+for(g in 1:length(genes)){
+  if((dim(filter(data, Region == genes[g]) %>% filter(Region_Type == "Promoter")) >= 1) == TRUE && TRUE){
+    nam<- paste("P",genes[g], sep=".") #creates object name (P.geneID)
+    assign(nam, (filter(data, Region == genes[g]) %>% filter(Region_Type == "Promoter") %>% pivot_longer(-c(Region,Region_Type,SV), names_to = "Genome") %>% inner_join(FT, by="Genome")%>% pivot_wider(names_from = SV, values_from = value))) #creates df of promoter region of that gene, assigns it to object name (nam)
+  }
+  if((dim(filter(data, Region == genes[g]) %>% filter(Region_Type == "Gene")) >= 1) == TRUE && TRUE){
+  nam<- paste("G",genes[g], sep=".") #creates object name (G.geneID)
+  assign(nam, (filter(data, Region == genes[g]) %>% filter(Region_Type == "Gene") %>% pivot_longer(-c(Region,Region_Type,SV), names_to = "Genome") %>% inner_join(FT, by="Genome")%>% pivot_wider(names_from = SV, values_from = value) )) #same as above but for gene regions
+  }
+}
+```
+Remove columns that contain NA's; Not needed with Arun's method
+```{r}
+#for promoters
+placeholder<-ls(pattern = "^P.") #creates a list of all promoter objects
+for(i in 1:length(placeholder)){ #through the number of promoter objects in placeholder list
+  nam<-placeholder[i] #name it that object
+  assign(nam,get(placeholder[i])[,apply(get(placeholder[i]),2,function(x) !any(is.na(x)))]) 
+  #assign that object name with values from function; function removes columns containing NA's from dataframe
+  #get uses the character string to call the object
+}
+
+#for genes
+placeholder<-ls(pattern = "^G.") #creates a list of all promoter objects
+for(i in 1:length(placeholder)){ #through the number of promoter objects in placeholder list
+  nam<-placeholder[i] #name it that object
+  assign(nam,get(placeholder[i])[,apply(get(placeholder[i]),2,function(x) !any(is.na(x)))]) 
+  #assign that object name with values from function; function removes columns containing NA's from dataframe
+  #get uses the character string to call the object
+}
+remove(placeholder)
+```
+#Statistical analysis
+https://rcompanion.org/handbook/G_09.html
+
+```{r}
+test<-lm(Flower_Time ~  ins14214+del14215, data = `G.no_evd_annotation chr1:275855389-275861912`)
+summary(test)
+
+test_1<-lm(Flower_Time ~ 0+ ins14214+del14215, data = `G.no_evd_annotation chr1:275855389-275861912`)
+summary(test_1)
+
+test_2<-lm(Flower_Time ~ ins14214+del14215+ins14214*del14215, data = `G.no_evd_annotation chr1:275855389-275861912`)
+summary(test_2)
+```
+Pseudo-code for a function that would return the different info for each test
+function(data)
+  Factors <- c(A + B + C ...) equivalent to the number of alleles
+    #(Number of variables - 4) would give the number of alleles
+    #splice alphabet to return (Number of variables - 4) from the beginning
+    #paste alphabet separated by "+"
+  Interactions <- c(A*B + A*C + ...) all possible interactions of factors
+  Formula_1 <- Flowering_Time ~ 0 + Factors + Interactions
+  Formula_2 <- Flowering_Time ~ 0 + Factors
+  model_1_dataName<- lm(Formula_1, data)
+  model_2_dataName<- lm(Formula_2, data)
+  return(model_1, model_2)
+
+# Creating a loop for testing all genes for association
+```{r}
+make_model<-function(df){ 
+  m <- lm(formula = as.formula(paste(colnames(df)[4], "~",
+                 paste(colnames(df)[c(5:ncol(df))], collapse = "+"), #pastes the column names into correct formula layout
+                 sep = "")), data=df) #give it the dataframe
+  return(m) #return the model
+}
+
+make_model(`G.no_evd_annotation chr1:275855389-275861912`)
+```
+```{r}
+test<-make_model(`G.no_evd_annotation chr1:275855389-275861912`) %>% summary()
+test$coefficients[,4] #this gives me the p-value
+test$coefficients[-1,4]
+```
+
+```{r}
+placeholder<-ls(pattern = "^G.") #creates a list of all promoter objects
+for(i in 1:length(placeholder)){ #through the number of promoter objects in placeholder list
+  #nam<-placeholder[i] #name it that object
+  df<-get(placeholder[i]) #get uses the character string to call the object
+  if(nrow(df) == 25){ #makes sure it has all the data
+    m <- make_model(df) %>% summary() #makes the model
+    if(min(m$coefficients[-1,4]) < 0.05){ #The [-1] should remove the intercept value which we don't care about, get's the p-values
+      print(paste(placeholder[i], "has a significant value"))
+      print(m)
+    } else{print(paste(placeholder[i], "does NOT have a significant indel")) } 
+  } else{print(paste(placeholder[i], "does NOT have any indels"))}
+}
+remove(placeholder)
+```
+
+```{r}
+placeholder<-ls(pattern = "^P.") #creates a list of all promoter objects
+for(i in 1:length(placeholder)){ #through the number of promoter objects in placeholder list
+  #nam<-placeholder[i] #name it that object
+  df<-get(placeholder[i]) #get uses the character string to call the object
+  if(nrow(df) == 25){ #makes sure that all the data is there
+    m <- make_model(df) %>% summary() #makes the model
+    if(min(m$coefficients[-1,4]) < 0.05){ #The [-1] should remove the intercept value which we don't care about, get's the p-values
+      print(paste(placeholder[i], "has a significant value"))
+      print(m)
+    } else{print(paste(placeholder[i], "does NOT have a significant indel")) } 
+  } else{print(paste(placeholder[i], "does NOT have any indels"))}
+}
+remove(placeholder)
+```
+
+# Finding minimum distance from QTL marker to gene
+```{r}
+overlap<-read_csv("QTL_overlap.csv")
+```
+```{r}
+gene_loc<-filter(overlap, Type == "FT_Gene") %>% select(ID) %>%pull()
+qtl_loc<-filter(overlap, Type %in% c("QTL_marker_DTA","QTL_marker_DTS","QTL_marker_ASI")) %>% select(ID) %>%pull()
+```
+
+```{r}
+min_distance<-tibble(gene=NA,qtl=NA,distance=NA,Type=NA)
+for(gene in 1:length(gene_loc)){
+  g<-filter(overlap, ID == gene_loc[gene]) #look at a single gene at a time
+  q<-filter(overlap, chromosome == as.character(g$chromosome[1])) %>% filter(Type %in% c("QTL_marker_DTA","QTL_marker_DTS","QTL_marker_ASI")) 
+  overlap_distance<-tibble(gene=NA,qtl=NA,distance=NA, Type=NA)
+  overlap_distance<-na.omit(overlap_distance)
+  for(marker in 1:nrow(q)){
+    if(q$start[marker] <= g$start[1]){
+    overlap_distance<-add_row(overlap_distance, gene=g$ID[1], qtl=q$ID[marker], distance=(g$start[1]-q$start[marker]), Type=q$Type[marker])
+    }else{
+      if(q$start[marker] >= g$end[1]){
+        overlap_distance<-add_row(overlap_distance, gene=g$ID[1], qtl=q$ID[marker], distance=(q$start[marker] - g$end[1]), Type=q$Type[marker])
+        }else{
+          if(g$start[1] < q$start[marker] & q$start[marker] < g$end[1] | g$start[1] == q$start[marker] | g$end[1] == q$start[marker]){
+    overlap_distance<-add_row(overlap_distance, gene=g$ID[1], qtl=q$ID[marker], distance=0, Type=q$Type[marker])
+          }  
+        }
+    }
+    m<-filter(overlap_distance, distance == min(overlap_distance$distance, na.rm = TRUE))
+    min_distance<-add_row(min_distance, gene=m$gene, qtl=m$qtl, distance=m$distance, Type=m$Type)
+  }
+} 
+min_distance<-group_by(min_distance, gene) %>% filter(distance == min(distance)) %>% unique() #%>% print(n=100)
+```
+
+```{r}
+for(gene in 1:3){
+  g<-filter(overlap, ID == gene_loc[gene]) #look at a single gene at a time
+  q<-filter(overlap, chromosome == as.character(g$chromosome[1])) %>% filter(Type %in% c("QTL_marker_DTA","QTL_marker_DTS","QTL_marker_ASI"))
+  #overlap_distance<-tibble(gene=NA,qtl=NA,distance=NA)
+  #overlap_distance<-na.omit(overlap_distance)
+  for(marker in 1:nrow(q)){
+    if(q$start[marker] <= g$start[1]){
+    overlap_distance<-add_row(overlap_distance, gene=g$ID[1], qtl=q$ID[marker], distance=(g$start[1]-q$start[marker]))
+    }else{
+      if(q$start[marker] >= g$end[1]){
+        overlap_distance<-add_row(overlap_distance, gene=g$ID[1], qtl=q$ID[marker], distance=(q$start[marker] - g$end[1]))
+        }else{
+          if(g$start[1] < q$start[marker] & q$start[marker] < g$end[1] | g$start[1] == q$start[marker] | g$end[1] == q$start[marker]){
+    overlap_distance<-add_row(overlap_distance, gene=g$ID[1], qtl=q$ID[marker], distance=0)
+          }  
+        }
+    }
+  }
+}
+
+
+```
+```{r}
+filter(min_distance, distance <= 999999)
+```
+no_evd_annotation == phya1
+Zm00001e016671 == GIGZ1B
+Zm00001e035953 == ZmPRR37
+Zm00001e035978 == DLF1 (The only one with a significant association with a promoter region)

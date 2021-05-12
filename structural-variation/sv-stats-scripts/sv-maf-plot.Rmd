@@ -1,0 +1,23 @@
+---
+title: "maf-plot"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(scipen = 999)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(readxl)
+```
+
+
+```{r}
+maf <- read.delim("/Users/elena/Desktop/sv-analysis-nam/files/maf_v8_variable.txt", sep="\t")
+maf$sv_sizes <- factor(maf$sv_sizes, levels = c("100bp-500bp","500bp-5000bp","5kb-10kb","10kb+"))
+dat=data.frame(group=maf$sv_sizes)
+ggplot(dat, aes(x=maf$maf_value, fill=group)) + geom_histogram(position="dodge2", bins=10) + xlab("MAF") + scale_x_continuous(breaks = seq(0,1,0.25), lim = c(0,0.55))
+```
