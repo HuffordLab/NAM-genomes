@@ -54,15 +54,15 @@ Go, NAMsters!
 3. Raw Datasets (PRJEB31061 and PRJEB32225)
     - [PacBio](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
     - [Illumina](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
-    - [RNAseq: E-MTAB-8633 and E-MTAB-8628](https://www.ebi.ac.uk/ena/browser/view/PRJEB32225)
+    - RNAseq: [E-MTAB-8633](https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-8633/) and [E-MTAB-8628](https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-8628/)
     - [BioNano](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
-    - [Methylation data: E-MTAB-10028](https://www.ebi.ac.uk/ena/browser/view/PRJEB31061)
+    - Methylation data: [E-MTAB-10088](https://www.ebi.ac.uk/arrayexpress/experiments/E-MTAB-10088/)
     - [NLR trees](https://itol.embl.de/shared/xCJbI9ndshEK)
  4. [NAM-webpage](https://nam-genomes.org/)
 
 # Citation
 
-Matthew B Hufford, Arun S Seetharam, Margaret R Woodhouse, Kapeel M. Chougule, Shujun Ou, Jianing Liu, William A Ricci, Tingting Guo, Andrew Olson, Yinjie Qiu, Rafael Della Coletta, Silas Tittes, Asher I Hudson, Alexandre P. Marand, Sharon Wei, Zhenyuan Lu, Bo Wang, Marcela K Tello-Ruiz, Rebecca D Piri, Na Wang, Dong won Kim, Yibing Zeng, Christine H O’Connor, Xianran Li, Amanda M Gilbert, Erin Baggs, Ksenia V Krasileva, John L Portwood II, Ethalinda KS Cannon, Carson M Andorf, Nancy Manchanda, Samantha J Snodgrass, David E Hufnagel, Qiuhan Jiang, Sarah Pedersen, Michael L Syring, David A Kudrna, Victor Llaca, Kevin Fengler, Robert J. Schmitz, Jeffrey Ross-Ibarra, Jianming Yu, Jonathan I Gent, Candice N Hirsch, Doreen Ware, R Kelly Dawe. De novo assembly, annotation, and comparative analysis of 26 diverse maize genomes. bioRxiv, [10.1101/2021.01.14.426684](https://www.biorxiv.org/content/10.1101/2021.01.14.426684v1), 2021. 
+Matthew B Hufford, Arun S Seetharam, Margaret R Woodhouse, Kapeel M. Chougule, Shujun Ou, Jianing Liu, William A Ricci, Tingting Guo, Andrew Olson, Yinjie Qiu, Rafael Della Coletta, Silas Tittes, Asher I Hudson, Alexandre P. Marand, Sharon Wei, Zhenyuan Lu, Bo Wang, Marcela K Tello-Ruiz, Rebecca D Piri, Na Wang, Dong won Kim, Yibing Zeng, Christine H O’Connor, Xianran Li, Amanda M Gilbert, Erin Baggs, Ksenia V Krasileva, John L Portwood II, Ethalinda KS Cannon, Carson M Andorf, Nancy Manchanda, Samantha J Snodgrass, David E Hufnagel, Qiuhan Jiang, Sarah Pedersen, Michael L Syring, David A Kudrna, Victor Llaca, Kevin Fengler, Robert J. Schmitz, Jeffrey Ross-Ibarra, Jianming Yu, Jonathan I Gent, Candice N Hirsch, Doreen Ware, R Kelly Dawe. De novo assembly, annotation, and comparative analysis of 26 diverse maize genomes. bioRxiv, [10.1101/2021.01.14.426684](https://www.biorxiv.org/content/10.1101/2021.01.14.426684v1), 2021.
 
 # Contacts
 
