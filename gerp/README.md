@@ -45,6 +45,7 @@ mkdir -p ${project_path}/data/sequences/query/
 mkdir -p ${project_path}/data/variants/
 mkdir -p ${project_path}/data/chromsize/
 mkdir -p ${project_path}/data/annotations/
+mkdir -p ${project_path}/analyses/tree
 ```
 
 Download the following files and add them to the following directories. All except query files available on Cyverse: \
