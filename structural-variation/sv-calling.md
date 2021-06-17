@@ -1,6 +1,6 @@
 # Structural variation
 
-Structural variation was called using [SNIFFLES](https://github.com/fritzsedlazeck/Sniffles)
+Structural variation was called using [SNIFFLES](https://github.com/fritzsedlazeck/Sniffles). The scripts can be found [here](sv-calling).
 
 
 ## 1. Read alignment
