@@ -131,3 +131,29 @@ cd r2_vcf
 ```
 
 ## 3. Calling variants using BioNano Solve
+
+
+Remove all the scaffolds from the genome (fasta file)
+
+```bash
+./separate-chr.sh <nam-genome>.fasta
+```
+
+Convert fasta to cmap format
+
+
+```
+fasta2cmap.sh <NAM-genome>-chr-only.fa
+```
+
+Call SV's against B73
+
+```
+bionano-call-SV.sh <NAM-genome>-chr-only.cmap
+```
+
+convert to vcf format
+
+```
+smap2vcf.sh
+```
