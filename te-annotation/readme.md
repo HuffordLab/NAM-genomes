@@ -18,13 +18,13 @@ perl ~/las/git_bin/EDTA/EDTA.pl --genome $genome --species Maize -t $threads --c
 Filter out single-copy annotations
 
 ```bash
-# $genome.out is the RepeatMasker .out file generated from the last step.
+# $genome.out is the RepeatMasker .out file generated from the last step, located in $genome.mod.EDTA.anno/
 for i in `cat list.cds|awk '{print $1}'`; do
     perl ~/las/git_bin/EDTA/util/output_by_list.pl \
       1 \
      <(perl -nle 's/#.*//; print $_' $i.mod.EDTA.TElib.novel.fa) \
      1 \
-     <(perl ~/las/git_bin/EDTA/util/find_flTE.pl $i.out | \
+     <(perl ~/las/git_bin/EDTA/util/find_flTE.pl $i.mod.out | \
      awk '{print $10}'| \
      sort| \
      uniq -c |\
@@ -108,6 +108,7 @@ done
 Re-run EDTA final on each genome
 
 ```bash
+lib=NAM.EDTA1.9.0.MTEC02052020.TElib.fa
 perl ~/las/git_bin/EDTA/EDTA.pl \
    --genome $genome \
    --species Maize \
@@ -123,7 +124,7 @@ perl ~/las/git_bin/EDTA/EDTA.pl \
 ## calculate LAI
 
 ```bash
-for i in `cat list`; do
+for i in `awk '{print $1}' list.cds`; do
  perl ~/las/git_bin/LTR_retriever/LAI \
     -genome $(echo $i|perl -nle 's/\..*//; print $_')/$i \
     -intact $(echo $i|perl -nle 's/\..*//; print $_')/$i.mod.EDTA.raw/LTR/$i.mod.pass.list \
