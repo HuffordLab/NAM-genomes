@@ -33,11 +33,22 @@ for i in `cat list.cds|awk '{print $1}'`; do
 done
 ```
 
+get classification info and convert #unknown to #DNA/Helitron
+
+```bash
+for j in *mod.EDTA.TElib.novel.fa; do 
+    for i in `cat $j.real`; do 
+        grep $i $j; 
+    done| \
+    perl -nle 's/#unknown/#DNA\/Helitron/; print $_' > $j.real.ori & 
+done
+```
+
 aggregate novel TE libraries
 
 ```bash
 i=0
-for j in *ori; do
+for j in *real.ori; do
   i=$(($i+5000));
   perl ~/las/git_bin/EDTA/util/rename_TE.pl $j $i;
 done > NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw
