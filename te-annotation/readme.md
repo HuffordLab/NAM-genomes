@@ -135,6 +135,105 @@ for i in `awk '{print $1}' list.cds`; do
 done
 ```
 
+## Summarize pan-genome TE
+
+aggregate TE summary info
+
+```bash
+for i in *mod.EDTA.TEanno.sum; do
+   cat <(echo $i| perl -nle 's/\..*//; print "$_\t${_}_cp\t${_}_bp\t${_}_pcnt"')\
+       <(head -32 $i|grep -v -P "\-\-|=|total|masked"| perl -0777 -ne 's/\s+unknown/\nLTR_unknown/; print $_' |grep %) |\
+   perl transpose3.pl -; \
+done > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum
+```
+
+grep summary for each superfamily
+
+```bash
+cat head <(grep pcnt NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum) > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.pcnt.txt
+cat head <(grep bp NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum) > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.bp.txt
+cat head <(grep cp NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum) > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.cp.txt
+```
+
+extract family percent
+
+```bash
+for i in *mod.EDTA.TEanno.sum; do
+  perl get_TE_fam_pcnt.pl $i &
+done
+```
+
+aggregate into a big table
+
+```bash
+cat *mod.EDTA.TEanno.sum.fam | perl combine_TE_fam_pcnt.pl pcnt - > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum.fam
+cat *mod.EDTA.TEanno.sum.fam | perl combine_TE_fam_pcnt.pl bp - > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum.fam.bp
+perl -i -nle 's/#/_/g; print $_' NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum.fam
+perl -i -nle 's/#/_/g; print $_' NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum.fam.bp
+```
+
+keep TE only
+
+```bash
+grep -v -P "CL569186.1|AF013103.1|\)n|cent|Cent|telo|knob|TR-1|osed|sela" NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum.fam > NAM.EDTA1.9.0.MTEC02052020.TE.v1.1.anno.sum.fam
+grep -v -P "CL569186.1|AF013103.1|\)n|cent|Cent|telo|knob|TR-1|osed|sela" NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.sum.fam.bp > NAM.EDTA1.9.0.MTEC02052020.TE.v1.1.anno.sum.fam.bp
+```
+
+count effective TEs
+
+```bash
+grep -v -P 'long_terminal_repeat|repeat_region|target_site_duplication' *mod.EDTA.TEanno.gff3 |\
+perl -nle 'next unless s/ID=//; \
+           my ($cla, $id)=(split)[2,8]; \
+           $id=~s/.*; \
+           Name=(.*);Classific.*/$1/; \
+           $id=~s/;.*//; $id=~s/#/_/; \
+           print "$id\t$cla"' |\
+grep -v -P "\)n|A-rich|G-rich|begin|position" |\
+sort -u > NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.TEfam.list &
+grep -v : NAM.EDTA1.9.0.MTEC02052020.TE.v1.anno.TEfam.list|wc -l
+```
+
+sum intact size for LTR TIR and Helitron in each genome
+
+```bash
+for j in `ls *fasta.mod.EDTA.intact.gff3`; do
+   echo -n "$j ";
+  for i in LTR_ /DT Heli; do
+     grep ID $j | grep $i | awk '{print $1"\t"$4"\t"$5"\t"$3}'|\
+     perl ~/las/git_bin/EDTA/util/combine_overlap.pl - |\
+    perl ~/las/git_bin/EDTA/util/count_mask.pl -;
+  done;
+done |\
+perl -ne 'chomp; print "\n" if /gff/; print "$_\t"' > NAM.EDTA1.9.0.MTEC02052020.intact.sum &
+perl -i -nle 'next if /^$/; s/.*\///; s/\..*gff3//; print $_' NAM.EDTA1.9.0.MTEC02052020.intact.sum
+cat <(echo "Genome LTR TIR Helitron") NAM.EDTA1.9.0.MTEC02052020.intact.sum > NAM.EDTA1.9.0.MTEC02052020.intact.sum.txt
+````
+
+get intact LTR info
+
+```bash
+for i in `ls *mod.EDTA.intact.gff3 |grep -v -P 'Ab10|AB10'`; do
+  grep LTR_retrotransposon $i |\
+  perl -nle 'my ($chr, undef, $supfam, $from, $to, undef, $str, undef, $info)=(split); \
+             my $genome = $1 if $chr=~s/^(.*?)_//; \
+             my ($id, $classification, $SO, $iden, $motif, $tsd)=($1, $2, $3, $4, $5, $6) if $info=~/Name=(.*);\
+             Classification=(.*); \
+             Sequence_ontology=(.*); \
+             ltr_identity=(.*); \
+             Method=structural; \
+             motif=(.*);tsd=(.*)$/;\
+            print "$genome\t$chr\t$supfam\t$classification\t$from\t$to\t$str\t$id\t$SO\t$motif\t$tsd\t$iden"';
+done > NAM.26.intact.LTR.list &
+```
+
+plot figures in R
+
+```
+Rscript NAM_TE_summary.R
+```
+
+
 plot figures in R
 ```bash
 Rscript Suppl. Fig. S4.R
