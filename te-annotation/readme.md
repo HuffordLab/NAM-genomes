@@ -90,7 +90,7 @@ cat maizeTE02052020 NAM.EDTA1.8.0.EDTA.TElib.novel.v2.fa > NAM.EDTA1.9.0.MTEC020
 Re-mask all genomes with the pan-genome TE lib
 
 ```bash
-lib=NAM.EDTA1.9.0.MTEC02052020.TElib.fa
+lib=NAM.EDTA1.8.0.MTEC02052020.TElib.fa
 RepeatMasker -pa 36 -q -div 40 -lib $lib -cutoff 225 -gff $genome
 for i in *fasta.out; do
  perl -nle 's/knob180_knob180/knob180/g;\
@@ -108,7 +108,7 @@ done
 Re-run EDTA final on each genome
 
 ```bash
-lib=NAM.EDTA1.9.0.MTEC02052020.TElib.fa
+lib=NAM.EDTA1.8.0.MTEC02052020.TElib.fa
 perl ~/las/git_bin/EDTA/EDTA.pl \
    --genome $genome \
    --species Maize \
