@@ -81,7 +81,7 @@ perl ~/las/git_bin/EDTA/util/rename_TE.pl NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.
 make comprehensive TE library
 
 ```
-cat maizeTE02052020 NAM.EDTA1.8.0.EDTA.TElib.novel.v2.fa > NAM.EDTA1.9.0.MTEC02052020.TElib.fa
+cat maizeTE02052020 NAM.EDTA1.8.0.EDTA.TElib.novel.v2.fa > NAM.EDTA1.8.0.MTEC02052020.TElib.fa
 ```
 
 
