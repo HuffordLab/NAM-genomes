@@ -1,6 +1,5 @@
+# Workflow
 <img src="/te-annotation/assets/Pan-EDTA_scheme.png" width=500>
-
-
 
 #  De novo TE anno
 
