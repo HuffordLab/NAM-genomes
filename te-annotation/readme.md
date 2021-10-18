@@ -1,4 +1,4 @@
-![workflow](/te-annotation/assets/Pan-EDTA_scheme.png)
+<img src="/te-annotation/assets/Pan-EDTA_scheme.png" width=300 align=left>
 
 
 #  De novo TE anno
