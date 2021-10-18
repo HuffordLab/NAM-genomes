@@ -1,4 +1,4 @@
-![workflow](/asset/Pan-EDTA scheme.pdf)
+![workflow](/assets/Pan-EDTA scheme.pdf)
 
 
 #  De novo TE anno
