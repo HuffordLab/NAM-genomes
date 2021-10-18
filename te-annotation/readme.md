@@ -1,3 +1,6 @@
+![workflow](/asset/Pan-EDTA scheme.pdf)
+
+
 #  De novo TE anno
 
 ## Identify raw TEs
