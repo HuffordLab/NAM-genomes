@@ -11,4 +11,4 @@
 # go to project folder
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
-run_pipeline.pl -Xmx100g -importGuess NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -export NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -exportType HapmapDiploid
+run_pipeline.pl -Xmx100g -importGuess NAM_rils_projected-SNPs-SVs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -export NAM_rils_projected-SNPs-SVs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -exportType HapmapDiploid

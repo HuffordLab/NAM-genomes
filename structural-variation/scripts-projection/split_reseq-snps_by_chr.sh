@@ -11,6 +11,4 @@
 # go to project folder
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
-grep -v -P "^del|^dup|^ins|^inv|^tra" NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt > NAM_rils_projected-reseq-SNPs-only.all-RILs.chr-${CHR}.v7.hmp.txt
-
-gzip -c NAM_rils_projected-reseq-SNPs-only.all-RILs.chr-${CHR}.v7.hmp.txt > NAM_rils_projected-reseq-SNPs-only.all-RILs.chr-${CHR}.v7.hmp.txt.gz
+grep -v -P "^del|^dup|^ins|^inv|^tra" NAM_rils_projected-SNPs-SVs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt | gzip > NAM_rils_projected-SNPs-only.all-RILs.chr-${CHR}.v9.hmp.txt.gz

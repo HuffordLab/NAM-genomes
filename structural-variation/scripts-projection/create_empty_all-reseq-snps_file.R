@@ -87,7 +87,7 @@ all.svs.hmp[, "pos"] <- all.proj.sv.pos[[as.character(chr)]]
 all.svs.hmp[, "strand"] <- "+"
 
 # write file
-out.filename <- paste0(folder.after.proj, "/NAM_rils_SNPs-reseq_and_SNPs-SVs.all-reseq-snps.empty.chr-", chr, ".hmp.txt")
+out.filename <- paste0(folder.after.proj, "/NAM_rils_SNPs-only.all-reseq-snps.empty.chr-", chr, ".hmp.txt")
 fwrite(all.svs.hmp, file = out.filename, quote = FALSE, sep = "\t", na = "NA", row.names = FALSE)
 
 

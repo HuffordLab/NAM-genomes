@@ -11,4 +11,4 @@
 # go to project folder
 cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
-run_pipeline.pl -Xmx100g -importGuess NAM_rils_SNPs-reseq_and_best-SNPs.reseq-snps-all-crosses.chr-${CHR}.projected.hmp.txt -GenotypeSummaryPlugin -endPlugin -export ld/missing_data_filter/tassel_summary_chr-${CHR}_NAM_rils_
+run_pipeline.pl -Xmx100g -importGuess NAM_rils_projected-SNPs-only.all-RILs.chr-${CHR}.v9.hmp.txt.gz -GenotypeSummaryPlugin -endPlugin -export tassel_summary_NAM_rils_chr-${CHR}_projected_snps

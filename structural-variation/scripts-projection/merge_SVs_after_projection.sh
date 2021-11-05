@@ -9,8 +9,8 @@
 #PBS -r n
 
 # go to project folder
-cd ~/projects/sv_nams/analysis/projection
+cd ~/projects/sv_nams/analysis/reseq_snps_projection2
 
 module load R/3.6.0
 
-Rscript ~/projects/sv_nams/scripts/merge_SVs_after_projection.R ~/projects/sv_nams/data/NAM_founders_SVs.hmp.txt ~/projects/sv_nams/analysis/projection
+Rscript ~/projects/sv_nams/scripts/merge_SVs_after_projection.R ~/projects/sv_nams/data/NAM_founders_SVs.hmp.txt ~/projects/sv_nams/analysis/reseq_snps_projection2
