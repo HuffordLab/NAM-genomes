@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=4:00:00,nodes=1:ppn=1,mem=60gb
+#PBS -l walltime=4:00:00,nodes=1:ppn=1,mem=40gb
 #PBS -o /home/hirschc1/della028/projects/sv_nams/data/tmp
 #PBS -e /home/hirschc1/della028/projects/sv_nams/data/tmp
 #PBS -V
@@ -13,4 +13,6 @@ cd ~/projects/sv_nams/data/tmp/
 
 module load R
 
-Rscript ~/projects/sv_nams/scripts/merge_SNPs-reseq_and_SNPs-SVs.R ~/projects/sv_nams/data/tmp/${CROSS}/NAM_parents-reseq_SNPs.${CROSS}.poly.not-in-SVs.hmp.txt ~/projects/sv_nams/data/NAM_parents_SVs-SNPs.${CROSS}.sorted.hmp.txt ~/projects/sv_nams/analysis/projection/NAM_rils_SVs-SNPs.${CROSS}.best-markers.projected.hmp.txt ~/projects/sv_nams/data/tmp/NAM_parents_SNPs-reseq_and_SVs-SNPs.${CROSS}.poly.hmp.txt ~/projects/sv_nams/data/tmp/${CROSS}/NAM_rils_SNPs-reseq_and_SVs-SNPs.${CROSS}.poly.not-projected.hmp.txt
+for chr in {1..10}; do
+  Rscript ~/projects/sv_nams/scripts/merge_SVs_and_SNPs.R ${CROSS}/NAM_parents-reseq_SNPs.${CROSS}.chr${chr}.poly.not-in-SVs.hmp.txt ~/projects/sv_nams/data/NAM_parents_SVs-SNPs.${CROSS}.chr${chr}.sorted.hmp.txt ~/projects/sv_nams/data/NAM_rils_SVs-SNPs.${CROSS}.best-markers.not-projected.chr${chr}.sorted.hmp.txt NAM_parents_SNPs-reseq_and_SVs-SNPs.${CROSS}.poly.chr-${chr}.hmp.txt ${CROSS}/NAM_rils_SNPs-reseq_and_SVs-SNPs.${CROSS}.poly.chr-${chr}.not-projected.hmp.txt
+done

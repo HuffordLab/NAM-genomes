@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -l walltime=10:00:00,nodes=1:ppn=1,mem=100gb
+#PBS -l walltime=12:00:00,nodes=1:ppn=10,mem=120gb
 #PBS -o /home/hirschc1/della028/projects/sv_nams/analysis/reseq_snps_projection2
 #PBS -e /home/hirschc1/della028/projects/sv_nams/analysis/reseq_snps_projection2
 #PBS -V

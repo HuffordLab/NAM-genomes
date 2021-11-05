@@ -60,8 +60,8 @@ cross.list <- system("ls -d ~/projects/sv_nams/data/GBS-output/tmp/B73* | xargs 
                      intern = TRUE)
 
 # get list with all SV filenames
-sv.files <- list.files(sv.folder, pattern = "NAM_parents-reseq_SNPs", full.names = TRUE, recursive = TRUE)
-sv.files <- sv.files[grep("poly.not-in-SVs.hmp.txt", sv.files)]
+sv.files <- list.files(sv.folder, pattern = "NAM_parents_SNPs-reseq_and_SVs-SNPs", full.names = TRUE, recursive = TRUE)
+sv.files <- sv.files[grep("poly.sorted.hmp.txt", sv.files)]
 
 
 # get list with all SV filenames
@@ -128,7 +128,7 @@ for (cross in cross.list) {
   names(RILs.projected) <- hmp.after[, 1]
   
   # create folder to store plots
-  plots.folder <- paste0(folder.after.proj, "/plots")
+  plots.folder <- paste0(folder.after.proj, "/plots_snps")
   if (!dir.exists(plots.folder)) {
     dir.create(plots.folder, recursive = TRUE)
   }
@@ -140,7 +140,7 @@ for (cross in cross.list) {
     labs(x = "SNPs projected",
          y = "Number of RILs")
   # add how many rils!
-  ggsave(filename = paste0(plots.folder, "/", cross, "_projection_distribution.pdf"),
+  ggsave(filename = paste0(plots.folder, "/", cross, "_SNPs-projection_distribution.pdf"),
          plot = proj.distribution.plot, device = "pdf")
   
   # plot distribution rils
@@ -150,7 +150,7 @@ for (cross in cross.list) {
     labs(x = "RILs projected",
          y = "Number of SVs")
   # add how many rils!
-  ggsave(filename = paste0(plots.folder, "/", cross, "_projection_distribution_RILs.pdf"),
+  ggsave(filename = paste0(plots.folder, "/", cross, "_SNPs-projection_distribution_RILs.pdf"),
          plot = proj.distribution.rils.plot, device = "pdf")
   
   
@@ -214,7 +214,7 @@ outfile.RILs.per.SV <- paste0(folder.after.proj, "/summary_projected_RILs_per_re
 fwrite(proj.RILs.all.svs, outfile.RILs.per.SV, quote = FALSE, sep = "\t", na = NA, row.names = FALSE)
 
 # write final table
-outfile <- paste0(folder.after.proj, "/summary_projection.txt")
+outfile <- paste0(folder.after.proj, "/summary_projection_reseq-snp.txt")
 fwrite(summary.projection, outfile, quote = FALSE, sep = "\t", na = NA, row.names = FALSE)
 
 cat("Average of ", round(mean(summary.projection$avg_percent_projected), digits = 2) * 100,
@@ -228,7 +228,7 @@ proj.summary.plot <- ggplot(summary.projection, aes(x = family, y = avg_percent_
   scale_y_continuous(labels = function(x) x*100, limits = c(0,1))+
   scale_x_discrete(labels = function(cross) gsub("B73x", "B73\nx\n", cross))
 
-ggsave(filename = paste0(folder.after.proj, "/summary_percent-projected_all-families.pdf"),
+ggsave(filename = paste0(folder.after.proj, "/summary_SNPs-percent-projected_all-families.pdf"),
        plot = proj.summary.plot, device = "pdf", width = 15, height = 6)
 
 
@@ -240,7 +240,7 @@ proj.accuracy.plot <- ggplot(summary.projection, aes(x = family, y = proj_accura
   scale_y_continuous(labels = function(x) x*100, limits = c(0,1))+
   scale_x_discrete(labels = function(cross) gsub("B73x", "B73\nx\n", cross))
 
-ggsave(filename = paste0(folder.after.proj, "/summary_projection-accuracy_all-families.pdf"),
+ggsave(filename = paste0(folder.after.proj, "/summary_SNPs-projection-accuracy_all-families.pdf"),
        plot = proj.accuracy.plot, device = "pdf", width = 15, height = 6)
 
 

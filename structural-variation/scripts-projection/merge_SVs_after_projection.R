@@ -25,7 +25,7 @@ sv.founders.file <- args[1]
 folder.after.proj <- args[2]
 
 # sv.founders.file <- "~/projects/sv_nams/data/NAM_founders_SVs.hmp.txt"
-# folder.after.proj <- "~/projects/sv_nams/analysis/projection"
+# folder.after.proj <- "~/projects/sv_nams/analysis/reseq_snps_projection2"
 
 
 
@@ -57,9 +57,9 @@ for (cross in cross.list) {
 
   # load hapmap after projection
   filename.after.proj <- list.files(path = folder.after.proj,
-                                    pattern = "projected.hmp.txt",
+                                    pattern = paste0("NAM_rils_SVs-only.", cross),
                                     full.names = TRUE)
-  filename.after.proj <- filename.after.proj[grep(cross, filename.after.proj)]
+  filename.after.proj <- filename.after.proj[grep("projected.hmp.txt", filename.after.proj)]
   hmp.after <- fread(filename.after.proj, header = TRUE, data.table = FALSE)
 
   # filter hmp by svs and select only chromosome and positions
@@ -99,9 +99,9 @@ for (cross in cross.list) {
 
   # load SVs projected for a cross
   filename.after.proj <- list.files(path = folder.after.proj,
-                                    pattern = "projected.hmp.txt",
+                                    pattern = paste0("NAM_rils_SVs-only.", cross),
                                     full.names = TRUE)
-  filename.after.proj <- filename.after.proj[grep(cross, filename.after.proj)]
+  filename.after.proj <- filename.after.proj[grep("projected.hmp.txt", filename.after.proj)]
   hmp.after <- fread(filename.after.proj, header = TRUE, data.table = FALSE)
   hmp.after.svs <- hmp.after[grep(".", hmp.after[, 1], fixed = TRUE), ]
 
