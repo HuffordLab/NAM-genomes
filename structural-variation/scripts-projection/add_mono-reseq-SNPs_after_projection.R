@@ -28,10 +28,9 @@ folder.not.proj <- args[3]
 folder.after.proj <- args[4]
 
 
-# cross <- "B73xB97"
-# chr <- 10
+# cross <- "B73xHp301"
 # folder.not.proj <- "~/projects/sv_nams/data/tmp"
-# folder.after.proj <- "~/projects/sv_nams/analysis/reseq_snps_projection2"
+# folder.after.proj <- "~/projects/sv_nams/analysis/reseq_snps_projection"
 
 
 
@@ -56,7 +55,6 @@ sv.filename <- list.files(folder.not.proj,
                           pattern = paste0("NAM_parents-reseq_SNPs.", cross, ".not-in-SVs.hmp.txt"),
                           recursive = TRUE,
                           full.names = TRUE)
-sv.filename <- sv.filename[grep(".gz", sv.filename, invert = TRUE)]
 # open file with SV positions
 sv.hmp.cross <- fread(sv.filename, header = TRUE, data.table = FALSE)
 # filter by chromosome
@@ -69,17 +67,18 @@ colnames(sv.hmp.cross)[grep("B73", colnames(sv.hmp.cross))] <- "B73"
 # get type of each marker
 marker.type <- apply(X = sv.hmp.cross[, c(parent1, parent2)],
                      MARGIN = 1, FUN = function(snp) {
-
+                       
                        # get unique genotypes between parents
                        genotypes <- unique(snp)
-
-                       if (any(grepl("NN", genotypes))) {
-
-                         # if there is NN, consider SNP is missing
+                       genotypes <- genotypes[genotypes != "NN"]
+                       
+                       if (length(genotypes) == 0) {
+                         
+                         # if there is no genotype, snp is missing
                          return("missing")
                          
                        } else if (length(genotypes) == 1) {
-
+                         
                          # if there is one genotype, it's monomorphic
                          # but distinguish if SNP is het
                          alleles <- unlist(strsplit(genotypes, split = ""))
@@ -88,9 +87,9 @@ marker.type <- apply(X = sv.hmp.cross[, c(parent1, parent2)],
                          } else {
                            return("het")
                          }
-
+                         
                        } else {
-
+                         
                          # if there are two genotypes, it's polymorphic
                          # but distiguish if one of the genotypes is het
                          p1.alleles <- unlist(strsplit(genotypes[1], split = ""))
@@ -100,7 +99,7 @@ marker.type <- apply(X = sv.hmp.cross[, c(parent1, parent2)],
                          } else {
                            return("het")
                          }
-
+                         
                        }
                      })
 
@@ -110,9 +109,8 @@ sv.hmp.cross.mono <- sv.hmp.cross[which(marker.type == "mono"), ]
 
 # after projection
 filename.after.proj <- list.files(path = folder.after.proj,
-                                  pattern = paste0("NAM_rils_SNPs-only.", cross),
+                                  pattern = paste0(cross, ".poly.projected.hmp.txt"),
                                   full.names = TRUE)
-filename.after.proj <- filename.after.proj[grep("poly.projected.hmp.txt", filename.after.proj)]
 hmp.after <- fread(filename.after.proj, header = TRUE, data.table = FALSE)
 # filter by chromosome
 hmp.after <- subset(hmp.after, chrom == chr)
@@ -140,3 +138,6 @@ merged.hmp <- cbind(merged.hmp[, 1:11], merged.hmp[, ril.columns])
 # write merged files
 outfile <- gsub("poly.projected.hmp.txt", paste0("only-reseq-snps.chr-", chr,".projected.hmp.txt"), filename.after.proj)
 fwrite(merged.hmp, outfile, quote = FALSE, sep = "\t", na = NA, row.names = FALSE)
+
+
+
