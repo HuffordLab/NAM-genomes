@@ -72,14 +72,10 @@ nohup perl ~/las/git_bin/EDTA/util/cleanup_nested.pl \
 remove a number of false TEs and rename IDs
 
 ```
-perl ~/las/git_bin/EDTA/util/output_by_list.pl \
-     1 \
-     NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln \
-     1 \
-     rm.list2 \
-     -ex \
-     -FA > NAM.EDTA1.8.0.EDTA.TElib.novel.v2.fa.raw.cln2
-perl ~/las/git_bin/EDTA/util/rename_TE.pl NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln2 > NAM.EDTA1.8.0.EDTA.TElib.novel.fa
+RepeatMasker -pa 36 -q -no_is -norna -nolow -div 40 -lib rm.fa -cutoff 225 NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln
+perl ~/las/git_bin/EDTA/util/output_by_list.pl 1 NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln 1 \
+    <(awk '{print $5}' NAM.EDTA1.8.0.EDTA.TElib.novel.fa.raw.cln.out|grep TE) -ex -FA | \
+    perl ~/las/git_bin/EDTA/util/rename_TE.pl - > NAM.EDTA1.8.0.EDTA.TElib.novel.fa
 ```
 make comprehensive TE library
 
