@@ -91,17 +91,6 @@ Re-mask all genomes with the pan-genome TE lib
 ```bash
 lib=NAM.EDTA1.8.0.MTEC02052020.TElib.fa
 RepeatMasker -pa 36 -q -div 40 -lib $lib -cutoff 225 -gff $genome
-for i in *fasta.out; do
- perl -nle 's/knob180_knob180/knob180/g;\
-            s/CentC_CentC/CentC/g; \
-            s/Unspecified/LTR\/CRM/g; \
-            s/4\-12\-1_CL569186.1/CL569186.1/; \
-            s/TR\-1_TR\-1/TR\-1/g;  \
-            next if /TE_00018291_LTR/; \
-            next if /TE_00013511/; \
-            next if /TE_00016670_LTR/; \
-            print $_' $i > $i.mod &
-done
 ```
 
 Re-run EDTA final on each genome
@@ -114,7 +103,7 @@ perl ~/las/git_bin/EDTA/EDTA.pl \
    -t $threads \
    --step final \
    --anno 1 \
-   --rmout $genome.out.mod \
+   --rmout $genome.out \
    --curatedlib \$lib \
    --cds $cds
 ```
@@ -127,7 +116,7 @@ for i in `awk '{print $1}' list.cds`; do
  perl ~/las/git_bin/LTR_retriever/LAI \
     -genome $(echo $i|perl -nle 's/\..*//; print $_')/$i \
     -intact $(echo $i|perl -nle 's/\..*//; print $_')/$i.mod.EDTA.raw/LTR/$i.mod.pass.list \
-    -all $i.out.mod \
+    -all $i.out \
     -q -iden 94.854 \
     -totLTR 76.34 \
     -t 2 &
