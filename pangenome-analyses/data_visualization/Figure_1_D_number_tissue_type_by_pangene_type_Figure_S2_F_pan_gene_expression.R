@@ -10,7 +10,6 @@ library(ggpubr)
 library(ggsignif)
 
 Tissue_8_expression_matrix <- read.csv(file = "expression_26_NAM_8_tissues_rm_header.csv", header = FALSE)
-
 # adding column name 
 colnames(Tissue_8_expression_matrix) <- c("PanGeneID","Geneid","8DAS_root","8DAS_shoot","R1_anther","V11_base",	"V11_middle","V11_tip",	"V18_ear","V18_tassel","number_of_tissue_expression", "pan-gene class")		
 
@@ -21,6 +20,7 @@ Tissue_8_expression_matrix_clean$mean_expression <- rowMeans(Tissue_8_expression
 table(Tissue_8_expression_matrix_clean$`pan-gene class`)
 # Core Gene Dispensable Gene   Near-Core Gene     Private Gene 
 # 725489           393801           102195            19888 
+# NOTE: this core gene number is slightly below 27910 *26, it was due to some duplicated pan-gene that we can not compress (included gmap coordinates)
 
 
 ##########  Pan gene expression RPKM    #############
